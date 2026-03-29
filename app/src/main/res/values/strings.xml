@@ -56,6 +56,13 @@
     <string name="add_error_handling">Add error handling</string>
     <string name="auto_snip_short">⚡ Auto-Snip</string>
     <string name="copy_code">Copy</string>
+    <string name="prompt_actions">Prompt</string>
+    <string name="copy_prompt">Copy prompt</string>
+    <string name="edit_prompt">Edit prompt</string>
+    <string name="snip_prompt">Snip it</string>
+    <string name="ai_reply_actions">AI reply</string>
+    <string name="snip_it">Snip it</string>
+    <string name="share">Share</string>
     <string name="mlkit_ocr_label">ML Kit OCR</string>
     <string name="ai_fix_first">✦ AI Fix first</string>
     <string name="badge_ai_refactor_title">AI Refactor</string>

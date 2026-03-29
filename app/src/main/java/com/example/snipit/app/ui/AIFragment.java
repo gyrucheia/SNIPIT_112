@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -371,10 +372,123 @@ public class AIFragment extends Fragment {
         if (user) {
             tv.setBackgroundResource(R.drawable.bg_card);
             tv.setTextColor(getResources().getColor(R.color.text_primary, null));
+            tv.setOnLongClickListener(
+                    v -> {
+                        CharSequence body = tv.getText();
+                        new MaterialAlertDialogBuilder(requireContext())
+                                .setTitle(R.string.prompt_actions)
+                                .setItems(
+                                        new CharSequence[] {
+                                            getString(R.string.copy_prompt),
+                                            getString(R.string.edit_prompt),
+                                            getString(R.string.snip_prompt)
+                                        },
+                                        (d, which) -> {
+                                            if (which == 0) {
+                                                ClipboardManager cm =
+                                                        (ClipboardManager)
+                                                                requireContext()
+                                                                        .getSystemService(
+                                                                                Context.CLIPBOARD_SERVICE);
+                                                cm.setPrimaryClip(
+                                                        ClipData.newPlainText(
+                                                                "prompt",
+                                                                body != null ? body : ""));
+                                                Toast.makeText(
+                                                                requireContext(),
+                                                                R.string.copied,
+                                                                Toast.LENGTH_SHORT)
+                                                        .show();
+                                            } else if (which == 1) {
+                                                input.setText(body != null ? body : "");
+                                                input.requestFocus();
+                                                input.setSelection(input.getText().length());
+                                                InputMethodManager imm =
+                                                        (InputMethodManager)
+                                                                requireContext()
+                                                                        .getSystemService(
+                                                                                Context.INPUT_METHOD_SERVICE);
+                                                if (imm != null) {
+                                                    imm.showSoftInput(
+                                                            input, InputMethodManager.SHOW_IMPLICIT);
+                                                }
+                                                chatScroll.post(
+                                                        () ->
+                                                                chatScroll.fullScroll(
+                                                                        View.FOCUS_DOWN));
+                                            } else if (which == 2) {
+                                                Intent i = new Intent(requireContext(), NewSnipActivity.class);
+                                                i.putExtra(NewSnipActivity.EXTRA_PREFILL_TITLE, "AI prompt");
+                                                i.putExtra(
+                                                        NewSnipActivity.EXTRA_PREFILL_CODE,
+                                                        body != null ? body.toString() : "");
+                                                i.putExtra(NewSnipActivity.EXTRA_PREFILL_LANG, "Text");
+                                                i.putExtra(NewSnipActivity.EXTRA_PREFILL_TAGS, "#AI,#Prompt");
+                                                startActivity(i);
+                                            }
+                                        })
+                                .show();
+                        return true;
+                    });
         } else {
             tv.setTypeface(Typeface.MONOSPACE);
             tv.setBackgroundResource(R.drawable.bg_code_block);
             tv.setTextColor(getResources().getColor(R.color.accent_cyan, null));
+            tv.setOnLongClickListener(
+                    v -> {
+                        CharSequence body = tv.getText();
+                        new MaterialAlertDialogBuilder(requireContext())
+                                .setTitle(R.string.ai_reply_actions)
+                                .setItems(
+                                        new CharSequence[] {
+                                            getString(R.string.snip_it),
+                                            getString(R.string.copy_code),
+                                            getString(R.string.share)
+                                        },
+                                        (d, which) -> {
+                                            if (which == 0) {
+                                                BadgeTracker.recordAiAutoSnip(requireContext());
+                                                Intent i = new Intent(requireContext(), NewSnipActivity.class);
+                                                i.putExtra(
+                                                        NewSnipActivity.EXTRA_PREFILL_TITLE,
+                                                        "AI output");
+                                                i.putExtra(
+                                                        NewSnipActivity.EXTRA_PREFILL_CODE,
+                                                        body != null ? body.toString() : "");
+                                                i.putExtra(NewSnipActivity.EXTRA_PREFILL_LANG, "Text");
+                                                i.putExtra(
+                                                        NewSnipActivity.EXTRA_PREFILL_TAGS,
+                                                        "#AI,#Refactored");
+                                                startActivity(i);
+                                                XpManager.addXp(requireContext(), 15);
+                                            } else if (which == 1) {
+                                                ClipboardManager cm =
+                                                        (ClipboardManager)
+                                                                requireContext()
+                                                                        .getSystemService(
+                                                                                Context.CLIPBOARD_SERVICE);
+                                                cm.setPrimaryClip(
+                                                        ClipData.newPlainText(
+                                                                "code",
+                                                                body != null ? body : ""));
+                                                Toast.makeText(
+                                                                requireContext(),
+                                                                R.string.copied,
+                                                                Toast.LENGTH_SHORT)
+                                                        .show();
+                                            } else if (which == 2) {
+                                                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                                                shareIntent.setType("text/plain");
+                                                String payload = body != null ? body.toString() : "";
+                                                shareIntent.putExtra(Intent.EXTRA_TEXT, payload);
+                                                startActivity(
+                                                        Intent.createChooser(
+                                                                shareIntent, getString(R.string.share)));
+                                            }
+                                        })
+                                .show();
+                        return true;
+                    });
         }
         chatContainer.addView(tv);
         chatScroll.post(() -> chatScroll.fullScroll(View.FOCUS_DOWN));

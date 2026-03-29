@@ -39,7 +39,9 @@ public class NewSnipActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_snip);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            int bottom = Math.max(bars.bottom, ime.bottom);
+            v.setPadding(bars.left, bars.top, bars.right, bottom);
             return insets;
         });
 
@@ -49,6 +51,7 @@ public class NewSnipActivity extends AppCompatActivity {
         EditText code = findViewById(R.id.input_code);
         ProgressBar fixProgress = findViewById(R.id.progress_fix_ai);
         View btnFixAi = findViewById(R.id.btn_fix_with_ai);
+        View btnShare = findViewById(R.id.btn_share);
 
         LanguagePickerHelper.bind(lang, this);
         if (getIntent() != null && getIntent().hasExtra(EXTRA_PREFILL_LANG)) {
@@ -130,6 +133,28 @@ public class NewSnipActivity extends AppCompatActivity {
                 });
 
         findViewById(R.id.btn_cancel).setOnClickListener(v -> finish());
+
+        btnShare.setOnClickListener(
+                v -> {
+                    String t = safe(title);
+                    String l =
+                            LanguagePickerHelper.vaultLabel(
+                                    lang.getText() != null ? lang.getText().toString() : "");
+                    String tg = safe(tags);
+                    String c = safe(code);
+                    StringBuilder sb = new StringBuilder();
+                    if (!t.isEmpty()) sb.append(t).append("\n");
+                    if (!l.isEmpty()) sb.append("Language: ").append(l).append("\n");
+                    if (!tg.isEmpty()) sb.append("Tags: ").append(tg).append("\n");
+                    if (sb.length() > 0) sb.append("\n");
+                    sb.append(c);
+
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("text/plain");
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, t.isEmpty() ? "SnipIT Snippet" : t);
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+                    startActivity(Intent.createChooser(shareIntent, getString(R.string.share)));
+                });
 
         SnipRepository repo = new SnipRepository(getApplication());
         findViewById(R.id.btn_commit)
