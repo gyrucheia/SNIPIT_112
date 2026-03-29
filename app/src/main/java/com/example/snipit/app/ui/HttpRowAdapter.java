@@ -7,6 +7,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.snipit.app.R;
+import com.example.snipit.app.data.DexContent;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class HttpRowAdapter extends RecyclerView.Adapter<HttpRowAdapter.VH> {
 
@@ -27,8 +29,16 @@ public class HttpRowAdapter extends RecyclerView.Adapter<HttpRowAdapter.VH> {
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
-        h.code.setText(rows[position][0]);
+        String code = rows[position][0];
+        h.code.setText(code);
         h.desc.setText(rows[position][1]);
+        h.itemView.setOnClickListener(
+                v ->
+                        new MaterialAlertDialogBuilder(v.getContext())
+                                .setTitle("HTTP " + code)
+                                .setMessage(DexContent.httpLongExplain(code))
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show());
     }
 
     @Override

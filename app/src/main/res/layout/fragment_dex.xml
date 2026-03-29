@@ -144,6 +144,15 @@
                         android:textColor="@color/accent_green"/>
                 </LinearLayout>
 
+                <TextView android:id="@+id/cmd_list_hint"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="@string/dex_more_info_hint"
+                    android:textSize="10sp"
+                    android:textColor="@color/text_muted"
+                    android:fontFamily="monospace"
+                    android:lineSpacingMultiplier="1.15"
+                    android:layout_marginBottom="8dp"/>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/cmd_recycler"
                     android:layout_width="match_parent"

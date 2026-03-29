@@ -1,6 +1,5 @@
 package com.example.snipit.app.ui;
 
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.snipit.app.R;
+import com.example.snipit.app.data.DexContent;
+import com.example.snipit.app.data.DexDoc;
 import com.example.snipit.app.util.NetworkUtils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,63 +25,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DexFragment extends Fragment {
-
-    private static final String[][] HTTP_ROWS =
-            new String[][] {
-                {"200", "OK — request succeeded"},
-                {"201", "Created — resource created"},
-                {"301", "Moved permanently"},
-                {"304", "Not modified"},
-                {"400", "Bad request"},
-                {"401", "Unauthorized"},
-                {"403", "Forbidden"},
-                {"404", "Not found"},
-                {"500", "Internal server error"},
-                {"503", "Service unavailable"}
-            };
-
-    private static final String[][] PORT_ROWS =
-            new String[][] {
-                {":80", "HTTP"},
-                {":443", "HTTPS / TLS"},
-                {":3306", "MySQL"},
-                {":5432", "PostgreSQL"},
-                {":8080", "Alt HTTP / proxies"}
-            };
-
-    private static final String[][] GIT =
-            new String[][] {
-                {"git status", "Show working tree"},
-                {"git pull", "Fetch & merge remote"},
-                {"git push", "Push commits"},
-                {"git branch -a", "List branches"},
-                {"git merge main", "Merge branch"},
-                {"git reset --soft HEAD~1", "Undo last commit (keep files)"}
-            };
-
-    private static final String[][] LINUX =
-            new String[][] {
-                {"ls -la", "List all files"},
-                {"chmod +x app.sh", "Make executable"},
-                {"grep -R \"TODO\" .", "Recursive search"},
-                {"find . -name \"*.kt\"", "Find Kotlin files"},
-                {"tar -czvf bak.tar.gz dir/", "Compress folder"}
-            };
-
-    private static final String[][] POWERSHELL =
-            new String[][] {
-                {"Get-ChildItem", "List directory"},
-                {"Get-NetIPAddress", "Show IP config"},
-                {"Test-NetConnection host -Port 443", "Probe port"}
-            };
-
-    private static final String[][] ADB =
-            new String[][] {
-                {"adb devices", "List devices"},
-                {"adb install app.apk", "Install APK"},
-                {"adb logcat", "Stream device logs"},
-                {"adb shell screencap", "Screenshot"}
-            };
 
     private final ExecutorService netExec = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -118,11 +62,11 @@ public class DexFragment extends Fragment {
 
         RecyclerView httpRv = v.findViewById(R.id.http_recycler);
         httpRv.setLayoutManager(new LinearLayoutManager(requireContext()));
-        httpRv.setAdapter(new HttpRowAdapter(HTTP_ROWS));
+        httpRv.setAdapter(new HttpRowAdapter(DexContent.allHttpRows()));
 
         RecyclerView portRv = v.findViewById(R.id.port_recycler);
         portRv.setLayoutManager(new LinearLayoutManager(requireContext()));
-        portRv.setAdapter(new PortRowAdapter(PORT_ROWS));
+        portRv.setAdapter(new PortRowAdapter(DexContent.allPortRows()));
 
         TextView localIp = v.findViewById(R.id.local_ip);
         localIp.setText(NetworkUtils.getLanIpv4());
@@ -134,13 +78,14 @@ public class DexFragment extends Fragment {
         cmdRv.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         v.findViewById(R.id.card_git)
-                .setOnClickListener(x -> openCmdList(v, "Git", GIT));
+                .setOnClickListener(x -> openCmdList(v, "Git", DexContent.gitWith(requireContext())));
         v.findViewById(R.id.card_linux)
-                .setOnClickListener(x -> openCmdList(v, "Linux", LINUX));
+                .setOnClickListener(x -> openCmdList(v, "Linux", DexContent.linuxWith(requireContext())));
         v.findViewById(R.id.card_powershell)
-                .setOnClickListener(x -> openCmdList(v, "PowerShell", POWERSHELL));
+                .setOnClickListener(
+                        x -> openCmdList(v, "PowerShell", DexContent.powershellWith(requireContext())));
         v.findViewById(R.id.card_adb)
-                .setOnClickListener(x -> openCmdList(v, "ADB", ADB));
+                .setOnClickListener(x -> openCmdList(v, "ADB", DexContent.adbWith(requireContext())));
 
         v.findViewById(R.id.btn_back_categories).setOnClickListener(x -> showCategoryGrid());
 
@@ -183,7 +128,7 @@ public class DexFragment extends Fragment {
         }
     }
 
-    private void openCmdList(View root, String title, String[][] data) {
+    private void openCmdList(View root, String title, DexDoc[] data) {
         for (int i = 0; i < panelCategories.getChildCount(); i++) {
             View child = panelCategories.getChildAt(i);
             if (child.getId() == R.id.cmd_list_container) {

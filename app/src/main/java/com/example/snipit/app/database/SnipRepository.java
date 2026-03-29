@@ -69,12 +69,53 @@ public class SnipRepository {
         executor.execute(() -> snipDao.insert(snip));
     }
 
+    /** Inserts a snip and runs onDone on the main thread after the write completes. */
+    public void insert(Snip snip, Runnable onDone) {
+        executor.execute(
+                () -> {
+                    snipDao.insert(snip);
+                    if (onDone != null) {
+                        mainHandler.post(onDone);
+                    }
+                });
+    }
+
+    public void getSnippetCount(java.util.function.Consumer<Integer> onResult) {
+        executor.execute(
+                () -> {
+                    int n = snipDao.getTotalCount();
+                    mainHandler.post(() -> onResult.accept(n));
+                });
+    }
+
     public void update(Snip snip) {
         executor.execute(() -> snipDao.update(snip));
     }
 
+    /** Updates and runs {@code onDone} on the main thread after the write completes. */
+    public void update(Snip snip, Runnable onDone) {
+        executor.execute(
+                () -> {
+                    snipDao.update(snip);
+                    if (onDone != null) {
+                        mainHandler.post(onDone);
+                    }
+                });
+    }
+
     public void delete(Snip snip) {
         executor.execute(() -> snipDao.delete(snip));
+    }
+
+    /** Deletes and runs {@code onDone} on the main thread after the delete completes. */
+    public void delete(Snip snip, Runnable onDone) {
+        executor.execute(
+                () -> {
+                    snipDao.delete(snip);
+                    if (onDone != null) {
+                        mainHandler.post(onDone);
+                    }
+                });
     }
 
     public LiveData<List<Snip>> getAllSnips() {

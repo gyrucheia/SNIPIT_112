@@ -7,6 +7,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.snipit.app.R;
+import com.example.snipit.app.data.DexContent;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class PortRowAdapter extends RecyclerView.Adapter<PortRowAdapter.VH> {
 
@@ -26,8 +28,16 @@ public class PortRowAdapter extends RecyclerView.Adapter<PortRowAdapter.VH> {
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
-        h.num.setText(rows[position][0]);
+        String portKey = rows[position][0];
+        h.num.setText(portKey);
         h.desc.setText(rows[position][1]);
+        h.itemView.setOnClickListener(
+                v ->
+                        new MaterialAlertDialogBuilder(v.getContext())
+                                .setTitle(portKey + " — " + rows[position][1])
+                                .setMessage(DexContent.portLongExplain(portKey))
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show());
     }
 
     @Override

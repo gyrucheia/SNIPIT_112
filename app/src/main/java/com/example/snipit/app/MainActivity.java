@@ -9,6 +9,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import com.example.snipit.app.database.SnipRepository;
 import com.example.snipit.app.ui.AIFragment;
 import com.example.snipit.app.ui.BeamFragment;
@@ -16,10 +18,14 @@ import com.example.snipit.app.ui.DexFragment;
 import com.example.snipit.app.ui.SnapFragment;
 import com.example.snipit.app.ui.VaultFragment;
 import com.example.snipit.app.ui.XPFragment;
+import com.example.snipit.app.util.BadgeTracker;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_BEAM_SNIP_ID = "beam_snip_id";
+
+    private static final String[] FRAGMENT_TAGS =
+            new String[] {"frag_vault", "frag_dex", "frag_beam", "frag_ai", "frag_snap", "frag_xp"};
 
     private int pendingBeamSnipId = -1;
     private int currentTab = 0;
@@ -42,11 +48,6 @@ public class MainActivity extends AppCompatActivity {
             pendingBeamSnipId = getIntent().getIntExtra(EXTRA_BEAM_SNIP_ID, -1);
         }
 
-        if (savedInstanceState != null) {
-            currentTab = savedInstanceState.getInt("tab", 0);
-            pendingBeamSnipId = savedInstanceState.getInt("pending_beam", -1);
-        }
-
         findViewById(R.id.nav_vault).setOnClickListener(v -> switchTab(0));
         findViewById(R.id.nav_dex).setOnClickListener(v -> switchTab(1));
         findViewById(R.id.nav_beam).setOnClickListener(v -> switchTab(2));
@@ -54,7 +55,36 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.nav_snap).setOnClickListener(v -> switchTab(4));
         findViewById(R.id.nav_xp).setOnClickListener(v -> switchTab(5));
 
-        switchTab(currentTab);
+        if (savedInstanceState == null) {
+            switchTab(0);
+        } else {
+            currentTab = savedInstanceState.getInt("tab", 0);
+            pendingBeamSnipId = savedInstanceState.getInt("pending_beam", -1);
+            highlightNav(currentTab);
+            FragmentManager fm = getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            for (int i = 0; i < FRAGMENT_TAGS.length; i++) {
+                Fragment f = fm.findFragmentByTag(FRAGMENT_TAGS[i]);
+                if (f != null) {
+                    if (i == currentTab) {
+                        ft.show(f);
+                    } else {
+                        ft.hide(f);
+                    }
+                }
+            }
+            ft.commit();
+            fm.executePendingTransactions();
+            if (fm.findFragmentByTag(FRAGMENT_TAGS[currentTab]) == null) {
+                switchTab(currentTab);
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BadgeTracker.recordStreakDay(this);
     }
 
     @Override
@@ -71,38 +101,54 @@ public class MainActivity extends AppCompatActivity {
 
     void switchTab(int index) {
         currentTab = index;
-        Fragment f;
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        for (int i = 0; i < FRAGMENT_TAGS.length; i++) {
+            Fragment f = fm.findFragmentByTag(FRAGMENT_TAGS[i]);
+            if (f != null) {
+                ft.hide(f);
+            }
+        }
+
+        Fragment target = fm.findFragmentByTag(FRAGMENT_TAGS[index]);
+        if (index == 2 && pendingBeamSnipId > 0 && target != null) {
+            ft.remove(target);
+            target = null;
+        }
+
+        if (target == null) {
+            target = createFragment(index);
+            if (index == 2 && pendingBeamSnipId > 0) {
+                Bundle b = new Bundle();
+                b.putInt(BeamFragment.ARG_SNIP_ID, pendingBeamSnipId);
+                target.setArguments(b);
+                pendingBeamSnipId = -1;
+            }
+            ft.add(R.id.fragment_container, target, FRAGMENT_TAGS[index]);
+        } else {
+            ft.show(target);
+        }
+        ft.commit();
+        highlightNav(index);
+    }
+
+    private static Fragment createFragment(int index) {
         switch (index) {
             case 0:
-                f = new VaultFragment();
-                break;
+                return new VaultFragment();
             case 1:
-                f = new DexFragment();
-                break;
+                return new DexFragment();
             case 2:
-                BeamFragment bf = new BeamFragment();
-                if (pendingBeamSnipId > 0) {
-                    Bundle b = new Bundle();
-                    b.putInt(BeamFragment.ARG_SNIP_ID, pendingBeamSnipId);
-                    bf.setArguments(b);
-                    pendingBeamSnipId = -1;
-                }
-                f = bf;
-                break;
+                return new BeamFragment();
             case 3:
-                f = new AIFragment();
-                break;
+                return new AIFragment();
             case 4:
-                f = new SnapFragment();
-                break;
+                return new SnapFragment();
             case 5:
-                f = new XPFragment();
-                break;
+                return new XPFragment();
             default:
-                f = new VaultFragment();
+                return new VaultFragment();
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, f).commit();
-        highlightNav(index);
     }
 
     private void highlightNav(int active) {

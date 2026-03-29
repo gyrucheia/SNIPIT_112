@@ -20,8 +20,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.snipit.app.EditSnipActivity;
 import com.example.snipit.app.MainActivity;
 import com.example.snipit.app.NewSnipActivity;
+import com.example.snipit.app.QrScanActivity;
 import com.example.snipit.app.R;
 import com.example.snipit.app.database.SnipRepository;
 import com.example.snipit.app.models.Snip;
@@ -174,6 +176,18 @@ public class VaultFragment extends Fragment implements SnipAdapter.Listener {
     public void onBeam(Snip snip) {
         XpManager.addXp(requireContext(), 5);
         ((MainActivity) requireActivity()).openBeamForSnip(snip.id);
+    }
+
+    @Override
+    public void onOpenEditor(Snip snip) {
+        Intent i = new Intent(requireContext(), EditSnipActivity.class);
+        i.putExtra(EditSnipActivity.EXTRA_SNIP_ID, snip.id);
+        startActivity(i);
+    }
+
+    @Override
+    public void onFixWithAi(Snip snip) {
+        onOpenEditor(snip);
     }
 
     @Override

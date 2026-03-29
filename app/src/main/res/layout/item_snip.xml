@@ -7,80 +7,96 @@
     android:layout_marginBottom="10dp"
     android:padding="14dp">
 
-    <!-- Snip Header: Title + Language badge -->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="8dp">
-
-        <TextView android:id="@+id/snip_title"
-            android:layout_width="0dp" android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Firebase Auth Init"
-            android:textColor="@color/text_primary"
-            android:textSize="13sp"
-            android:textStyle="bold"/>
-
-        <TextView android:id="@+id/snip_language"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="Java"
-            android:textColor="@color/accent_purple"
-            android:fontFamily="monospace"
-            android:textSize="10sp"
-            android:paddingStart="8dp" android:paddingEnd="8dp"
-            android:paddingTop="2dp" android:paddingBottom="2dp"
-            android:background="@drawable/bg_tag"/>
-    </LinearLayout>
-
-    <!-- Code preview block -->
-    <TextView android:id="@+id/snip_code"
+    <LinearLayout
+        android:id="@+id/snip_click_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="56dp"
-        android:maxHeight="72dp"
-        android:background="@drawable/bg_code_block"
-        android:padding="10dp"
-        android:fontFamily="monospace"
-        android:textSize="11sp"
-        android:textColor="@color/text_secondary"
-        android:ellipsize="end"
-        android:maxLines="4"
-        android:layout_marginBottom="8dp"/>
+        android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground">
 
-    <!-- Footer: tags + action buttons -->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        <!-- Snip Header: Title + Language badge -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView android:id="@+id/snip_title"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Firebase Auth Init"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold"/>
+
+            <TextView android:id="@+id/snip_language"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Java"
+                android:textColor="@color/accent_purple"
+                android:fontFamily="monospace"
+                android:textSize="10sp"
+                android:paddingStart="8dp" android:paddingEnd="8dp"
+                android:paddingTop="2dp" android:paddingBottom="2dp"
+                android:background="@drawable/bg_tag"/>
+        </LinearLayout>
+
+        <!-- Code preview block -->
+        <TextView android:id="@+id/snip_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:maxHeight="72dp"
+            android:background="@drawable/bg_code_block"
+            android:padding="10dp"
+            android:fontFamily="monospace"
+            android:textSize="11sp"
+            android:textColor="@color/text_secondary"
+            android:ellipsize="end"
+            android:maxLines="4"
+            android:layout_marginBottom="8dp"/>
 
         <TextView android:id="@+id/snip_tags"
-            android:layout_width="0dp" android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="#Java  #Firebase"
             android:fontFamily="monospace"
             android:textSize="10sp"
             android:textColor="@color/text_muted"/>
+    </LinearLayout>
 
-        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+    <!-- Action buttons (outside tap-to-edit area) -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end|center_vertical"
+        android:layout_marginTop="8dp">
 
-            <TextView android:id="@+id/btn_beam"
-                android:layout_width="36dp" android:layout_height="36dp"
-                android:text="📡"
-                android:textSize="14sp"
-                android:gravity="center"
-                android:background="@drawable/bg_card"
-                android:layout_marginEnd="6dp"
-                android:padding="6dp"/>
+        <TextView android:id="@+id/btn_fix_ai"
+            android:layout_width="36dp" android:layout_height="36dp"
+            android:text="✨"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:background="@drawable/bg_card"
+            android:layout_marginEnd="6dp"
+            android:contentDescription="@string/fix_with_ai"
+            android:padding="6dp"/>
 
-            <TextView android:id="@+id/btn_copy"
-                android:layout_width="36dp" android:layout_height="36dp"
-                android:text="⎘"
-                android:textSize="14sp"
-                android:gravity="center"
-                android:background="@drawable/bg_card"
-                android:padding="6dp"/>
-        </LinearLayout>
+        <TextView android:id="@+id/btn_beam"
+            android:layout_width="36dp" android:layout_height="36dp"
+            android:text="📡"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:background="@drawable/bg_card"
+            android:layout_marginEnd="6dp"
+            android:padding="6dp"/>
+
+        <TextView android:id="@+id/btn_copy"
+            android:layout_width="36dp" android:layout_height="36dp"
+            android:text="⎘"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:background="@drawable/bg_card"
+            android:padding="6dp"/>
     </LinearLayout>
 
 </LinearLayout>

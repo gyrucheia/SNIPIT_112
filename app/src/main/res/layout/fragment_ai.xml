@@ -1,113 +1,267 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ai_drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/bg_primary"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <!-- Header -->
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="@string/snip_ai"
-        android:fontFamily="monospace" android:textSize="22sp"
-        android:textStyle="bold" android:textColor="@color/accent_green"
-        android:layout_marginBottom="14dp"/>
-
-    <!-- Chat messages -->
-    <ScrollView android:id="@+id/chat_scroll"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbars="none"
-        android:layout_marginBottom="12dp">
+        android:layout_height="match_parent"
+        android:background="@color/bg_primary"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout android:id="@+id/chat_container"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="8dp">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
 
-            <!-- Initial AI greeting -->
-            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_card"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp"
-                android:maxWidth="280dp">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="@string/ai_agent_label"
-                    android:fontFamily="monospace" android:textSize="11sp"
-                    android:textColor="@color/accent_purple"
-                    android:layout_marginBottom="4dp"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="@string/ai_greeting"
-                    android:textSize="13sp" android:textColor="@color/text_primary"/>
+            <ImageButton
+                android:id="@+id/btn_ai_menu"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/ai_history"
+                android:src="@android:drawable/ic_menu_sort_by_size" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="monospace"
+                android:gravity="center_vertical"
+                android:text="@string/snip_ai"
+                android:textColor="@color/accent_green"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btn_new_chat_toolbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/new_chat"
+                android:fontFamily="monospace"
+                android:paddingStart="8dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/new_chat"
+                android:textColor="@color/accent_cyan"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingEnd="4dp">
+
+                <View
+                    android:id="@+id/ai_online_dot"
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/dot_online" />
+
+                <TextView
+                    android:id="@+id/ai_online_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ai_status_online"
+                    android:textColor="@color/text_muted"
+                    android:textSize="10sp" />
             </LinearLayout>
-
         </LinearLayout>
-    </ScrollView>
 
-    <!-- Quick action chips -->
-    <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:scrollbars="none" android:layout_marginBottom="10dp">
-        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <Button android:id="@+id/chip_tagalog"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content" android:layout_height="36dp"
-                android:text="@string/explain_tagalog"
-                android:textSize="11sp" android:textColor="@color/text_secondary"
-                android:background="@drawable/bg_card"
-                android:layout_marginEnd="8dp"/>
-            <Button android:id="@+id/chip_kotlin"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content" android:layout_height="36dp"
-                android:text="@string/convert_kotlin"
-                android:textSize="11sp" android:textColor="@color/text_secondary"
-                android:background="@drawable/bg_card"
-                android:layout_marginEnd="8dp"/>
-            <Button android:id="@+id/chip_optimize"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content" android:layout_height="36dp"
-                android:text="@string/optimize_mobile"
-                android:textSize="11sp" android:textColor="@color/text_secondary"
-                android:background="@drawable/bg_card"
-                android:layout_marginEnd="8dp"/>
-            <Button android:id="@+id/chip_debug"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content" android:layout_height="36dp"
-                android:text="@string/find_bug"
-                android:textSize="11sp" android:textColor="@color/text_secondary"
-                android:background="@drawable/bg_card"/>
-        </LinearLayout>
-    </HorizontalScrollView>
-
-    <!-- Input row -->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <EditText android:id="@+id/ai_input"
-            android:layout_width="0dp" android:layout_height="wrap_content"
+        <ScrollView
+            android:id="@+id/chat_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:hint="@string/ai_input_hint"
-            android:textColorHint="@color/text_muted"
-            android:textColor="@color/text_primary"
-            android:textSize="13sp"
-            android:background="@drawable/bg_search"
-            android:padding="12dp"
-            android:minLines="1" android:maxLines="4"
-            android:inputType="textMultiLine"
-            android:importantForAutofill="no"
-            android:layout_marginEnd="8dp"/>
+            android:layout_marginBottom="12dp"
+            android:scrollbars="none">
 
-        <Button android:id="@+id/btn_send"
-            android:layout_width="44dp" android:layout_height="44dp"
-            android:text="➤"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:background="@drawable/bg_button_green"
-            android:padding="0dp"/>
+            <LinearLayout
+                android:id="@+id/chat_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="8dp">
+
+                <LinearLayout
+                    android:id="@+id/ai_greeting_wrap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_card"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:fontFamily="monospace"
+                        android:text="@string/ai_agent_label"
+                        android:textColor="@color/accent_purple"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ai_greeting"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/chip_tagalog"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_card"
+                    android:text="@string/explain_tagalog"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <Button
+                    android:id="@+id/chip_kotlin"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_card"
+                    android:text="@string/convert_kotlin"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <Button
+                    android:id="@+id/chip_optimize"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_card"
+                    android:text="@string/optimize_mobile"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <Button
+                    android:id="@+id/chip_debug"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_card"
+                    android:text="@string/find_bug"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <Button
+                    android:id="@+id/chip_errors"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_card"
+                    android:text="@string/add_error_handling"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/ai_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_search"
+                android:hint="@string/ai_input_hint"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine"
+                android:maxLines="4"
+                android:minLines="1"
+                android:padding="12dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_muted"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/btn_send"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_button_green"
+                android:padding="0dp"
+                android:text="➤"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@color/bg_secondary"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="monospace"
+            android:text="@string/ai_history"
+            android:textColor="@color/accent_green"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_new_ai_chat"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_tag"
+            android:text="@string/new_chat"
+            android:textColor="@color/accent_green"
+            android:textSize="12sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ai_history_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btn_clear_ai_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_card"
+            android:text="@string/clear_all_history"
+            android:textColor="@color/accent_red" />
+    </LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

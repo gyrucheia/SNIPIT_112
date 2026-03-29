@@ -70,13 +70,15 @@
             android:textColor="@color/text_muted"
             android:textSize="10sp" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/input_language"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/bg_search"
-            android:hint="Java, Kotlin, CLI..."
+            android:completionThreshold="1"
+            android:fontFamily="monospace"
+            android:hint="@string/language_search_hint"
             android:inputType="text"
             android:padding="12dp"
             android:textColor="@color/text_primary"
@@ -113,6 +115,32 @@
             android:text="CODE"
             android:textColor="@color/text_muted"
             android:textSize="10sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_fix_with_ai"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_tag"
+                android:text="@string/fix_with_ai"
+                android:textColor="@color/accent_green"
+                android:textSize="12sp" />
+
+            <ProgressBar
+                android:id="@+id/progress_fix_ai"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:indeterminate="true"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/input_code"

@@ -19,10 +19,12 @@ import androidx.fragment.app.Fragment;
 import com.example.snipit.app.R;
 import com.example.snipit.app.database.SnipRepository;
 import com.example.snipit.app.models.Snip;
+import com.example.snipit.app.util.BadgeTracker;
+import com.example.snipit.app.util.BeamService;
 import com.example.snipit.app.util.QrUtils;
 import com.example.snipit.app.util.XpManager;
 import com.google.zxing.WriterException;
-import java.util.Random;
+import java.security.SecureRandom;
 
 public class BeamFragment extends Fragment {
 
@@ -32,6 +34,9 @@ public class BeamFragment extends Fragment {
 
     private SnipRepository repo;
     private Snip current;
+    private final BeamService beamService = new BeamService();
+    private final SecureRandom secureRandom = new SecureRandom();
+    private String activeFirebasePin;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable ticker;
     private int secondsLeft;
@@ -49,6 +54,10 @@ public class BeamFragment extends Fragment {
     private TextView title;
     private TextView lang;
     private TextView code;
+    private View beamActiveSection;
+    private TextView beamEmptyState;
+    private View btnNewPin;
+    private View btnCopyPin;
 
     @Nullable
     @Override
@@ -67,6 +76,10 @@ public class BeamFragment extends Fragment {
         title = v.findViewById(R.id.beam_snip_title);
         lang = v.findViewById(R.id.beam_snip_lang);
         code = v.findViewById(R.id.beam_snip_code);
+        beamActiveSection = v.findViewById(R.id.beam_active_section);
+        beamEmptyState = v.findViewById(R.id.beam_empty_state);
+        btnNewPin = v.findViewById(R.id.btn_new_pin);
+        btnCopyPin = v.findViewById(R.id.btn_copy_pin);
         pinMode = v.findViewById(R.id.pin_mode_container);
         qrMode = v.findViewById(R.id.qr_mode_container);
         tabPin = v.findViewById(R.id.tab_pin);
@@ -105,9 +118,8 @@ public class BeamFragment extends Fragment {
                     sid,
                     s -> {
                         if (s == null) {
+                            bindEmptyBeamState();
                             title.setText("Snippet not found");
-                            lang.setText("—");
-                            code.setText("");
                             return;
                         }
                         current = s;
@@ -115,23 +127,38 @@ public class BeamFragment extends Fragment {
                         regeneratePinAndTimer();
                     });
         } else {
-            repo.getLatestSnip(
-                    s -> {
-                        if (s != null) {
-                            current = s;
-                            bindSnip(s);
-                            regeneratePinAndTimer();
-                        } else {
-                            title.setText("No snippet yet");
-                            lang.setText("—");
-                            code.setText("Create a snip in Vault first.");
-                        }
-                    });
+            bindEmptyBeamState();
         }
+    }
+
+    /** No Vault snippet was chosen — do not auto-load “latest” so the tab matches user intent. */
+    private void bindEmptyBeamState() {
+        current = null;
+        activeFirebasePin = null;
+        if (ticker != null) handler.removeCallbacks(ticker);
+        title.setText(R.string.beam_no_snippet_title);
+        lang.setText("—");
+        code.setText("");
+        if (beamEmptyState != null) {
+            beamEmptyState.setVisibility(View.VISIBLE);
+        }
+        if (beamActiveSection != null) {
+            beamActiveSection.setVisibility(View.GONE);
+        }
+        if (btnNewPin != null) btnNewPin.setEnabled(false);
+        if (btnCopyPin != null) btnCopyPin.setEnabled(false);
     }
 
     private void bindSnip(Snip s) {
         if (s == null) return;
+        if (beamEmptyState != null) {
+            beamEmptyState.setVisibility(View.GONE);
+        }
+        if (beamActiveSection != null) {
+            beamActiveSection.setVisibility(View.VISIBLE);
+        }
+        if (btnNewPin != null) btnNewPin.setEnabled(true);
+        if (btnCopyPin != null) btnCopyPin.setEnabled(true);
         title.setText(s.title != null ? s.title : "(untitled)");
         lang.setText(s.language != null ? s.language : "—");
         code.setText(s.code != null ? s.code : "");
@@ -155,10 +182,22 @@ public class BeamFragment extends Fragment {
     }
 
     private void regeneratePinAndTimer() {
-        Random r = new Random();
-        pin = String.format("%06d", r.nextInt(1_000_000));
+        if (activeFirebasePin != null) {
+            beamService.deletePin(activeFirebasePin);
+            activeFirebasePin = null;
+        }
+        pin = String.format("%06d", secureRandom.nextInt(1_000_000));
         for (int i = 0; i < 6; i++) {
             pinDigits[i].setText(String.valueOf(pin.charAt(i)));
+        }
+        if (current != null) {
+            beamService.uploadPin(
+                    pin,
+                    current.code != null ? current.code : "",
+                    current.title != null ? current.title : "",
+                    current.language != null ? current.language : "");
+            activeFirebasePin = pin;
+            BadgeTracker.recordBeamSession(requireContext());
         }
         secondsLeft = TIMER_SEC;
         if (ticker != null) handler.removeCallbacks(ticker);
