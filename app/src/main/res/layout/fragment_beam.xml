@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginBottom="14dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="BeamIT"
+                android:fontFamily="monospace" android:textSize="22sp"
+                android:textStyle="bold" android:textColor="@color/accent_green"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="📱 Sender"
+                android:textSize="11sp" android:textColor="@color/text_secondary"
+                android:background="@drawable/bg_card"
+                android:paddingStart="10dp" android:paddingEnd="10dp"
+                android:paddingTop="4dp" android:paddingBottom="4dp"
+                android:fontFamily="monospace"/>
+        </LinearLayout>
+
+        <!-- Snippet preview card -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="12dp"
+            android:layout_marginBottom="14dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <TextView android:id="@+id/beam_snip_title"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Firebase Auth Init"
+                    android:textColor="@color/text_primary" android:textSize="13sp"
+                    android:textStyle="bold"/>
+                <TextView android:id="@+id/beam_snip_lang"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Java" android:textColor="@color/accent_purple"
+                    android:fontFamily="monospace" android:textSize="10sp"
+                    android:background="@drawable/bg_tag"
+                    android:paddingStart="8dp" android:paddingEnd="8dp"
+                    android:paddingTop="2dp" android:paddingBottom="2dp"/>
+            </LinearLayout>
+            <TextView android:id="@+id/beam_snip_code"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="FirebaseApp.initializeApp(this);\nFirebaseAuth auth =\n  FirebaseAuth.getInstance();"
+                android:fontFamily="monospace" android:textSize="10sp"
+                android:textColor="@color/accent_cyan"
+                android:background="@drawable/bg_code_block"
+                android:padding="8dp"
+                android:maxLines="3"/>
+        </LinearLayout>
+
+        <!-- Mode Tabs -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="44dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_code_block"
+            android:padding="3dp"
+            android:layout_marginBottom="16dp">
+            <TextView android:id="@+id/tab_pin"
+                android:layout_width="0dp" android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="PIN Code"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:fontFamily="monospace"
+                android:textColor="@color/accent_green"
+                android:background="@drawable/bg_card"/>
+            <TextView android:id="@+id/tab_qr"
+                android:layout_width="0dp" android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="QR Scan"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:fontFamily="monospace"
+                android:textColor="@color/text_muted"
+                android:background="@null"/>
+        </LinearLayout>
+
+        <!-- PIN Mode -->
+        <LinearLayout android:id="@+id/pin_mode_container"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="20dp"
+            android:gravity="center"
+            android:layout_marginBottom="14dp">
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="TRANSFER PIN — VALID FOR"
+                android:fontFamily="monospace" android:textSize="9sp"
+                android:textColor="@color/text_muted" android:letterSpacing="0.15"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- 6 digit PIN boxes -->
+            <LinearLayout android:id="@+id/pin_digits_container"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <TextView android:id="@+id/pin_d0"
+                    style="@style/PinDigit" android:layout_marginEnd="6dp" android:text="–"/>
+                <TextView android:id="@+id/pin_d1"
+                    style="@style/PinDigit" android:layout_marginEnd="6dp" android:text="–"/>
+                <TextView android:id="@+id/pin_d2"
+                    style="@style/PinDigit" android:layout_marginEnd="6dp" android:text="–"/>
+                <TextView android:id="@+id/pin_d3"
+                    style="@style/PinDigit" android:layout_marginEnd="6dp" android:text="–"/>
+                <TextView android:id="@+id/pin_d4"
+                    style="@style/PinDigit" android:layout_marginEnd="6dp" android:text="–"/>
+                <TextView android:id="@+id/pin_d5"
+                    style="@style/PinDigit" android:text="–"/>
+            </LinearLayout>
+
+            <!-- Timer row -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <ProgressBar android:id="@+id/timer_bar_left"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp" android:layout_height="4dp"
+                    android:layout_weight="1"
+                    android:progressTint="@color/accent_yellow"
+                    android:progressBackgroundTint="@color/bg_secondary"
+                    android:max="300" android:progress="300"
+                    android:layout_marginEnd="8dp"/>
+                <TextView android:id="@+id/pin_timer"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="5:00"
+                    android:fontFamily="monospace" android:textSize="13sp"
+                    android:textColor="@color/accent_yellow"
+                    android:layout_marginEnd="8dp"/>
+                <ProgressBar android:id="@+id/timer_bar_right"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp" android:layout_height="4dp"
+                    android:layout_weight="1"
+                    android:progressTint="@color/accent_yellow"
+                    android:progressBackgroundTint="@color/bg_secondary"
+                    android:max="300" android:progress="300"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Type this PIN on the SnipIT web receiver on your PC — code pastes straight into your IDE"
+            android:textSize="11sp" android:textColor="@color/text_muted"
+            android:gravity="center" android:layout_marginBottom="14dp"/>
+
+        <!-- PIN Action Buttons -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginBottom="16dp">
+            <Button android:id="@+id/btn_new_pin"
+                android:layout_width="0dp" android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="⟳ New PIN"
+                android:background="@drawable/bg_button_green"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginEnd="8dp"/>
+            <Button android:id="@+id/btn_copy_pin"
+                android:layout_width="0dp" android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="⎘ Copy PIN"
+                android:background="@drawable/bg_card"
+                android:textColor="@color/text_primary"/>
+        </LinearLayout>
+
+        <!-- QR Mode (hidden by default) -->
+        <LinearLayout android:id="@+id/qr_mode_container"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="16dp"
+            android:gravity="center"
+            android:layout_marginBottom="14dp"
+            android:visibility="gone">
+
+            <ImageView android:id="@+id/qr_image"
+                android:layout_width="150dp" android:layout_height="150dp"
+                android:background="#FFFFFF"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Scan with laptop camera"
+                android:textSize="12sp" android:textColor="@color/text_muted"/>
+        </LinearLayout>
+
+        <!-- How it works section -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="14dp"
+            android:layout_marginBottom="14dp">
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="HOW IT WORKS"
+                android:fontFamily="monospace" android:textSize="9sp"
+                android:textColor="@color/text_muted" android:letterSpacing="0.15"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:layout_marginBottom="6dp">
+                <TextView android:layout_width="22dp" android:layout_height="22dp"
+                    android:text="1" android:gravity="center"
+                    android:fontFamily="monospace" android:textSize="10sp"
+                    android:textColor="@color/accent_green"
+                    android:background="@drawable/bg_tag" android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tap Beam IT on any snippet in your Vault"
+                    android:textSize="11sp" android:textColor="@color/text_secondary"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:layout_marginBottom="6dp">
+                <TextView android:layout_width="22dp" android:layout_height="22dp"
+                    android:text="2" android:gravity="center"
+                    android:fontFamily="monospace" android:textSize="10sp"
+                    android:textColor="@color/accent_green"
+                    android:background="@drawable/bg_tag" android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="A 6-digit PIN is generated — valid for 5 minutes"
+                    android:textSize="11sp" android:textColor="@color/text_secondary"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:layout_marginBottom="6dp">
+                <TextView android:layout_width="22dp" android:layout_height="22dp"
+                    android:text="3" android:gravity="center"
+                    android:fontFamily="monospace" android:textSize="10sp"
+                    android:textColor="@color/accent_green"
+                    android:background="@drawable/bg_tag" android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Go to snipit.beam on your PC browser"
+                    android:textSize="11sp" android:textColor="@color/text_secondary"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView android:layout_width="22dp" android:layout_height="22dp"
+                    android:text="4" android:gravity="center"
+                    android:fontFamily="monospace" android:textSize="10sp"
+                    android:textColor="@color/accent_green"
+                    android:background="@drawable/bg_tag" android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Type the PIN — code appears and auto-pastes into VS Code"
+                    android:textSize="11sp" android:textColor="@color/text_secondary"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

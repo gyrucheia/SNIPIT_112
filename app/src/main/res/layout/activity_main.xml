@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_primary">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Custom Bottom Nav matching prototype exactly -->
+    <LinearLayout
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:orientation="horizontal"
+        android:background="@color/bg_secondary"
+        android:paddingTop="6dp"
+        android:paddingBottom="10dp"
+        android:elevation="8dp">
+
+        <LinearLayout android:id="@+id/nav_vault"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:orientation="vertical"
+            android:gravity="center" android:background="?attr/selectableItemBackgroundBorderless">
+            <TextView android:id="@+id/nav_vault_icon"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="⊟" android:textSize="18sp" android:textColor="@color/accent_green"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Vault" android:textSize="10sp" android:textColor="@color/accent_green"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/nav_dex"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:orientation="vertical"
+            android:gravity="center" android:background="?attr/selectableItemBackgroundBorderless">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="⌗" android:textSize="18sp" android:textColor="@color/text_secondary"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Dev-Dex" android:textSize="10sp" android:textColor="@color/text_secondary"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/nav_beam"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:orientation="vertical"
+            android:gravity="center" android:background="?attr/selectableItemBackgroundBorderless">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="📡" android:textSize="18sp" android:textColor="@color/text_secondary"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Beam IT" android:textSize="10sp" android:textColor="@color/text_secondary"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/nav_ai"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:orientation="vertical"
+            android:gravity="center" android:background="?attr/selectableItemBackgroundBorderless">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="◈" android:textSize="18sp" android:textColor="@color/text_secondary"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="AI Agent" android:textSize="10sp" android:textColor="@color/text_secondary"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/nav_snap"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:orientation="vertical"
+            android:gravity="center" android:background="?attr/selectableItemBackgroundBorderless">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="📷" android:textSize="18sp" android:textColor="@color/text_secondary"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Snap" android:textSize="10sp" android:textColor="@color/text_secondary"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/nav_xp"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:orientation="vertical"
+            android:gravity="center" android:background="?attr/selectableItemBackgroundBorderless">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="⚡" android:textSize="18sp" android:textColor="@color/text_secondary"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Dev-XP" android:textSize="10sp" android:textColor="@color/text_secondary"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:padding="16dp">
+
+    <!-- Header -->
+    <LinearLayout android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="SnipIT"
+            android:textSize="22sp"
+            android:fontFamily="monospace"
+            android:textStyle="bold"
+            android:textColor="@color/accent_green"/>
+
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_card"
+            android:paddingStart="10dp" android:paddingEnd="10dp"
+            android:paddingTop="5dp" android:paddingBottom="5dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="⚡ " android:textColor="@color/accent_yellow" android:textSize="13sp"/>
+            <TextView android:id="@+id/xp_display"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="340 XP" android:textColor="@color/accent_yellow"
+                android:fontFamily="monospace" android:textSize="12sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Search Bar -->
+    <LinearLayout android:id="@+id/search_container"
+        android:layout_width="match_parent" android:layout_height="44dp"
+        android:layout_below="@id/header"
+        android:background="@drawable/bg_search"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp" android:paddingEnd="12dp"
+        android:layout_marginBottom="14dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="⌕ " android:textColor="@color/text_muted" android:textSize="18sp"/>
+        <EditText android:id="@+id/search_input"
+            android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="Search snippets..."
+            android:textColorHint="@color/text_muted"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:background="@null"
+            android:fontFamily="monospace"
+            android:imeOptions="actionSearch"
+            android:inputType="text"/>
+    </LinearLayout>
+
+    <!-- Tag filter row -->
+    <HorizontalScrollView android:id="@+id/tag_scroll"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_below="@id/search_container"
+        android:scrollbars="none"
+        android:layout_marginBottom="14dp">
+        <LinearLayout android:id="@+id/tag_row"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="2dp"/>
+    </HorizontalScrollView>
+
+    <!-- Section label -->
+    <TextView android:id="@+id/section_label"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_below="@id/tag_scroll"
+        android:text="RECENT SNIPS"
+        android:textSize="10sp"
+        android:fontFamily="monospace"
+        android:textColor="@color/text_muted"
+        android:letterSpacing="0.15"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Snip List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/snip_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/section_label"
+        android:layout_marginBottom="72dp"
+        android:scrollbars="none"/>
+
+    <!-- FAB -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="4dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/accent_green"
+        app:tint="@color/black"
+        app:elevation="6dp" />
+
+</RelativeLayout>

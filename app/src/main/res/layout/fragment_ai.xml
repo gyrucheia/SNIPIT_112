@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_primary"
+    android:padding="16dp">
+
+    <!-- Header -->
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/snip_ai"
+        android:fontFamily="monospace" android:textSize="22sp"
+        android:textStyle="bold" android:textColor="@color/accent_green"
+        android:layout_marginBottom="14dp"/>
+
+    <!-- Chat messages -->
+    <ScrollView android:id="@+id/chat_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
+        android:layout_marginBottom="12dp">
+
+        <LinearLayout android:id="@+id/chat_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="8dp">
+
+            <!-- Initial AI greeting -->
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:padding="12dp"
+                android:layout_marginBottom="10dp"
+                android:maxWidth="280dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/ai_agent_label"
+                    android:fontFamily="monospace" android:textSize="11sp"
+                    android:textColor="@color/accent_purple"
+                    android:layout_marginBottom="4dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/ai_greeting"
+                    android:textSize="13sp" android:textColor="@color/text_primary"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Quick action chips -->
+    <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:scrollbars="none" android:layout_marginBottom="10dp">
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button android:id="@+id/chip_tagalog"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content" android:layout_height="36dp"
+                android:text="@string/explain_tagalog"
+                android:textSize="11sp" android:textColor="@color/text_secondary"
+                android:background="@drawable/bg_card"
+                android:layout_marginEnd="8dp"/>
+            <Button android:id="@+id/chip_kotlin"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content" android:layout_height="36dp"
+                android:text="@string/convert_kotlin"
+                android:textSize="11sp" android:textColor="@color/text_secondary"
+                android:background="@drawable/bg_card"
+                android:layout_marginEnd="8dp"/>
+            <Button android:id="@+id/chip_optimize"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content" android:layout_height="36dp"
+                android:text="@string/optimize_mobile"
+                android:textSize="11sp" android:textColor="@color/text_secondary"
+                android:background="@drawable/bg_card"
+                android:layout_marginEnd="8dp"/>
+            <Button android:id="@+id/chip_debug"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content" android:layout_height="36dp"
+                android:text="@string/find_bug"
+                android:textSize="11sp" android:textColor="@color/text_secondary"
+                android:background="@drawable/bg_card"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Input row -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <EditText android:id="@+id/ai_input"
+            android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/ai_input_hint"
+            android:textColorHint="@color/text_muted"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:background="@drawable/bg_search"
+            android:padding="12dp"
+            android:minLines="1" android:maxLines="4"
+            android:inputType="textMultiLine"
+            android:importantForAutofill="no"
+            android:layout_marginEnd="8dp"/>
+
+        <Button android:id="@+id/btn_send"
+            android:layout_width="44dp" android:layout_height="44dp"
+            android:text="➤"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:background="@drawable/bg_button_green"
+            android:padding="0dp"/>
+    </LinearLayout>
+
+</LinearLayout>

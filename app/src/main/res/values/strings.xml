@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SnipIT</string>
+    <string name="motto">Huy, Snip it Quick!</string>
+    <string name="vault">Vault</string>
+    <string name="dev_dex">Dev-Dex</string>
+    <string name="beam_it">Beam IT</string>
+    <string name="ai_agent">AI Agent</string>
+    <string name="snap">Snap</string>
+    <string name="dev_xp">Dev-XP</string>
+    <string name="search_hint">Search snippets...</string>
+    <string name="new_snip">New Snip</string>
+    <string name="commit_to_vault">⚡ Commit to Vault</string>
+    <string name="offline_ready">● Offline-ready</string>
+    <string name="generate_pin">Generate PIN</string>
+    <string name="new_pin">New PIN</string>
+    <string name="beam_description">Type this PIN on snipit.beam on your PC — code pastes straight into your IDE</string>
+
+    <!-- AI Agent Strings -->
+    <string name="snip_ai">Snip-AI</string>
+    <string name="ai_agent_label">SNIP-AI AGENT</string>
+    <string name="ai_greeting">Huy! Paste your code and I\'ll refactor, explain, or convert it. What do you need?</string>
+    <string name="explain_tagalog">Explain in Tagalog</string>
+    <string name="convert_kotlin">Convert to Kotlin</string>
+    <string name="optimize_mobile">Optimize for Mobile</string>
+    <string name="find_bug">Find the Bug</string>
+    <string name="ai_input_hint">Ask anything or paste code...</string>
+    <string name="send_icon">➤</string>
+
+    <!-- <string name="ai_greeting">Huy! Paste your code and I\'ll refactor, explain, or convert it. What
+        do you need?
+    </string> -->
+
+    <!-- <string name="ai_greeting">Huy! Paste your code and I\'ll refactor, explain, or convert it. What
+        do you need?
+    </string> -->
+</resources>
