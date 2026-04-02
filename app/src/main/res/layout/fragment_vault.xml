@@ -82,10 +82,46 @@
             android:inputType="text"/>
     </LinearLayout>
 
+    <!-- Last searches (tappable) -->
+    <HorizontalScrollView
+        android:id="@+id/search_history_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_container"
+        android:layout_marginBottom="10dp"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/search_history_row"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="2dp" />
+    </HorizontalScrollView>
+
+    <!-- Live language result chips -->
+    <HorizontalScrollView
+        android:id="@+id/live_filter_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_history_scroll"
+        android:layout_marginBottom="14dp"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/live_filter_row"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="2dp" />
+    </HorizontalScrollView>
+
     <!-- Tag filter row -->
     <HorizontalScrollView android:id="@+id/tag_scroll"
         android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:layout_below="@id/search_container"
+        android:layout_below="@id/live_filter_scroll"
         android:scrollbars="none"
         android:layout_marginBottom="14dp">
         <LinearLayout android:id="@+id/tag_row"

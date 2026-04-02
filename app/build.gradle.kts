@@ -68,6 +68,8 @@ dependencies {
     implementation(platform(libs.firebase.bom.platform))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-database")
+    implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
     implementation(libs.mlkit.text.recognition)
     implementation(libs.mlkit.barcode.scanning)
     testImplementation(libs.junit)

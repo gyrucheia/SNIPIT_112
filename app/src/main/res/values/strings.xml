@@ -16,6 +16,21 @@
     <string name="new_pin">New PIN</string>
     <string name="beam_description">Type this PIN on snipit.beam on your PC — code pastes straight into your IDE</string>
 
+    <!-- Auth -->
+    <string name="login_subtitle">Sign in to sync, share, and unlock collaboration features.</string>
+    <string name="signup_subtitle">Create an account to start building your Vault.</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="login">Login</string>
+    <string name="back">← Back</string>
+    <string name="create_account">Create account</string>
+    <string name="no_account_create">No account? Create one</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="continue_with_github">Continue with GitHub</string>
+    <string name="sign_out">Sign out</string>
+    <string name="default_web_client_id" translatable="false">YOUR_WEB_CLIENT_ID_HERE</string>
+
     <!-- AI Agent Strings -->
     <string name="snip_ai">Snip-AI</string>
     <string name="ai_agent_label">SNIP-AI AGENT</string>
@@ -112,12 +127,4 @@
 
     <string name="saved_to_vault_done">Saved to Vault ✓</string>
     <string name="snap_ready_again">Ready — scan again for a new capture.</string>
-
-    <!-- <string name="ai_greeting">Huy! Paste your code and I\'ll refactor, explain, or convert it. What
-        do you need?
-    </string> -->
-
-    <!-- <string name="ai_greeting">Huy! Paste your code and I\'ll refactor, explain, or convert it. What
-        do you need?
-    </string> -->
 </resources>

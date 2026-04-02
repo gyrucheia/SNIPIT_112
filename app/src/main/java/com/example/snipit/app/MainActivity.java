@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import com.example.snipit.app.auth.LoginActivity;
 import com.example.snipit.app.database.SnipRepository;
 import com.example.snipit.app.ui.AIFragment;
 import com.example.snipit.app.ui.BeamFragment;
@@ -19,6 +20,7 @@ import com.example.snipit.app.ui.SnapFragment;
 import com.example.snipit.app.ui.VaultFragment;
 import com.example.snipit.app.ui.XPFragment;
 import com.example.snipit.app.util.BadgeTracker;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            startActivity(new android.content.Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

@@ -1,5 +1,6 @@
 package com.example.snipit.app.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +11,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.example.snipit.app.auth.LoginActivity;
 import com.example.snipit.app.R;
 import com.example.snipit.app.database.SnipRepository;
 import com.example.snipit.app.util.BadgeTracker;
 import com.example.snipit.app.util.XpManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class XPFragment extends Fragment {
 
@@ -33,6 +36,16 @@ public class XPFragment extends Fragment {
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
         snipRepo = new SnipRepository(requireActivity().getApplication());
+
+        v.findViewById(R.id.btn_sign_out)
+                .setOnClickListener(
+                        x -> {
+                            FirebaseAuth.getInstance().signOut();
+                            Intent i = new Intent(requireContext(), LoginActivity.class);
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            requireActivity().finishAffinity();
+                        });
 
         v.findViewById(R.id.badge_snip)
                 .setOnClickListener(
