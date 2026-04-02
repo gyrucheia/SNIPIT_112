@@ -127,4 +127,22 @@
 
     <string name="saved_to_vault_done">Saved to Vault ✓</string>
     <string name="snap_ready_again">Ready — scan again for a new capture.</string>
+
+    <!-- Snap screen (capture first — no live OCR) -->
+    <string name="snap_screen_headline">Snap</string>
+    <string name="snap_subtitle">Text is read only after you take a picture</string>
+    <string name="snap_scan_hint">Line up your code in the frame — tap Take picture when you are ready</string>
+    <string name="snap_section_extract">TEXT FROM PHOTO</string>
+    <string name="snap_status_preview">Frame your shot. Nothing is read until you capture.</string>
+    <string name="snap_status_ocr">Reading text from your photo…</string>
+    <string name="snap_status_result">Done — you can edit, save, or run Fix with AI.</string>
+    <string name="snap_status_ai_working">Snip-AI is cleaning up the text…</string>
+    <string name="snap_take_picture">Take picture</string>
+    <string name="snap_retake">New picture</string>
+    <string name="snap_code_hint">Appears here after capture</string>
+    <string name="snap_no_text_found">No text found in that photo — try again or move closer.</string>
+    <string name="snap_capture_failed">Couldn\'t take a photo. Try again.</string>
+    <string name="snap_ocr_failed">Couldn\'t read text from the photo.</string>
+    <string name="snap_camera_not_ready">Camera is still starting…</string>
+    <string name="save_snip">Save Snip</string>
 </resources>
