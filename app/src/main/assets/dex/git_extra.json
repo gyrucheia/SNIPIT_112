@@ -1,0 +1,22 @@
+[
+  {
+    "command": "git rebase -i HEAD~3",
+    "summary": "Interactive rebase last 3 commits",
+    "documentation": "Opens your editor to reorder, squash, reword, or drop commits. After saving, Git replays commits. Resolve conflicts with git add then git rebase --continue.\n\nExample:\n  git rebase -i origin/main"
+  },
+  {
+    "command": "git cherry-pick <sha>",
+    "summary": "Apply one commit onto current branch",
+    "documentation": "Takes the patch from a single commit and applies it on HEAD — useful for backporting fixes without merging whole branches.\n\nIf conflicts: fix files, git add, git cherry-pick --continue."
+  },
+  {
+    "command": "git bisect start",
+    "summary": "Binary search for a bad commit",
+    "documentation": "After git bisect start, mark commits as good/bad until Git finds the first bad commit. End with git bisect reset.\n\nUse when a regression appeared between two known-good commits."
+  },
+  {
+    "command": "git worktree add ../hotfix main",
+    "summary": "Second checkout in another folder",
+    "documentation": "Lets you check out another branch in a separate directory without stashing — ideal for urgent hotfixes while staying on feature work."
+  }
+]

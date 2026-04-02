@@ -1,0 +1,12 @@
+[
+  {
+    "command": "journalctl -u nginx -f",
+    "summary": "Follow systemd service logs",
+    "documentation": "Streams logs for a unit (-u). Use -f like tail -f. Good for debugging why a service failed after restart.\n\nExample:\n  journalctl -u docker --since today"
+  },
+  {
+    "command": "ss -lntp",
+    "summary": "List listening TCP ports + process",
+    "documentation": "Modern replacement for netstat. Shows which program listens on which port — essential when debugging 'address already in use'."
+  }
+]

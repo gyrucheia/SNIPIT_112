@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "494406383763",
+    "project_id": "snipit-d07da",
+    "storage_bucket": "snipit-d07da.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494406383763:android:d3069e926ee31d0a20b566",
+        "android_client_info": {
+          "package_name": "com.example.snipit.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAa-l7kxBmUaKie0pBMolEVeiZ52AsT6N0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

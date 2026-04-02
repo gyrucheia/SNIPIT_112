@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SnipIT Beam — QR receiver</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      font-family: ui-monospace, Consolas, monospace;
+      margin: 0; padding: 16px;
+      background: #0d1117; color: #c9d1d9;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    h1 { font-size: 1.1rem; color: #3fb950; margin: 0 0 8px; }
+    p { font-size: 0.85rem; color: #8b949e; line-height: 1.5; max-width: 42rem; }
+    video {
+      width: 100%; max-width: 420px; border-radius: 8px;
+      background: #161b22; border: 1px solid #30363d;
+    }
+    pre {
+      margin-top: 16px; padding: 12px; border-radius: 8px;
+      background: #161b22; border: 1px solid #30363d;
+      white-space: pre-wrap; word-break: break-word;
+      font-size: 0.8rem; color: #79c0ff;
+      min-height: 3em;
+    }
+    .hint { font-size: 0.75rem; color: #484f58; margin-top: 12px; }
+    #status { font-size: 0.8rem; color: #d29922; margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <h1>SnipIT Beam — scan QR from your phone</h1>
+  <p>
+    Allow camera access. Point at the QR shown in SnipIT (Beam tab). Decoded snippet text appears below — copy into your IDE.
+    Uses the browser camera (<code>getUserMedia</code>) and <a href="https://github.com/cozmo/jsQR" style="color:#58a6ff">jsQR</a> (MIT).
+  </p>
+  <p id="status">Starting camera…</p>
+  <video id="cam" playsinline muted autoplay></video>
+  <canvas id="canvas" hidden></canvas>
+  <pre id="out">(decoded payload will show here)</pre>
+  <p class="hint">Host this file as HTTPS or open via localhost — browsers require a secure context for camera.</p>
+
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <script>
+    (function () {
+      var video = document.getElementById('cam');
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+      var out = document.getElementById('out');
+      var statusEl = document.getElementById('status');
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        statusEl.textContent = 'Camera API not available. Use Chrome/Edge/Firefox over HTTPS or localhost.';
+        return;
+      }
+
+      navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: 'environment' }, audio: false })
+        .then(function (stream) {
+          video.srcObject = stream;
+          statusEl.textContent = 'Scanning… align QR in frame.';
+          requestAnimationFrame(tick);
+        })
+        .catch(function (err) {
+          statusEl.textContent = 'Camera error: ' + (err && err.message ? err.message : String(err));
+        });
+
+      function tick() {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          var img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          if (typeof jsQR === 'function') {
+            var code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
+            if (code && code.data) {
+              out.textContent = code.data;
+              statusEl.textContent = 'Got payload — you can copy from the box above.';
+            }
+          }
+        }
+        requestAnimationFrame(tick);
+      }
+    })();
+  </script>
+</body>
+</html>
