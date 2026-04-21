@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/bg_card"
-    android:layout_marginBottom="10dp"
-    android:padding="14dp">
+    android:layout_marginBottom="6dp"
+    android:padding="10dp">
 
     <LinearLayout
         android:id="@+id/snip_click_area"
@@ -20,7 +20,7 @@
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="6dp">
 
             <TextView android:id="@+id/snip_title"
                 android:layout_width="0dp" android:layout_height="wrap_content"
@@ -35,9 +35,9 @@
                 android:text="Java"
                 android:textColor="@color/accent_purple"
                 android:fontFamily="monospace"
-                android:textSize="10sp"
-                android:paddingStart="8dp" android:paddingEnd="8dp"
-                android:paddingTop="2dp" android:paddingBottom="2dp"
+                android:textSize="9sp"
+                android:paddingStart="6dp" android:paddingEnd="6dp"
+                android:paddingTop="1dp" android:paddingBottom="1dp"
                 android:background="@drawable/bg_tag"/>
         </LinearLayout>
 
@@ -45,23 +45,23 @@
         <TextView android:id="@+id/snip_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="56dp"
-            android:maxHeight="72dp"
+            android:minHeight="48dp"
+            android:maxHeight="64dp"
             android:background="@drawable/bg_code_block"
-            android:padding="10dp"
+            android:padding="8dp"
             android:fontFamily="monospace"
-            android:textSize="11sp"
+            android:textSize="10sp"
             android:textColor="@color/text_secondary"
             android:ellipsize="end"
-            android:maxLines="4"
-            android:layout_marginBottom="8dp"/>
+            android:maxLines="3"
+            android:layout_marginBottom="6dp"/>
 
         <TextView android:id="@+id/snip_tags"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="#Java  #Firebase"
             android:fontFamily="monospace"
-            android:textSize="10sp"
+            android:textSize="9sp"
             android:textColor="@color/text_muted"/>
     </LinearLayout>
 
@@ -69,34 +69,34 @@
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="end|center_vertical"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="6dp">
 
         <TextView android:id="@+id/btn_fix_ai"
-            android:layout_width="36dp" android:layout_height="36dp"
+            android:layout_width="32dp" android:layout_height="32dp"
             android:text="✨"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:gravity="center"
             android:background="@drawable/bg_card"
             android:layout_marginEnd="6dp"
             android:contentDescription="@string/fix_with_ai"
-            android:padding="6dp"/>
+            android:padding="4dp"/>
 
         <TextView android:id="@+id/btn_beam"
-            android:layout_width="36dp" android:layout_height="36dp"
+            android:layout_width="32dp" android:layout_height="32dp"
             android:text="📡"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:gravity="center"
             android:background="@drawable/bg_card"
             android:layout_marginEnd="6dp"
-            android:padding="6dp"/>
+            android:padding="4dp"/>
 
         <TextView android:id="@+id/btn_copy"
-            android:layout_width="36dp" android:layout_height="36dp"
+            android:layout_width="32dp" android:layout_height="32dp"
             android:text="⎘"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:gravity="center"
             android:background="@drawable/bg_card"
-            android:padding="6dp"/>
+            android:padding="4dp"/>
     </LinearLayout>
 
 </LinearLayout>

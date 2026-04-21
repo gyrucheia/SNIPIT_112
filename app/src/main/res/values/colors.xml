@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark Kernel Palette -->
-    <color name="bg_primary">#0D0D0D</color>
-    <color name="bg_secondary">#1A1A1A</color>
-    <color name="bg_card">#1E1E1E</color>
-    <color name="bg_input">#252525</color>
+    <!-- Core Brand Palette -->
+    <color name="accent_green">#00C853</color>
+    <color name="accent_cyan">#00B8D4</color>
+    <color name="accent_yellow">#FFD600</color>
+    <color name="accent_red">#D50000</color>
+    <color name="accent_purple">#AA00FF</color>
+    <color name="accent_orange">#FF6D00</color>
 
-    <color name="accent_green">#00FF88</color>
-    <color name="accent_cyan">#00D4FF</color>
-    <color name="accent_yellow">#FFD700</color>
-    <color name="accent_red">#FF4444</color>
-    <color name="accent_purple">#A855F7</color>
-    <color name="accent_orange">#FF8C00</color>
+    <!-- Default (Light) Palette -->
+    <color name="bg_primary">#F5F5F7</color>
+    <color name="bg_secondary">#FFFFFF</color>
+    <color name="bg_card">#FFFFFF</color>
+    <color name="bg_input">#E0E0E0</color>
 
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#888888</color>
-    <color name="text_muted">#555555</color>
+    <color name="text_primary">#1C1C1E</color>
+    <color name="text_secondary">#3A3A3C</color>
+    <color name="text_muted">#8E8E93</color>
 
     <color name="tag_java">#F89820</color>
     <color name="tag_python">#3776AB</color>
     <color name="tag_kotlin">#7F52FF</color>
     <color name="tag_sql">#00758F</color>
-    <color name="tag_cli">#00FF88</color>
+    <color name="tag_cli">#00C853</color>
     <color name="tag_firebase">#FFCA28</color>
 
     <color name="white">#FFFFFF</color>

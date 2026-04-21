@@ -106,6 +106,7 @@ public class NewSnipActivity extends AppCompatActivity {
                                     lang.getText() != null ? lang.getText().toString() : "");
                     btnFixAi.setEnabled(false);
                     fixProgress.setVisibility(View.VISIBLE);
+
                     aiModel.improveSnippet(
                             body,
                             langHint,
@@ -114,9 +115,20 @@ public class NewSnipActivity extends AppCompatActivity {
                                 public void onResult(String result) {
                                     fixProgress.setVisibility(View.GONE);
                                     btnFixAi.setEnabled(true);
-                                    if (result != null) {
-                                        code.setText(result.trim());
+                                    String out = result != null ? result : "";
+                                    code.setText(out);
+                                    if (tags.getText() == null
+                                            || tags.getText().toString().trim().isEmpty()) {
+                                        String suggested = AutoTagger.suggest(out, langHint);
+                                        if (!suggested.isEmpty()) {
+                                            tags.setText(suggested);
+                                        }
                                     }
+                                    Toast.makeText(
+                                                    NewSnipActivity.this,
+                                                    R.string.snip_ai_improved,
+                                                    Toast.LENGTH_SHORT)
+                                            .show();
                                 }
 
                                 @Override
@@ -125,7 +137,7 @@ public class NewSnipActivity extends AppCompatActivity {
                                     btnFixAi.setEnabled(true);
                                     Toast.makeText(
                                                     NewSnipActivity.this,
-                                                    error,
+                                                    error != null ? error : getString(R.string.snap_ai_failed),
                                                     Toast.LENGTH_LONG)
                                             .show();
                                 }
@@ -160,13 +172,24 @@ public class NewSnipActivity extends AppCompatActivity {
         findViewById(R.id.btn_commit)
                 .setOnClickListener(
                         v -> {
-                            Snip s = new Snip();
-                            s.title = safe(title);
-                            s.language =
+                            String t = safe(title);
+                            String l =
                                     LanguagePickerHelper.vaultLabel(
                                             lang.getText() != null ? lang.getText().toString() : "");
-                            s.tags = safe(tags);
-                            s.code = safe(code);
+                            String tg = safe(tags);
+                            String c = safe(code);
+
+                            if (c.isEmpty()) {
+                                Toast.makeText(this, "Please enter some code", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            Snip s = new Snip();
+                            s.title = t;
+                            s.language = l;
+                            s.tags = tg;
+                            s.code = c;
+
                             if (s.tags != null
                                     && (s.tags.contains("#Snap") || s.tags.contains("#OCR"))) {
                                 BadgeTracker.recordSnapHunterSave(NewSnipActivity.this);

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,7 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import androidx.core.widget.NestedScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.snipit.app.BuildConfig;
 import com.example.snipit.app.NewSnipActivity;
 import com.example.snipit.app.R;
 import com.example.snipit.app.database.ChatRepository;
@@ -35,6 +37,7 @@ import com.example.snipit.app.util.BadgeTracker;
 import com.example.snipit.app.services.GitHubModelService;
 import com.example.snipit.app.util.NetworkUtils;
 import com.example.snipit.app.util.XpManager;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.List;
 
@@ -43,11 +46,13 @@ public class AIFragment extends Fragment {
     private static final Object TAG_TYPING = new Object();
 
     private DrawerLayout drawer;
+    private View aiToolbarWrap;
     private LinearLayout chatContainer;
-    private ScrollView chatScroll;
+    private NestedScrollView chatScroll;
     private View greetingWrap;
     private EditText input;
     private final GitHubModelService aiModel = new GitHubModelService();
+
     private ChatRepository chatRepo;
     private Long currentSessionId;
     private AiSessionAdapter sessionAdapter;
@@ -69,6 +74,7 @@ public class AIFragment extends Fragment {
         chatRepo = new ChatRepository(requireActivity().getApplication());
 
         drawer = v.findViewById(R.id.ai_drawer_layout);
+        aiToolbarWrap = v.findViewById(R.id.ai_toolbar_wrap);
         chatContainer = v.findViewById(R.id.chat_container);
         chatScroll = v.findViewById(R.id.chat_scroll);
         greetingWrap = v.findViewById(R.id.ai_greeting_wrap);
@@ -78,8 +84,19 @@ public class AIFragment extends Fragment {
         aiOnlineLabel = v.findViewById(R.id.ai_online_label);
         refreshOnlineStatus();
 
+        v.findViewById(R.id.btn_main_profile).setOnClickListener(x -> {
+            if (getActivity() instanceof com.example.snipit.app.MainActivity) {
+                ((com.example.snipit.app.MainActivity) getActivity()).openMainDrawer();
+            }
+        });
+
         ImageButton menu = v.findViewById(R.id.btn_ai_menu);
         menu.setOnClickListener(x -> drawer.openDrawer(GravityCompat.END));
+
+        View newChatToolbar = v.findViewById(R.id.btn_new_chat_toolbar);
+        if (newChatToolbar != null) {
+            newChatToolbar.setOnClickListener(x -> startNewChat());
+        }
 
         RecyclerView historyRv = v.findViewById(R.id.ai_history_list);
         historyRv.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -100,7 +117,6 @@ public class AIFragment extends Fragment {
                         });
 
         v.findViewById(R.id.btn_new_ai_chat).setOnClickListener(x -> startNewChat());
-        v.findViewById(R.id.btn_new_chat_toolbar).setOnClickListener(x -> startNewChat());
         v.findViewById(R.id.btn_clear_ai_history)
                 .setOnClickListener(
                         x ->
@@ -142,14 +158,18 @@ public class AIFragment extends Fragment {
 
     private void refreshOnlineStatus() {
         if (aiOnlineDot == null || aiOnlineLabel == null) return;
-        boolean on = NetworkUtils.isOnline(requireContext());
-        int dot =
-                on
-                        ? getResources().getColor(R.color.accent_purple, null)
-                        : getResources().getColor(R.color.text_muted, null);
-        aiOnlineDot.setBackgroundTintList(ColorStateList.valueOf(dot));
-        aiOnlineLabel.setText(
-                on ? R.string.ai_status_online : R.string.ai_status_offline);
+
+        boolean internetOn = NetworkUtils.isOnline(requireContext());
+        boolean keyConfigured = !TextUtils.isEmpty(BuildConfig.OPENROUTER_API_KEY);
+        updateStatusUi(internetOn && keyConfigured);
+    }
+
+    private void updateStatusUi(boolean isAiOnline) {
+        int dotColor = isAiOnline
+                ? getResources().getColor(R.color.accent_purple, null)
+                : getResources().getColor(R.color.text_muted, null);
+        aiOnlineDot.setBackgroundTintList(ColorStateList.valueOf(dotColor));
+        aiOnlineLabel.setText(isAiOnline ? R.string.ai_status_online : R.string.ai_status_offline);
     }
 
     @Override
@@ -192,6 +212,14 @@ public class AIFragment extends Fragment {
         }
     }
 
+    public void startFixSession(String code) {
+        if (!isAdded()) return;
+        showGreeting(false);
+        String prompt = "Please review and fix this code snippet:\n\n" + code;
+        input.setText(prompt);
+        send(); // Automatically trigger the AI analysis
+    }
+
     private void showGreeting(boolean show) {
         greetingWrap.setVisibility(show ? View.VISIBLE : View.GONE);
     }
@@ -205,51 +233,43 @@ public class AIFragment extends Fragment {
         XpManager.addXp(requireContext(), 3);
         addTypingIndicator();
 
-        Runnable afterUserSaved =
-                () ->
-                        aiModel.sendMessage(
-                                msg,
-                                new GitHubModelService.Callback() {
-                                    @Override
-                                    public void onResult(String result) {
-                                        if (!isAdded()) return;
-                                        removeTypingIndicator();
-                                        addBubble(result, false);
-                                        addAssistantActionsRow(result);
-                                        chatScroll.post(() -> chatScroll.fullScroll(View.FOCUS_DOWN));
-                                        if (currentSessionId != null) {
-                                            chatRepo.saveAssistantMessage(
-                                                    currentSessionId,
-                                                    result,
-                                                    null);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(String error) {
-                                        if (!isAdded()) return;
-                                        removeTypingIndicator();
-                                        String fallback = "(" + error + ")\n\n" + cannedReply(msg);
-                                        addBubble(fallback, false);
-                                        if (currentSessionId != null) {
-                                            chatRepo.saveAssistantMessage(
-                                                    currentSessionId, fallback, null);
-                                        }
-                                        chatScroll.post(() -> chatScroll.fullScroll(View.FOCUS_DOWN));
-                                    }
-                                });
-
         if (currentSessionId == null) {
             String title = msg.length() > 36 ? msg.substring(0, 36) + "…" : msg;
             chatRepo.createSession(
                     title,
                     id -> {
                         currentSessionId = id;
-                        chatRepo.saveUserMessage(id, msg, afterUserSaved);
+                        performAiAnalysis(id, msg);
                     });
         } else {
-            chatRepo.saveUserMessage(currentSessionId, msg, afterUserSaved);
+            performAiAnalysis(currentSessionId, msg);
         }
+    }
+
+    private void performAiAnalysis(long sessionId, String msg) {
+        chatRepo.saveUserMessage(sessionId, msg, () -> {
+            // Use the direct AI service instead of the local Python server
+            aiModel.analyzeCode(msg, new GitHubModelService.AiCallback() {
+                @Override
+                public void onResponse(String fixedCode, String explanation) {
+                    if (!isAdded()) return;
+                    removeTypingIndicator();
+                    
+                    String reply = fixedCode + "\n\n" + explanation;
+                    addBubble(reply, false);
+                    addAssistantActionsRow(fixedCode);
+                    chatScroll.post(() -> chatScroll.fullScroll(View.FOCUS_DOWN));
+                    chatRepo.saveAssistantMessage(sessionId, reply, null);
+                }
+
+                @Override
+                public void onError(String error) {
+                    if (!isAdded()) return;
+                    removeTypingIndicator();
+                    addBubble("AI Error: " + error, false);
+                }
+            });
+        });
     }
 
     private void addTypingIndicator() {
@@ -352,7 +372,7 @@ public class AIFragment extends Fragment {
         if (m.contains("bug")) {
             return "Offline fallback: tingnan ang null safety at bounds.";
         }
-        return "Offline mode: walang GitHub token o walang network. Ilagay ang GITHUB_TOKEN sa local.properties (GitHub Settings → Tokens).";
+        return "Offline mode: walang GitHub token o walang network. Ilagay ang GITHUB_MODELS_TOKEN sa local.properties (PAT na may models scope).";
     }
 
     private void addBubble(String text, boolean user) {

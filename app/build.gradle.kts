@@ -28,8 +28,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val githubToken = localProps.getProperty("GITHUB_TOKEN", "").replace("\"", "\\\"")
-        buildConfigField("String", "GITHUB_TOKEN", "\"$githubToken\"")
+        val openRouterKey = localProps.getProperty("OPENROUTER_API_KEY", "").replace("\"", "\\\"")
+        buildConfigField("String", "OPENROUTER_API_KEY", "\"$openRouterKey\"")
     }
 
     buildTypes {
@@ -61,6 +61,8 @@ dependencies {
     annotationProcessor(libs.room.compiler)
     implementation(libs.zxing.core)
     implementation(libs.okhttp)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
     implementation(platform(libs.firebase.bom.platform))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-database")

@@ -1,167 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_primary"
-    android:padding="16dp">
+    android:background="@color/bg_primary">
 
-    <!-- Header -->
-    <LinearLayout android:id="@+id/header"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:background="@color/bg_primary"
+        app:elevation="0dp">
 
-        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SnipIT"
-            android:textSize="22sp"
-            android:fontFamily="monospace"
-            android:textStyle="bold"
-            android:textColor="@color/accent_green"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="8dp">
 
-        <TextView android:id="@+id/btn_scan_qr"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="@string/vault_scan_qr"
-            android:textColor="@color/accent_cyan"
-            android:textSize="12sp"
-            android:fontFamily="monospace"
-            android:paddingEnd="10dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="SnipIT"
+                android:textColor="@color/accent_green"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
-        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_card"
-            android:paddingStart="10dp" android:paddingEnd="10dp"
-            android:paddingTop="5dp" android:paddingBottom="5dp"
-            android:gravity="center_vertical">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="⚡ " android:textColor="@color/accent_yellow" android:textSize="13sp"/>
-            <TextView android:id="@+id/xp_display"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="340 XP" android:textColor="@color/accent_yellow"
-                android:fontFamily="monospace" android:textSize="12sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Tap a card for editor, or use ✨ to fix code."
+                android:textColor="@color/text_muted"
+                android:textSize="11sp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:cardBackgroundColor="@color/bg_card"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/bg_input"
+                app:strokeWidth="1dp">
+
+                <EditText
+                    android:id="@+id/search_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:drawableStart="@android:drawable/ic_menu_search"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/text_muted"
+                    android:hint="Search snippets..."
+                    android:paddingHorizontal="12dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_muted"
+                    android:textSize="13sp" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/filter_chips_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <!-- Chips will be added here -->
+                </LinearLayout>
+            </HorizontalScrollView>
         </LinearLayout>
-    </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:id="@+id/vault_editor_hint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/header"
-        android:layout_marginBottom="10dp"
-        android:lineSpacingMultiplier="1.2"
-        android:text="@string/vault_ide_hint"
-        android:textColor="@color/text_muted"
-        android:textSize="11sp" />
-
-    <!-- Search Bar -->
-    <LinearLayout android:id="@+id/search_container"
-        android:layout_width="match_parent" android:layout_height="44dp"
-        android:layout_below="@id/vault_editor_hint"
-        android:background="@drawable/bg_search"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="12dp" android:paddingEnd="12dp"
-        android:layout_marginBottom="14dp">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="⌕ " android:textColor="@color/text_muted" android:textSize="18sp"/>
-        <EditText android:id="@+id/search_input"
-            android:layout_width="0dp" android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:hint="Search snippets..."
-            android:textColorHint="@color/text_muted"
-            android:textColor="@color/text_primary"
-            android:textSize="13sp"
-            android:background="@null"
-            android:fontFamily="monospace"
-            android:imeOptions="actionSearch"
-            android:inputType="text"/>
-    </LinearLayout>
-
-    <!-- Last searches (tappable) -->
-    <HorizontalScrollView
-        android:id="@+id/search_history_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/search_container"
-        android:layout_marginBottom="10dp"
-        android:scrollbars="none"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:id="@+id/search_history_row"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="2dp" />
-    </HorizontalScrollView>
-
-    <!-- Live language result chips -->
-    <HorizontalScrollView
-        android:id="@+id/live_filter_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/search_history_scroll"
-        android:layout_marginBottom="14dp"
-        android:scrollbars="none"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:id="@+id/live_filter_row"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="2dp" />
-    </HorizontalScrollView>
-
-    <!-- Tag filter row -->
-    <HorizontalScrollView android:id="@+id/tag_scroll"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:layout_below="@id/live_filter_scroll"
-        android:scrollbars="none"
-        android:layout_marginBottom="14dp">
-        <LinearLayout android:id="@+id/tag_row"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="2dp"/>
-    </HorizontalScrollView>
-
-    <!-- Section label -->
-    <TextView android:id="@+id/section_label"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:layout_below="@id/tag_scroll"
-        android:text="RECENT SNIPS"
-        android:textSize="10sp"
-        android:fontFamily="monospace"
-        android:textColor="@color/text_muted"
-        android:letterSpacing="0.15"
-        android:layout_marginBottom="8dp"/>
-
-    <!-- Snip List -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/snip_recycler"
+        android:id="@+id/vault_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/section_label"
-        android:layout_marginBottom="72dp"
-        android:scrollbars="none"/>
+        android:clipToPadding="false"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="80dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/item_snip" />
 
-    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_new"
+        android:id="@+id/btn_add_snip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="4dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="Add New Snip"
         android:src="@android:drawable/ic_input_add"
         app:backgroundTint="@color/accent_green"
-        app:tint="@color/black"
-        app:elevation="6dp" />
+        app:fabSize="normal"
+        app:tint="@color/black" />
 
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

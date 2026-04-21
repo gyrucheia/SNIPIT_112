@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.ImageProxy;
@@ -33,6 +34,7 @@ import com.example.snipit.app.NewSnipActivity;
 import com.example.snipit.app.R;
 import com.example.snipit.app.services.GitHubModelService;
 import com.example.snipit.app.util.XpManager;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.common.InputImage;
@@ -68,10 +70,12 @@ public class SnapFragment extends Fragment {
     private TextRecognizer recognizer;
     private ProcessCameraProvider cameraProvider;
     private ImageCapture imageCapture;
+    private ImageAnalysis imageAnalysis;
     private final GitHubModelService aiModel = new GitHubModelService();
 
     private int state = STATE_PREVIEW;
     private boolean aiBusy = false;
+    private boolean isLiveScanning = true;
 
     private final ActivityResultLauncher<String> permLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
@@ -123,7 +127,9 @@ public class SnapFragment extends Fragment {
                     if (state == STATE_PROCESSING) {
                         return;
                     }
-                    if (state == STATE_RESULT) {
+                    if (state == STATE_RESULT || !isLiveScanning) {
+                        // Reset to scanning
+                        isLiveScanning = true;
                         extracted.setText("");
                         state = STATE_PREVIEW;
                         captureBtn.setText(R.string.snap_take_picture);
@@ -131,9 +137,14 @@ public class SnapFragment extends Fragment {
                         status.setText(R.string.snap_status_preview);
                         extracted.setEnabled(true);
                         refreshActionButtons();
-                        return;
+                    } else {
+                        // Freeze/Capture current result
+                        isLiveScanning = false;
+                        state = STATE_RESULT;
+                        captureBtn.setText(R.string.snap_retake);
+                        status.setText(R.string.snap_status_result);
+                        refreshActionButtons();
                     }
-                    takePictureAndRecognize();
                 });
 
         fixAiBtn.setOnClickListener(
@@ -154,37 +165,36 @@ public class SnapFragment extends Fragment {
                     extracted.setEnabled(false);
                     progress.setVisibility(View.VISIBLE);
                     status.setText(R.string.snap_status_ai_working);
+
                     aiModel.fixOcrText(
                             body,
-                            "",
+                            "Unknown",
                             new GitHubModelService.Callback() {
                                 @Override
                                 public void onResult(String result) {
-                                    if (!isAdded()) {
-                                        return;
-                                    }
+                                    if (!isAdded()) return;
                                     aiBusy = false;
                                     progress.setVisibility(View.GONE);
                                     captureBtn.setEnabled(true);
                                     extracted.setEnabled(true);
-                                    if (result != null) {
-                                        extracted.setText(result.trim());
-                                    }
+                                    extracted.setText(result != null ? result.trim() : "");
                                     status.setText(R.string.snap_status_result);
                                     refreshActionButtons();
                                 }
 
                                 @Override
                                 public void onError(String error) {
-                                    if (!isAdded()) {
-                                        return;
-                                    }
+                                    if (!isAdded()) return;
                                     aiBusy = false;
                                     progress.setVisibility(View.GONE);
                                     captureBtn.setEnabled(true);
                                     extracted.setEnabled(true);
                                     refreshActionButtons();
-                                    Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(
+                                                    requireContext(),
+                                                    error != null ? error : getString(R.string.snap_ai_failed),
+                                                    Toast.LENGTH_LONG)
+                                            .show();
                                     status.setText(R.string.snap_status_result);
                                 }
                             });
@@ -363,14 +373,55 @@ public class SnapFragment extends Fragment {
                         .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                         .build();
 
+        imageAnalysis =
+                new ImageAnalysis.Builder()
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build();
+
+        imageAnalysis.setAnalyzer(cameraExecutor, this::analyzeImage);
+
         CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
 
         try {
             cameraProvider.unbindAll();
-            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
+            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture, imageAnalysis);
         } catch (Exception e) {
             Log.e(TAG, "Use case binding failed", e);
         }
+    }
+
+    @androidx.annotation.OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
+    private void analyzeImage(@NonNull ImageProxy imageProxy) {
+        if (!isLiveScanning || state == STATE_PROCESSING || aiBusy) {
+            imageProxy.close();
+            return;
+        }
+
+        android.media.Image mediaImage = imageProxy.getImage();
+        if (mediaImage == null) {
+            imageProxy.close();
+            return;
+        }
+
+        InputImage input =
+                InputImage.fromMediaImage(
+                        mediaImage, imageProxy.getImageInfo().getRotationDegrees());
+
+        recognizer
+                .process(input)
+                .addOnSuccessListener(
+                        text -> {
+                            if (!isAdded() || !isLiveScanning) return;
+                            
+                            String rawText = text.getText().trim();
+                            if (!rawText.isEmpty()) {
+                                requireActivity().runOnUiThread(() -> {
+                                    extracted.setText(rawText);
+                                    saveBtn.setEnabled(true);
+                                });
+                            }
+                        })
+                .addOnCompleteListener(task -> imageProxy.close());
     }
 
     @Override

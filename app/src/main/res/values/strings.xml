@@ -14,6 +14,7 @@
     <string name="offline_ready">● Offline-ready</string>
     <string name="generate_pin">Generate PIN</string>
     <string name="new_pin">New PIN</string>
+    <string name="profile">Profile</string>
     <string name="beam_description">Type this PIN on snipit.beam on your PC — code pastes straight into your IDE</string>
 
     <!-- Auth -->
@@ -63,6 +64,7 @@
     <string name="language_search_hint">Search languages…</string>
     <string name="fix_with_ai">✨ Fix with AI</string>
     <string name="fix_ai_need_code">Paste or type some code first.</string>
+    <string name="snip_ai_improved">Snip-AI updated your snippet.</string>
     <string name="badge_earned_label">Unlocked — keep using SnipIT to level up.</string>
     <string name="badge_progress_label">%1$d / %2$d toward this badge</string>
     <string name="badge_next_steps">Next: %1$d more to unlock.</string>
@@ -144,5 +146,6 @@
     <string name="snap_capture_failed">Couldn\'t take a photo. Try again.</string>
     <string name="snap_ocr_failed">Couldn\'t read text from the photo.</string>
     <string name="snap_camera_not_ready">Camera is still starting…</string>
+    <string name="snap_ai_failed">Snip-AI request failed. Check your connection and OPENROUTER_API_KEY in local.properties (use your GitHub Models PAT with models scope as this value).</string>
     <string name="save_snip">Save Snip</string>
 </resources>

@@ -15,40 +15,58 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * GitHub Models (Azure OpenAI–compatible chat/completions). Set {@code GITHUB_TOKEN} in
- * {@code local.properties} (classic PAT, often starts with ghp_).
- *
- * @see <a href="https://github.com/marketplace/models">GitHub Models</a>
+ * GitHub Models inference API (OpenAI-style chat completions). Requires a GitHub PAT with the
+ * {@code models} scope; see GitHub Models quickstart in the docs.
  */
 public class GitHubModelService {
 
-    private static final String ENDPOINT = "https://models.inference.ai.azure.com/chat/completions";
+    private static final String ENDPOINT =
+            "https://models.github.ai/inference/chat/completions";
 
-    /** Swap model id here (e.g. gpt-4o-mini, Llama-3.1-8B-Instruct, Phi-3-mini). */
-    private static final String MODEL_NAME = "gpt-4o-mini";
+    /** See model catalog: https://github.com/marketplace?type=models */
+    private static final String MODEL_NAME = "openai/gpt-4o";
 
-    /**
-     * Product identity: same idea as a hosted assistant that only serves one app — never “I’m a general
-     * model”; always Snip-AI inside SnipIT.
-     */
+    private static final String GITHUB_API_VERSION = "2022-11-28";
+
     private static final String SNIPIT_SYSTEM_PROMPT =
-            "You are Snip-AI, the dedicated assistant for the SnipIT Android app only. Your job is to help "
-                    + "users with code snippets in SnipIT: the Vault (local snippet library), Beam (send code "
-                    + "to a PC with a PIN), Snap (OCR from photos), Dev-Dex (CLI reference), QR import, and "
-                    + "the snippet editor. You are not a generic chatbot or a detached cloud model—introduce "
-                    + "yourself as Snip-AI when it fits, and assume every question is in the SnipIT context. "
-                    + "Be warm, direct, and concise; say “we” / “in SnipIT” when helpful. Never tell the user "
-                    + "to use a different product instead of SnipIT for snippet workflows.";
+            "You are Snip-AI, the dedicated assistant for the SnipIT Android app. "
+            + "Help users fix, explain, and optimize code snippets. Be concise.";
 
     public interface Callback {
         void onResult(String result);
-
+        void onError(String error);
+    }
+    
+    // Compatibility interface for AIFragment
+    public interface AiCallback {
+        void onResponse(String fixedCode, String explanation);
         void onError(String error);
     }
 
     private final OkHttpClient client = new OkHttpClient();
     private final ExecutorService exec = Executors.newSingleThreadExecutor();
     private final Handler main = new Handler(Looper.getMainLooper());
+
+    public void analyzeCode(String userMessage, AiCallback aiCb) {
+        sendMessage(userMessage, new Callback() {
+            @Override
+            public void onResult(String result) {
+                if (result.contains("```")) {
+                    String[] parts = result.split("```");
+                    String code = parts.length > 1 ? parts[1].replaceAll("^[a-zA-Z]+\\n", "") : "";
+                    String explanation = parts.length > 2 ? parts[2] : "Code fixed by Snip-AI.";
+                    aiCb.onResponse(code, explanation);
+                } else {
+                    aiCb.onResponse("", result);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                aiCb.onError(error);
+            }
+        });
+    }
 
     /** Clean up / improve a snippet from the Vault editor. */
     public void improveSnippet(String code, String languageHint, Callback cb) {
@@ -61,7 +79,7 @@ public class GitHubModelService {
                         + "\n\n---\n"
                         + (code != null ? code : "")
                         + "\n---";
-        sendWithSystemPrompt(prompt, cb);
+        sendMessage(prompt, cb);
     }
 
     /** Post-process noisy OCR into cleaner code. */
@@ -75,100 +93,60 @@ public class GitHubModelService {
                         + "\n\n---\n"
                         + (rawOcr != null ? rawOcr : "")
                         + "\n---";
-        sendWithSystemPrompt(prompt, cb);
+        sendMessage(prompt, cb);
     }
 
-    /** General chat / instruction (Snip-AI). Uses SnipIT system persona + user message. */
     public void sendMessage(String userMessage, Callback cb) {
-        sendWithSystemPrompt(userMessage, cb);
-    }
+        String apiKey = BuildConfig.OPENROUTER_API_KEY;
 
-    /** Single user turn with SnipIT system instruction (also used for improve/OCR tasks). */
-    private void sendWithSystemPrompt(String userContent, Callback cb) {
-        if (TextUtils.isEmpty(BuildConfig.GITHUB_TOKEN)) {
-            main.post(() -> cb.onError("Missing GITHUB_TOKEN in local.properties"));
+        if (TextUtils.isEmpty(apiKey)) {
+            main.post(
+                    () ->
+                            cb.onError(
+                                    "Missing OPENROUTER_API_KEY in local.properties "
+                                            + "(use your GitHub Models PAT with \"models\" scope as this value)."));
             return;
         }
-        exec.execute(
-                () -> {
-                    try {
-                        JSONObject jsonBody = new JSONObject();
-                        jsonBody.put("model", MODEL_NAME);
-                        JSONArray messages = new JSONArray();
-                        messages.put(
-                                new JSONObject()
-                                        .put("role", "system")
-                                        .put("content", SNIPIT_SYSTEM_PROMPT));
-                        messages.put(
-                                new JSONObject()
-                                        .put("role", "user")
-                                        .put("content", userContent != null ? userContent : ""));
-                        jsonBody.put("messages", messages);
-                        jsonBody.put("max_tokens", 1000);
 
-                        Request request =
-                                new Request.Builder()
-                                        .url(ENDPOINT)
-                                        .post(
-                                                RequestBody.create(
-                                                        jsonBody.toString(),
-                                                        MediaType.get("application/json")))
-                                        .addHeader(
-                                                "Authorization",
-                                                "Bearer " + BuildConfig.GITHUB_TOKEN)
-                                        .addHeader("Content-Type", "application/json")
-                                        .build();
+        exec.execute(() -> {
+            try {
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("model", MODEL_NAME);
 
-                        try (Response resp = client.newCall(request).execute()) {
-                            String respBody = resp.body() != null ? resp.body().string() : "";
-                            if (!resp.isSuccessful()) {
-                                main.post(() -> parseOrRawError(resp.code(), respBody, cb));
-                                return;
-                            }
-                            JSONObject json = new JSONObject(respBody);
-                            JSONArray choices = json.optJSONArray("choices");
-                            if (choices == null || choices.length() == 0) {
-                                main.post(
-                                        () ->
-                                                cb.onError(
-                                                        "No choices in model response: "
-                                                                + respBody));
-                                return;
-                            }
-                            JSONObject first = choices.getJSONObject(0);
-                            JSONObject message = first.optJSONObject("message");
-                            String content =
-                                    message != null ? message.optString("content") : "";
-                            if (TextUtils.isEmpty(content)) {
-                                main.post(() -> cb.onError("Empty content in model response"));
-                                return;
-                            }
-                            String out = content.trim();
-                            main.post(() -> cb.onResult(out));
-                        }
-                    } catch (Exception e) {
-                        String err = e.getMessage() != null ? e.getMessage() : "network error";
-                        main.post(() -> cb.onError(err));
+                JSONArray messages = new JSONArray();
+                messages.put(new JSONObject().put("role", "system").put("content", SNIPIT_SYSTEM_PROMPT));
+                messages.put(new JSONObject().put("role", "user").put("content", userMessage));
+
+                jsonBody.put("messages", messages);
+
+                Request request =
+                        new Request.Builder()
+                                .url(ENDPOINT)
+                                .post(
+                                        RequestBody.create(
+                                                jsonBody.toString(), MediaType.get("application/json")))
+                                .addHeader("Accept", "application/vnd.github+json")
+                                .addHeader("Authorization", "Bearer " + apiKey)
+                                .addHeader("X-GitHub-Api-Version", GITHUB_API_VERSION)
+                                .build();
+
+                try (Response resp = client.newCall(request).execute()) {
+                    String respBody = resp.body() != null ? resp.body().string() : "";
+                    if (!resp.isSuccessful()) {
+                        main.post(() -> cb.onError("Error " + resp.code() + ": " + respBody));
+                        return;
                     }
-                });
+
+                    JSONObject json = new JSONObject(respBody);
+                    JSONArray choices = json.getJSONArray("choices");
+                    String content = choices.getJSONObject(0).getJSONObject("message").getString("content");
+                    
+                    main.post(() -> cb.onResult(content.trim()));
+                }
+            } catch (Exception e) {
+                main.post(() -> cb.onError(e.getMessage()));
+            }
+        });
     }
 
-    private void parseOrRawError(int code, String respBody, Callback cb) {
-        try {
-            JSONObject json = new JSONObject(respBody);
-            if (json.has("error")) {
-                JSONObject err = json.optJSONObject("error");
-                if (err != null) {
-                    cb.onError(
-                            "HTTP "
-                                    + code
-                                    + ": "
-                                    + err.optString("message", err.toString()));
-                    return;
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        cb.onError("HTTP " + code + ": " + respBody);
-    }
 }

@@ -1,267 +1,340 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ai_drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_primary"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:background="@color/bg_primary">
 
+        <!-- Slim Toolbar -->
         <LinearLayout
+            android:id="@+id/ai_toolbar_wrap"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
+            android:background="@color/bg_primary"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:layout_marginBottom="10dp">
+            android:paddingHorizontal="12dp"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton
-                android:id="@+id/btn_ai_menu"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:id="@+id/btn_main_profile"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/ai_history"
-                android:src="@android:drawable/ic_menu_sort_by_size" />
+                android:contentDescription="@string/profile"
+                android:src="@android:drawable/ic_menu_myplaces"
+                app:tint="@color/accent_green" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:fontFamily="monospace"
-                android:gravity="center_vertical"
                 android:text="@string/snip_ai"
                 android:textColor="@color/accent_green"
-                android:textSize="22sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
+            <ImageButton
                 android:id="@+id/btn_new_chat_toolbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/new_chat"
-                android:fontFamily="monospace"
-                android:paddingStart="8dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="8dp"
-                android:text="@string/new_chat"
-                android:textColor="@color/accent_cyan"
-                android:textSize="12sp" />
+                android:src="@android:drawable/ic_menu_add"
+                app:tint="@color/text_muted" />
 
-            <LinearLayout
+            <ImageButton
+                android:id="@+id/btn_ai_menu"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginHorizontal="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/ai_history"
+                android:src="@android:drawable/ic_menu_recent_history"
+                app:tint="@color/text_muted" />
+
+            <View
+                android:id="@+id/ai_online_dot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/dot_online" />
+
+            <TextView
+                android:id="@+id/ai_online_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingEnd="4dp">
-
-                <View
-                    android:id="@+id/ai_online_dot"
-                    android:layout_width="6dp"
-                    android:layout_height="6dp"
-                    android:layout_marginEnd="5dp"
-                    android:background="@drawable/dot_online" />
-
-                <TextView
-                    android:id="@+id/ai_online_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ai_status_online"
-                    android:textColor="@color/text_muted"
-                    android:textSize="10sp" />
-            </LinearLayout>
+                android:layout_marginStart="4dp"
+                android:text="@string/ai_status_online"
+                android:textColor="@color/text_muted"
+                android:textSize="10sp" />
         </LinearLayout>
 
-        <ScrollView
+        <!-- Flexible Chat Area -->
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/chat_scroll"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginBottom="12dp"
-            android:scrollbars="none">
+            android:clipToPadding="false"
+            android:padding="12dp"
+            app:layout_constraintBottom_toTopOf="@+id/ai_bottom_area"
+            app:layout_constraintTop_toBottomOf="@id/ai_toolbar_wrap">
 
             <LinearLayout
                 android:id="@+id/chat_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="8dp">
+                android:orientation="vertical">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/ai_greeting_wrap"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/bg_card"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/bg_input"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:fontFamily="monospace"
+                            android:text="@string/ai_agent_label"
+                            android:textColor="@color/accent_purple"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ai_greeting"
+                            android:textColor="@color/text_primary"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- Compact Bottom Area -->
+        <LinearLayout
+            android:id="@+id/ai_bottom_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg_primary"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:scrollbars="none">
 
                 <LinearLayout
-                    android:id="@+id/ai_greeting_wrap"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/bg_card"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                    android:orientation="horizontal">
 
-                    <TextView
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chip_tagalog"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:fontFamily="monospace"
-                        android:text="@string/ai_agent_label"
-                        android:textColor="@color/accent_purple"
-                        android:textSize="11sp" />
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="6dp"
+                        android:backgroundTint="@color/bg_card"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="@string/explain_tagalog"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        app:cornerRadius="16dp"
+                        app:strokeColor="@color/bg_input"
+                        app:strokeWidth="1dp" />
 
-                    <TextView
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chip_kotlin"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/ai_greeting"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp" />
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="6dp"
+                        android:backgroundTint="@color/bg_card"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="@string/convert_kotlin"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        app:cornerRadius="16dp"
+                        app:strokeColor="@color/bg_input"
+                        app:strokeWidth="1dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chip_optimize"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="6dp"
+                        android:backgroundTint="@color/bg_card"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="@string/optimize_mobile"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        app:cornerRadius="16dp"
+                        app:strokeColor="@color/bg_input"
+                        app:strokeWidth="1dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chip_debug"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="6dp"
+                        android:backgroundTint="@color/bg_card"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="@string/find_bug"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        app:cornerRadius="16dp"
+                        app:strokeColor="@color/bg_input"
+                        app:strokeWidth="1dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/chip_errors"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:backgroundTint="@color/bg_card"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="@string/add_error_handling"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        app:cornerRadius="16dp"
+                        app:strokeColor="@color/bg_input"
+                        app:strokeWidth="1dp" />
                 </LinearLayout>
-            </LinearLayout>
-        </ScrollView>
+            </HorizontalScrollView>
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
 
-                <Button
-                    android:id="@+id/chip_tagalog"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_card"
-                    android:text="@string/explain_tagalog"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="11sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp">
 
-                <Button
-                    android:id="@+id/chip_kotlin"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_card"
-                    android:text="@string/convert_kotlin"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="11sp" />
+                    <EditText
+                        android:id="@+id/ai_input"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="@string/ai_input_hint"
+                        android:importantForAutofill="no"
+                        android:inputType="textMultiLine"
+                        android:maxLines="4"
+                        android:minHeight="44dp"
+                        android:paddingVertical="10dp"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp" />
 
-                <Button
-                    android:id="@+id/chip_optimize"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_card"
-                    android:text="@string/optimize_mobile"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="11sp" />
-
-                <Button
-                    android:id="@+id/chip_debug"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_card"
-                    android:text="@string/find_bug"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="11sp" />
-
-                <Button
-                    android:id="@+id/chip_errors"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:background="@drawable/bg_card"
-                    android:text="@string/add_error_handling"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="11sp" />
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/ai_input"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_search"
-                android:hint="@string/ai_input_hint"
-                android:importantForAutofill="no"
-                android:inputType="textMultiLine"
-                android:maxLines="4"
-                android:minLines="1"
-                android:padding="12dp"
-                android:textColor="@color/text_primary"
-                android:textColorHint="@color/text_muted"
-                android:textSize="13sp" />
-
-            <Button
-                android:id="@+id/btn_send"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="@drawable/bg_button_green"
-                android:padding="0dp"
-                android:text="➤"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_send"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:padding="0dp"
+                        app:backgroundTint="@color/accent_green"
+                        app:cornerRadius="18dp"
+                        app:icon="@android:drawable/ic_menu_send"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconSize="18dp"
+                        app:iconTint="@color/black" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Side Drawer -->
     <LinearLayout
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:background="@color/bg_secondary"
+        android:clickable="true"
+        android:focusable="true"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="16dp"
             android:fontFamily="monospace"
             android:text="@string/ai_history"
             android:textColor="@color/accent_green"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_new_ai_chat"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/bg_tag"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
             android:text="@string/new_chat"
+            android:textAllCaps="false"
             android:textColor="@color/accent_green"
-            android:textSize="12sp" />
+            app:cornerRadius="8dp"
+            app:strokeColor="@color/accent_green" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ai_history_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            tools:listitem="@android:layout/simple_list_item_1" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_clear_ai_history"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_card"
+            android:layout_marginTop="12dp"
             android:text="@string/clear_all_history"
+            android:textAllCaps="false"
             android:textColor="@color/accent_red" />
     </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

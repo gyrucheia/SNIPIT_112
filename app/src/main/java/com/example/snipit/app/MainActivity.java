@@ -5,6 +5,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -32,8 +33,16 @@ public class MainActivity extends AppCompatActivity {
     private int pendingBeamSnipId = -1;
     private int currentTab = 0;
 
+    public void openMainDrawer() {
+        androidx.drawerlayout.widget.DrawerLayout drawer = findViewById(R.id.main_drawer_layout);
+        if (drawer != null) drawer.openDrawer(androidx.core.view.GravityCompat.START);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // FORCE DARK MODE
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        
         super.onCreate(savedInstanceState);
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivity(new android.content.Intent(this, LoginActivity.class));
@@ -42,11 +51,14 @@ public class MainActivity extends AppCompatActivity {
         }
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        
+        // Handle Sidebar Swipe/Click
+        androidx.drawerlayout.widget.DrawerLayout drawer = findViewById(R.id.main_drawer_layout);
+        
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_drawer_layout), (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
-            int bottom = Math.max(bars.bottom, ime.bottom);
-            v.setPadding(bars.left, bars.top, bars.right, bottom);
+            // Only apply top padding to keep header below status bar
+            v.setPadding(0, bars.top, 0, 0);
             return insets;
         });
 
@@ -108,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         switchTab(2);
     }
 
-    void switchTab(int index) {
+    public void switchTab(int index) {
         currentTab = index;
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
