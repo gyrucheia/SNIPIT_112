@@ -18,15 +18,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SnipIT">
 
+        <!-- STEP 1: Set TutorialActivity as the starting point -->
         <activity
-            android:name=".auth.LoginActivity"
+            android:name=".TutorialActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- STEP 2: Make LoginActivity normal (not launcher) -->
+        <activity
+            android:name=".auth.LoginActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".auth.SignupActivity"

@@ -1,5 +1,7 @@
 package com.example.snipit.app;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -38,26 +40,35 @@ public class MainActivity extends AppCompatActivity {
         if (drawer != null) drawer.openDrawer(androidx.core.view.GravityCompat.START);
     }
 
+    // may dinagdag me
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // FORCE DARK MODE
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        
+        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
+
         super.onCreate(savedInstanceState);
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            startActivity(new android.content.Intent(this, LoginActivity.class));
+
+        android.content.SharedPreferences pref = getSharedPreferences("prefs", MODE_PRIVATE);
+        boolean isTutorialDone = pref.getBoolean("tutorial_done", false);
+
+        if (!isTutorialDone) {
+            startActivity(new android.content.Intent(this, TutorialActivity.class));
             finish();
             return;
         }
+
+        if (com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser() == null) {
+            startActivity(new android.content.Intent(this, com.example.snipit.app.auth.LoginActivity.class));
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        
-        // Handle Sidebar Swipe/Click
+
         androidx.drawerlayout.widget.DrawerLayout drawer = findViewById(R.id.main_drawer_layout);
         
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_drawer_layout), (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            // Only apply top padding to keep header below status bar
             v.setPadding(0, bars.top, 0, 0);
             return insets;
         });
