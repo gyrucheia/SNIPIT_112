@@ -21,6 +21,7 @@ import com.example.snipit.app.ui.SnapFragment;
 import com.example.snipit.app.ui.VaultFragment;
 import com.example.snipit.app.ui.XPFragment;
 import com.example.snipit.app.util.BadgeTracker;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
@@ -65,6 +66,23 @@ public class MainActivity extends AppCompatActivity {
         SnipRepository repo = new SnipRepository(getApplication());
         repo.seedIfEmpty();
 
+        try {
+            // Sync XP from Firebase for cross-platform parity
+            com.example.snipit.app.util.XpManager.syncFromFirebase(this);
+            
+            // Sync Vault with Firebase (with small delay to ensure Room is ready)
+            final SnipRepository fRepo = repo;
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                try {
+                    fRepo.sync(null);
+                } catch (Exception e) {
+                    android.util.Log.e("MainActivity", "Delayed sync failed", e);
+                }
+            }, 1000);
+        } catch (Exception e) {
+            android.util.Log.e("MainActivity", "Sync startup failed", e);
+        }
+
         if (getIntent() != null && getIntent().hasExtra(EXTRA_BEAM_SNIP_ID)) {
             pendingBeamSnipId = getIntent().getIntExtra(EXTRA_BEAM_SNIP_ID, -1);
         }
@@ -99,6 +117,22 @@ public class MainActivity extends AppCompatActivity {
             if (fm.findFragmentByTag(FRAGMENT_TAGS[currentTab]) == null) {
                 switchTab(currentTab);
             }
+        }
+        
+        checkFirstLaunch();
+    }
+
+    private void checkFirstLaunch() {
+        android.content.SharedPreferences prefs = getSharedPreferences("snipit_prefs", MODE_PRIVATE);
+        if (prefs.getBoolean("first_launch", true)) {
+            new MaterialAlertDialogBuilder(this)
+                .setTitle("Welcome to SnipIT ⚡")
+                .setMessage("Your ultimate developer companion. Capture code with Snap, manage your Vault, and fix bugs with Snip-AI.\n\nReady to beam some code?")
+                .setPositiveButton("Let's Go!", (d, w) -> {
+                    prefs.edit().putBoolean("first_launch", false).apply();
+                })
+                .setCancelable(false)
+                .show();
         }
     }
 

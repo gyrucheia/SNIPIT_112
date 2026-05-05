@@ -207,8 +207,21 @@
                 android:layout_marginBottom="8dp"/>
 
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Scan with laptop camera"
-                android:textSize="12sp" android:textColor="@color/text_muted"/>
+                android:text="Scan PC QR to Transfer"
+                android:textSize="12sp" android:textColor="@color/text_primary"
+                android:layout_marginBottom="12dp"/>
+
+            <Button android:id="@+id/btn_scan_pc"
+                android:layout_width="160dp" android:layout_height="44dp"
+                android:text="📷 Scan PC"
+                android:background="@drawable/bg_button_green"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="OR show this QR to your laptop camera"
+                android:textSize="10sp" android:textColor="@color/text_muted"/>
         </LinearLayout>
 
         </LinearLayout>

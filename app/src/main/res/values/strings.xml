@@ -88,7 +88,13 @@
     <string name="badge_snap_hunter_desc">Save snippets that came from Snap-to-Snip (OCR) to the Vault — real-world captures count.</string>
     <string name="badge_streak_title">7-Day Streak</string>
     <string name="badge_streak_desc">Open SnipIT on consecutive days and do at least one action (save, beam, chat, snap). Opening the app counts toward your streak.</string>
-    <string name="xp_level_code_wizard">Code Wizard</string>
+    <string name="rank_1">Novice</string>
+    <string name="rank_2">Syntax Learner</string>
+    <string name="rank_3">Code Scout</string>
+    <string name="rank_4">Snippet Master</string>
+    <string name="rank_5">Logic Architect</string>
+    <string name="rank_6">Syntax Wizard</string>
+    <string name="rank_7">Code Deity</string>
     <string name="xp_level_line">Lv %1$d — %2$s</string>
     <string name="xp_how_title">HOW TO EARN XP</string>
     <string name="xp_earn_save">Save a snippet</string>
@@ -107,7 +113,7 @@
     <string name="qr_need_code">Add some code before generating a QR.</string>
     <string name="qr_too_long">Code is too long for a single QR. Share a shorter snippet or split it.</string>
     <string name="qr_scan_title">Scan QR code</string>
-    <string name="qr_scan_hint">Pick a screenshot or photo that contains a QR — we decode it and open New Snip with the text.</string>
+    <string name="qr_scan_hint">Point your camera at a SnipIT QR code or pick a screenshot from your gallery.</string>
     <string name="qr_pick_image">Choose image</string>
     <string name="qr_no_barcode">No QR found in that image.</string>
     <string name="delete_snip">Delete</string>

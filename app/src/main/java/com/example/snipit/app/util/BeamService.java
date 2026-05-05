@@ -22,19 +22,26 @@ public class BeamService {
 
     public void uploadPin(
             String pin, String snippetCode, String snippetTitle, String language) {
-        if (pin == null || pin.length() != 6) return;
+        uploadToSession(pin, snippetCode, snippetTitle, language, true);
+    }
+
+    public void uploadToSession(
+            String sessionId, String snippetCode, String snippetTitle, String language, boolean autoDelete) {
+        if (sessionId == null || sessionId.isEmpty()) return;
         Map<String, Object> data = new HashMap<>();
         data.put("code", snippetCode != null ? snippetCode : "");
         data.put("title", snippetTitle != null ? snippetTitle : "");
         data.put("language", language != null ? language : "");
         data.put("expires_at", System.currentTimeMillis() + TTL_MS);
 
-        db.child(pin).setValue(data);
-        main.postDelayed(() -> db.child(pin).removeValue(), TTL_MS);
+        db.child(sessionId).setValue(data);
+        if (autoDelete) {
+            main.postDelayed(() -> db.child(sessionId).removeValue(), TTL_MS);
+        }
     }
 
     public void deletePin(String pin) {
-        if (pin == null || pin.length() != 6) return;
+        if (pin == null || pin.isEmpty()) return;
         db.child(pin).removeValue();
     }
 }

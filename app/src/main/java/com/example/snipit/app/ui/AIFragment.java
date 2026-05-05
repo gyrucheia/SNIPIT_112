@@ -247,27 +247,58 @@ public class AIFragment extends Fragment {
     }
 
     private void performAiAnalysis(long sessionId, String msg) {
+        // Local Greeting check (like web)
+        String m = msg.toLowerCase();
+        if (m.equals("hi") || m.equals("hello") || m.equals("huy")) {
+            removeTypingIndicator();
+            String reply = "Hi! I'm Snip-AI. How can I help you with your code today? ⚡";
+            addBubble(reply, false);
+            chatRepo.saveAssistantMessage(sessionId, reply, null);
+            return;
+        }
+
         chatRepo.saveUserMessage(sessionId, msg, () -> {
-            // Use the direct AI service instead of the local Python server
-            aiModel.analyzeCode(msg, new GitHubModelService.AiCallback() {
-                @Override
-                public void onResponse(String fixedCode, String explanation) {
-                    if (!isAdded()) return;
-                    removeTypingIndicator();
-                    
-                    String reply = fixedCode + "\n\n" + explanation;
-                    addBubble(reply, false);
-                    addAssistantActionsRow(fixedCode);
-                    chatScroll.post(() -> chatScroll.fullScroll(View.FOCUS_DOWN));
-                    chatRepo.saveAssistantMessage(sessionId, reply, null);
+            // Get last 4 messages for context (context window)
+            chatRepo.loadMessages(sessionId, messages -> {
+                org.json.JSONArray history = new org.json.JSONArray();
+                try {
+                    // Collect up to 5 previous messages for context
+                    int start = Math.max(0, messages.size() - 6);
+                    for (int i = start; i < messages.size() - 1; i++) {
+                        AiChatMessage old = messages.get(i);
+                        history.put(new org.json.JSONObject()
+                                .put("role", old.role)
+                                .put("content", old.body));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
-                @Override
-                public void onError(String error) {
-                    if (!isAdded()) return;
-                    removeTypingIndicator();
-                    addBubble("AI Error: " + error, false);
-                }
+                aiModel.analyzeCode(msg, history, new GitHubModelService.AiCallback() {
+                    @Override
+                    public void onResponse(String fixedCode, String explanation) {
+                        if (!isAdded()) return;
+                        removeTypingIndicator();
+
+                        String reply = (fixedCode != null && !fixedCode.isEmpty()) 
+                            ? fixedCode + "\n\n" + explanation 
+                            : explanation;
+                        
+                        addBubble(reply, false);
+                        if (fixedCode != null && !fixedCode.isEmpty()) {
+                            addAssistantActionsRow(fixedCode);
+                        }
+                        chatScroll.post(() -> chatScroll.fullScroll(View.FOCUS_DOWN));
+                        chatRepo.saveAssistantMessage(sessionId, reply, null);
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        if (!isAdded()) return;
+                        removeTypingIndicator();
+                        addBubble("AI Error: " + error, false);
+                    }
+                });
             });
         });
     }

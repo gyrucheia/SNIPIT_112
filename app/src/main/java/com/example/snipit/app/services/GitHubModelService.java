@@ -47,8 +47,8 @@ public class GitHubModelService {
     private final ExecutorService exec = Executors.newSingleThreadExecutor();
     private final Handler main = new Handler(Looper.getMainLooper());
 
-    public void analyzeCode(String userMessage, AiCallback aiCb) {
-        sendMessage(userMessage, new Callback() {
+    public void analyzeCode(String userMessage, JSONArray history, AiCallback aiCb) {
+        sendMessage(userMessage, history, new Callback() {
             @Override
             public void onResult(String result) {
                 if (result.contains("```")) {
@@ -79,7 +79,7 @@ public class GitHubModelService {
                         + "\n\n---\n"
                         + (code != null ? code : "")
                         + "\n---";
-        sendMessage(prompt, cb);
+        sendMessage(prompt, null, cb);
     }
 
     /** Post-process noisy OCR into cleaner code. */
@@ -93,18 +93,18 @@ public class GitHubModelService {
                         + "\n\n---\n"
                         + (rawOcr != null ? rawOcr : "")
                         + "\n---";
-        sendMessage(prompt, cb);
+        sendMessage(prompt, null, cb);
     }
 
     public void sendMessage(String userMessage, Callback cb) {
+        sendMessage(userMessage, null, cb);
+    }
+
+    public void sendMessage(String userMessage, JSONArray history, Callback cb) {
         String apiKey = BuildConfig.OPENROUTER_API_KEY;
 
         if (TextUtils.isEmpty(apiKey)) {
-            main.post(
-                    () ->
-                            cb.onError(
-                                    "Missing OPENROUTER_API_KEY in local.properties "
-                                            + "(use your GitHub Models PAT with \"models\" scope as this value)."));
+            main.post(() -> cb.onError("Missing OPENROUTER_API_KEY"));
             return;
         }
 
@@ -115,20 +115,22 @@ public class GitHubModelService {
 
                 JSONArray messages = new JSONArray();
                 messages.put(new JSONObject().put("role", "system").put("content", SNIPIT_SYSTEM_PROMPT));
+                
+                if (history != null) {
+                    for (int i = 0; i < history.length(); i++) {
+                        messages.put(history.get(i));
+                    }
+                }
+                
                 messages.put(new JSONObject().put("role", "user").put("content", userMessage));
-
                 jsonBody.put("messages", messages);
 
-                Request request =
-                        new Request.Builder()
-                                .url(ENDPOINT)
-                                .post(
-                                        RequestBody.create(
-                                                jsonBody.toString(), MediaType.get("application/json")))
-                                .addHeader("Accept", "application/vnd.github+json")
-                                .addHeader("Authorization", "Bearer " + apiKey)
-                                .addHeader("X-GitHub-Api-Version", GITHUB_API_VERSION)
-                                .build();
+                Request request = new Request.Builder()
+                        .url(ENDPOINT)
+                        .post(RequestBody.create(jsonBody.toString(), MediaType.get("application/json")))
+                        .addHeader("Authorization", "Bearer " + apiKey)
+                        .addHeader("X-GitHub-Api-Version", GITHUB_API_VERSION)
+                        .build();
 
                 try (Response resp = client.newCall(request).execute()) {
                     String respBody = resp.body() != null ? resp.body().string() : "";
@@ -136,11 +138,8 @@ public class GitHubModelService {
                         main.post(() -> cb.onError("Error " + resp.code() + ": " + respBody));
                         return;
                     }
-
                     JSONObject json = new JSONObject(respBody);
-                    JSONArray choices = json.getJSONArray("choices");
-                    String content = choices.getJSONObject(0).getJSONObject("message").getString("content");
-                    
+                    String content = json.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
                     main.post(() -> cb.onResult(content.trim()));
                 }
             } catch (Exception e) {

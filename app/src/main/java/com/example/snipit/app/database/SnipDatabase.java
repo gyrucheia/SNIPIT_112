@@ -10,7 +10,7 @@ import com.example.snipit.app.models.Snip;
 
 @Database(
         entities = {Snip.class, AiChatSession.class, AiChatMessage.class},
-        version = 2,
+        version = 3,
         exportSchema = false)
 public abstract class SnipDatabase extends RoomDatabase {
 

@@ -1,0 +1,27 @@
+# Ignore sensitive data and local build files
+node_modules/
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+
+# Build outputs
+dist/
+build/
+*.bundle.js
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local development
+localhost/
+temp/
+.cache/
+
+# Don't accidentally commit this if you add secrets
+firebase-config.*.js
+!firebase-config.js  # This file will have public config for Netlify

@@ -1,35 +1,64 @@
 package com.example.snipit.app;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.io.IOException;
-import java.io.InputStream;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageProxy;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class QrScanActivity extends AppCompatActivity {
+
+    private static final String TAG = "QrScanActivity";
+    private ExecutorService cameraExecutor;
+    private PreviewView viewFinder;
+    private boolean isScanning = true;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    startCamera();
+                } else {
+                    Toast.makeText(this, "Camera permission required for live scanning", Toast.LENGTH_LONG).show();
+                }
+            });
 
     private final ActivityResultLauncher<String> pickImage =
             registerForActivityResult(
                     new ActivityResultContracts.GetContent(),
                     uri -> {
                         if (uri != null) {
-                            decodeQr(uri);
+                            decodeQrFromUri(uri);
                         }
                     });
 
@@ -44,90 +73,111 @@ public class QrScanActivity extends AppCompatActivity {
             return insets;
         });
 
+        viewFinder = findViewById(R.id.viewFinder);
+        cameraExecutor = Executors.newSingleThreadExecutor();
+
         TextView back = findViewById(R.id.btn_back);
         back.setOnClickListener(v -> finish());
 
         Button pick = findViewById(R.id.btn_pick);
         pick.setOnClickListener(v -> pickImage.launch("image/*"));
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            startCamera();
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
     }
 
-    private void decodeQr(Uri uri) {
-        Bitmap bitmap = null;
+    private void startCamera() {
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(this);
+
+        cameraProviderFuture.addListener(() -> {
+            try {
+                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+
+                Preview preview = new Preview.Builder().build();
+                preview.setSurfaceProvider(viewFinder.getSurfaceProvider());
+
+                ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build();
+
+                imageAnalysis.setAnalyzer(cameraExecutor, image -> {
+                    if (isScanning) {
+                        processImageProxy(image);
+                    } else {
+                        image.close();
+                    }
+                });
+
+                CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+
+                cameraProvider.unbindAll();
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis);
+
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e(TAG, "Use case binding failed", e);
+            }
+        }, ContextCompat.getMainExecutor(this));
+    }
+
+    @androidx.annotation.OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)
+    private void processImageProxy(ImageProxy imageProxy) {
+        if (imageProxy.getImage() == null) {
+            imageProxy.close();
+            return;
+        }
+
+        InputImage image = InputImage.fromMediaImage(imageProxy.getImage(), imageProxy.getImageInfo().getRotationDegrees());
+        BarcodeScanning.getClient().process(image)
+                .addOnSuccessListener(barcodes -> {
+                    String text = firstQrPayload(barcodes);
+                    if (text != null && !text.isEmpty()) {
+                        isScanning = false;
+                        handleResult(text);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Barcode scanning failed", e))
+                .addOnCompleteListener(task -> imageProxy.close());
+    }
+
+    private void handleResult(String text) {
+        if (getIntent().getBooleanExtra("result_only", false)) {
+            Intent result = new Intent();
+            result.putExtra("scanned_text", text);
+            setResult(RESULT_OK, result);
+            finish();
+            return;
+        }
+
+        Intent i = new Intent(this, NewSnipActivity.class);
+        i.putExtra(NewSnipActivity.EXTRA_PREFILL_TITLE, "From QR");
+        i.putExtra(NewSnipActivity.EXTRA_PREFILL_CODE, text);
+        startActivity(i);
+        finish();
+    }
+
+    private void decodeQrFromUri(Uri uri) {
         try {
-            bitmap = loadBitmapForBarcode(uri);
-            if (bitmap == null) {
-                Toast.makeText(this, R.string.qr_no_barcode, Toast.LENGTH_SHORT).show();
-                return;
-            }
+            InputStream is = getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            if (bitmap == null) return;
+
             InputImage image = InputImage.fromBitmap(bitmap, 0);
-            final Bitmap toRecycle = bitmap;
-            BarcodeScanning.getClient()
-                    .process(image)
-                    .addOnSuccessListener(
-                            barcodes -> {
-                                if (!toRecycle.isRecycled()) {
-                                    toRecycle.recycle();
-                                }
-                                String text = firstQrPayload(barcodes);
-                                if (text == null || text.isEmpty()) {
-                                    Toast.makeText(this, R.string.qr_no_barcode, Toast.LENGTH_SHORT)
-                                            .show();
-                                    return;
-                                }
-                                Intent i = new Intent(this, NewSnipActivity.class);
-                                i.putExtra(NewSnipActivity.EXTRA_PREFILL_TITLE, "From QR");
-                                i.putExtra(NewSnipActivity.EXTRA_PREFILL_CODE, text);
-                                startActivity(i);
-                                finish();
-                            })
-                    .addOnFailureListener(
-                            e -> {
-                                if (!toRecycle.isRecycled()) {
-                                    toRecycle.recycle();
-                                }
-                                Toast.makeText(
-                                                this,
-                                                e.getMessage() != null
-                                                        ? e.getMessage()
-                                                        : "Decode failed",
-                                                Toast.LENGTH_LONG)
-                                        .show();
-                            });
-        } catch (Exception e) {
-            if (bitmap != null && !bitmap.isRecycled()) {
-                bitmap.recycle();
-            }
-            Toast.makeText(
-                            this,
-                            e.getMessage() != null ? e.getMessage() : "Could not read image",
-                            Toast.LENGTH_LONG)
-                    .show();
-        }
-    }
-
-    /** Older vision-common builds omit {@code InputImage.fromUri}; decode and use {@link InputImage#fromBitmap}. */
-    private Bitmap loadBitmapForBarcode(Uri uri) throws IOException {
-        BitmapFactory.Options bounds = new BitmapFactory.Options();
-        bounds.inJustDecodeBounds = true;
-        try (InputStream is = getContentResolver().openInputStream(uri)) {
-            if (is == null) return null;
-            BitmapFactory.decodeStream(is, null, bounds);
-        }
-        int w = bounds.outWidth;
-        int h = bounds.outHeight;
-        if (w <= 0 || h <= 0) return null;
-
-        int maxDim = 2048;
-        int sample = 1;
-        while (w / sample > maxDim || h / sample > maxDim) {
-            sample *= 2;
-        }
-
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        opts.inSampleSize = sample;
-        try (InputStream is = getContentResolver().openInputStream(uri)) {
-            if (is == null) return null;
-            return BitmapFactory.decodeStream(is, null, opts);
+            BarcodeScanning.getClient().process(image)
+                    .addOnSuccessListener(barcodes -> {
+                        String text = firstQrPayload(barcodes);
+                        if (text != null && !text.isEmpty()) {
+                            handleResult(text);
+                        } else {
+                            Toast.makeText(this, R.string.qr_no_barcode, Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(this, "Scan failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        } catch (IOException e) {
+            Toast.makeText(this, "Could not read image", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -138,5 +188,11 @@ public class QrScanActivity extends AppCompatActivity {
             }
         }
         return null;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cameraExecutor.shutdown();
     }
 }

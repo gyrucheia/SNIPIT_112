@@ -99,6 +99,8 @@ public class VaultFragment extends Fragment implements SnipAdapter.Listener {
                 x -> startActivity(new Intent(requireContext(), NewSnipActivity.class)));
         }
 
+        repo.sync(null);
+
         repo.getAllSnips()
                 .observe(
                         getViewLifecycleOwner(),
@@ -217,7 +219,9 @@ public class VaultFragment extends Fragment implements SnipAdapter.Listener {
 
     @Override
     public void onBeam(Snip snip) {
-        // Implement beam logic if needed
+        if (getActivity() instanceof com.example.snipit.app.MainActivity) {
+            ((com.example.snipit.app.MainActivity) getActivity()).openBeamForSnip(snip.id);
+        }
     }
 
     @Override

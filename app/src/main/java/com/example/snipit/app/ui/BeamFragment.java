@@ -58,6 +58,22 @@ public class BeamFragment extends Fragment {
     private TextView beamEmptyState;
     private View btnNewPin;
     private View btnCopyPin;
+    private View btnScanPc;
+
+    private final androidx.activity.result.ActivityResultLauncher<android.content.Intent> scanLauncher =
+            registerForActivityResult(
+                    new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
+                            String scanned = result.getData().getStringExtra("scanned_text");
+                            if (scanned != null && scanned.startsWith("snipit://beam/")) {
+                                String sessionId = scanned.substring("snipit://beam/".length());
+                                beamToSession(sessionId);
+                            } else {
+                                Toast.makeText(requireContext(), "Invalid QR for Beam", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
 
     @Nullable
     @Override
@@ -107,6 +123,12 @@ public class BeamFragment extends Fragment {
 
         v.findViewById(R.id.btn_new_pin).setOnClickListener(x -> regeneratePinAndTimer());
         v.findViewById(R.id.btn_copy_pin).setOnClickListener(x -> copyPin());
+        btnScanPc = v.findViewById(R.id.btn_scan_pc);
+        btnScanPc.setOnClickListener(x -> {
+            android.content.Intent i = new android.content.Intent(requireContext(), com.example.snipit.app.QrScanActivity.class);
+            i.putExtra("result_only", true);
+            scanLauncher.launch(i);
+        });
 
         int snipId = -1;
         Bundle args = getArguments();
@@ -162,7 +184,22 @@ public class BeamFragment extends Fragment {
         title.setText(s.title != null ? s.title : "(untitled)");
         lang.setText(s.language != null ? s.language : "—");
         code.setText(s.code != null ? s.code : "");
+        if (btnScanPc != null) btnScanPc.setEnabled(true);
         buildQr();
+    }
+
+    private void beamToSession(String sessionId) {
+        if (current == null) return;
+        beamService.uploadToSession(
+                sessionId,
+                current.code != null ? current.code : "",
+                current.title != null ? current.title : "",
+                current.language != null ? current.language : "",
+                false // Don't auto-delete session ID beams immediately, keep for receiver
+        );
+        Toast.makeText(requireContext(), "📡 Beaming to PC...", Toast.LENGTH_SHORT).show();
+        XpManager.addXp(requireContext(), 10);
+        BadgeTracker.recordBeamSession(requireContext());
     }
 
     private void showMode(boolean pin) {

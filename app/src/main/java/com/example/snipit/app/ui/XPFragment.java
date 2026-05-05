@@ -116,6 +116,7 @@ public class XPFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        XpManager.syncFromFirebase(requireContext());
         View v = getView();
         if (v != null) refresh(v);
     }
@@ -147,9 +148,9 @@ public class XPFragment extends Fragment {
     }
 
     private void refresh(View v) {
-        int xp = XpManager.getXp(requireContext());
-        int level = XpManager.levelFromXp(xp);
-        int prog = XpManager.progressInLevel(xp);
+        int totalXp = XpManager.getTotalXp(requireContext());
+        int level = XpManager.levelFromXp(totalXp);
+        int prog = XpManager.progressInLevel(totalXp);
 
         TextView lvl = v.findViewById(R.id.xp_level);
         ProgressBar bar = v.findViewById(R.id.xp_bar);
@@ -159,16 +160,15 @@ public class XPFragment extends Fragment {
                 getString(
                         R.string.xp_level_line,
                         level,
-                        getString(R.string.xp_level_code_wizard)));
+                        XpManager.getLevelName(requireContext(), level)));
         bar.setProgress(prog);
-        int next = 100 - prog;
+        int appXp = XpManager.getAppXp(requireContext());
+        int webXp = XpManager.getWebXp(requireContext());
+        
         detail.setText(
-                xp
-                        + " XP · "
-                        + prog
-                        + "/100 in this level · "
-                        + next
-                        + " XP to next level");
+                "Total: " + totalXp + " XP\n" +
+                "(App: " + appXp + " · Web: " + webXp + ")\n" +
+                prog + "% in level · " + (XpManager.getNextLevelXp(level) - totalXp) + " XP to next");
 
         LinearLayout bSnip = v.findViewById(R.id.badge_snip);
         LinearLayout bBeam = v.findViewById(R.id.badge_beam);

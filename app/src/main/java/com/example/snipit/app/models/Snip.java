@@ -16,6 +16,7 @@ public class Snip {
     public long dateCreated;
     public int usageCount;
     public boolean isPinned;
+    public String remoteId;
 
     public Snip() {
         this.dateCreated = System.currentTimeMillis();

@@ -1,0 +1,43 @@
+function loadVault() {
+  const allSnippets = LocalStorage.getSnippets();
+  let filteredSnippets = [...allSnippets];
+  
+  const vaultList = document.getElementById('vault-list');
+  const dashList = document.getElementById('dashboard-recent-list');
+  const searchIn = document.getElementById('vault-search-in');
+  const langSel = document.getElementById('vault-lang-sel');
+  
+  if (searchIn && langSel) {
+    const q = searchIn.value.toLowerCase();
+    const lang = langSel.value.toLowerCase();
+    filteredSnippets = allSnippets.filter(s => {
+      const matchSearch = s.title.toLowerCase().includes(q) || 
+                          s.code.toLowerCase().includes(q) || 
+                          (s.tags && s.tags.toLowerCase().includes(q));
+      const matchLang = lang === 'all' || s.language.toLowerCase() === lang;
+      return matchSearch && matchLang;
+    });
+  }
+
+  // Update Vault Page
+  if (vaultList) {
+    if (filteredSnippets.length === 0) {
+      vaultList.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t4);font-family:var(--mono);font-size:12px">No snippets found matching your filters.</div>';
+    } else {
+      vaultList.innerHTML = filteredSnippets.map(s => renderSnippet(s)).join('');
+    }
+  }
+
+  // Update Dashboard Recent List (Always use all snippets, but limit to 3)
+  if (dashList) {
+    const recent = allSnippets.slice(-3).reverse();
+    if (recent.length === 0) {
+      dashList.innerHTML = `<div style="text-align:center; padding:40px 0; color:var(--t4)"><div style="font-size:32px; margin-bottom:10px; opacity:0.3">⎗</div><div style="font-family:var(--mono); font-size:11px">Your recent activity will appear here.</div></div>`;
+    } else {
+      dashList.innerHTML = recent.map(s => renderSnippet(s)).join('');
+    }
+  }
+
+  // Update Global Stats (XP, Rank, Counts)
+  updateXPUI();
+}

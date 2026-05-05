@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SnipIT — Web Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg0:#07080d;--bg1:#0d0f17;--bg2:#131520;--bg3:#191c2a;--bg4:#1f2235;
+  --g:#00ffaa;--g2:#00cc88;--p:#9d7dff;--p2:#7c5de8;--c:#1de9ff;--y:#ffcc00;--r:#ff5566;--pk:#ff6eb4;
+  --t1:#eef2ff;--t2:#8892b0;--t3:#4a5270;--t4:#2a2f47;
+  --bd:#ffffff0a;--bd2:#ffffff14;--bd3:#ffffff22;--bd4:#ffffff35;
+  --mono:'JetBrains Mono',monospace;--ui:'Syne',sans-serif;
+  --sidebar:240px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg0);color:var(--t1);font-family:var(--ui);font-size:14px;display:flex}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bd3);border-radius:2px}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);min-width:var(--sidebar);background:var(--bg1);border-right:0.5px solid var(--bd2);display:flex;flex-direction:column;height:100vh;position:relative;z-index:10}
+.sidebar-logo{padding:24px 20px 20px;border-bottom:0.5px solid var(--bd2)}
+.logo-text{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--g);letter-spacing:-1px}
+.logo-text em{color:var(--t3);font-style:normal}
+.logo-sub{font-size:10px;color:var(--t3);margin-top:3px;letter-spacing:1px}
+
+.user-card{margin:14px 12px;background:var(--bg2);border:0.5px solid var(--bd2);border-radius:12px;padding:12px;cursor:pointer;transition:border-color .2s}
+.user-card:hover{border-color:var(--bd4)}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--g));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#000;margin-bottom:8px}
+.user-name{font-size:13px;font-weight:600;color:var(--t1)}
+.user-handle{font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:1px}
+.user-xp{display:flex;align-items:center;gap:6px;margin-top:8px}
+.xp-bar-bg{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.xp-bar-fill{height:100%;background:var(--y);border-radius:2px;width:68%}
+.xp-label{font-family:var(--mono);font-size:9px;color:var(--y)}
+
+.nav-section{padding:8px 12px 4px;font-family:var(--mono);font-size:9px;color:var(--t4);letter-spacing:1.5px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:0 6px 2px;border-radius:8px;cursor:pointer;color:var(--t3);font-size:13px;font-weight:500;transition:all .18s;position:relative}
+.nav-item:hover{background:var(--bg2);color:var(--t1)}
+.nav-item.active{background:var(--g)12;color:var(--g)}
+.nav-item.active::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--g);border-radius:0 2px 2px 0}
+.nav-icon{font-size:15px;width:20px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--r)20;color:var(--r);font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:10px}
+
+.sidebar-bottom{margin-top:auto;padding:12px;border-top:0.5px solid var(--bd2)}
+.connection-card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:10px;padding:10px 12px}
+.conn-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.conn-label{font-family:var(--mono);font-size:9px;color:var(--t4);letter-spacing:1px}
+.conn-ip{font-family:var(--mono);font-size:11px;color:var(--c)}
+.conn-status{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t3)}
+.conn-dot{width:6px;height:6px;border-radius:50%;animation:pulse 2s infinite}
+.conn-dot.online{background:var(--g)}
+.conn-dot.offline{background:var(--r);animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:56px;background:var(--bg1);border-bottom:0.5px solid var(--bd2);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0}
+.topbar-title{font-size:16px;font-weight:700;color:var(--t1)}
+.topbar-sub{font-family:var(--mono);font-size:11px;color:var(--t3)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.topbar-status{display:flex;align-items:center;gap:6px;background:var(--bg2);border:0.5px solid var(--bd2);border-radius:20px;padding:5px 12px;font-family:var(--mono);font-size:10px}
+.topbar-btn{background:var(--bg2);border:0.5px solid var(--bd2);border-radius:8px;padding:7px 14px;font-size:12px;font-family:var(--ui);color:var(--t2);cursor:pointer;transition:all .18s}
+.topbar-btn:hover{border-color:var(--g);color:var(--g)}
+.topbar-btn.primary{background:var(--g)20;border-color:var(--g)50;color:var(--g);font-weight:600}
+
+.content{flex:1;overflow-y:auto;padding:24px}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block}
+
+/* CARDS */
+.card{background:var(--bg1);border:0.5px solid var(--bd2);border-radius:14px;padding:20px}
+.card-sm{background:var(--bg1);border:0.5px solid var(--bd2);border-radius:12px;padding:14px}
+.card-title{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:12px}
+
+/* GRID LAYOUTS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid-beam{display:grid;grid-template-columns:1.6fr 1fr;gap:18px}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--bg1);border:0.5px solid var(--bd2);border-radius:12px;padding:14px}
+.stat-n{font-family:var(--mono);font-size:22px;font-weight:700;margin-bottom:3px}
+.stat-l{font-size:11px;color:var(--t3)}
+.stat-d{font-family:var(--mono);font-size:10px;margin-top:6px}
+
+/* SNIP CARDS */
+.snip-list{display:flex;flex-direction:column;gap:10px}
+.snip-card{background:var(--bg1);border:0.5px solid var(--bd);border-radius:12px;padding:14px;transition:border-color .18s;cursor:pointer}
+.snip-card:hover{border-color:var(--bd3)}
+.snip-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.snip-title{font-weight:600;font-size:13px;flex:1}
+.lang-badge{font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:10px}
+.snip-code{font-family:var(--mono);font-size:10px;background:var(--bg0);border-radius:8px;padding:10px;color:var(--t2);line-height:1.6;max-height:60px;overflow:hidden}
+.snip-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.snip-tags{font-family:var(--mono);font-size:9px;color:var(--t4)}
+.snip-actions{display:flex;gap:6px}
+.ic-btn{background:var(--bg2);border:0.5px solid var(--bd);border-radius:7px;padding:5px 9px;font-size:11px;cursor:pointer;color:var(--t2);transition:all .18s}
+.ic-btn:hover{border-color:var(--g);color:var(--g)}
+.ic-btn.beam:hover{border-color:var(--c);color:var(--c)}
+
+/* BEAM STATION */
+.beam-status-bar{display:flex;align-items:center;gap:12px;background:var(--bg2);border:0.5px solid var(--bd2);border-radius:12px;padding:12px 16px;margin-bottom:18px}
+.beam-pulse{width:10px;height:10px;border-radius:50%;background:var(--y);animation:pulse 1.5s infinite;flex-shrink:0}
+.beam-pulse.connected{background:var(--g)}
+.beam-status-txt{font-family:var(--mono);font-size:12px}
+.beam-status-txt span{color:var(--g)}
+
+.qr-container{display:flex;align-items:center;justify-content:center;background:white;border-radius:14px;width:160px;height:160px;flex-shrink:0;overflow:hidden;cursor:pointer;transition:transform .2s}
+.qr-container:hover{transform:scale(1.03)}
+
+.code-incoming{background:var(--bg0);border:0.5px solid var(--bd2);border-radius:12px;padding:16px;flex:1;min-height:180px;position:relative}
+.incoming-label{font-family:var(--mono);font-size:9px;color:var(--t4);letter-spacing:1.2px;margin-bottom:10px}
+.code-area{font-family:var(--mono);font-size:11px;color:var(--g);line-height:1.65;white-space:pre}
+
+.pin-display-row{display:flex;gap:8px;justify-content:center;margin:16px 0}
+.pin-box{width:46px;height:58px;background:var(--bg2);border:1.5px solid var(--g)50;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:26px;font-weight:700;color:var(--g);transition:all .25s}
+.pin-box.active{border-color:var(--g);background:var(--g)15;animation:pinGlow .5s ease}
+@keyframes pinGlow{0%{box-shadow:0 0 0 var(--g)}50%{box-shadow:0 0 16px var(--g)30}100%{box-shadow:0 0 0 var(--g)}}
+.pin-box.success{border-color:var(--g);background:var(--g)20;color:var(--g)}
+
+.numpad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;max-width:200px;margin:0 auto}
+.nk{background:var(--bg2);border:0.5px solid var(--bd2);border-radius:10px;padding:13px;text-align:center;font-family:var(--mono);font-size:16px;font-weight:500;cursor:pointer;transition:all .15s;user-select:none}
+.nk:hover{background:var(--bg3);border-color:var(--bd3)}
+.nk:active{background:var(--g)15;border-color:var(--g)50;transform:scale(.95)}
+.nk.del{color:var(--r)}
+
+.session-log{background:var(--bg0);border:0.5px solid var(--bd);border-radius:10px;height:200px;overflow-y:auto;padding:12px;font-family:var(--mono);font-size:11px}
+.log-line{padding:3px 0;border-bottom:0.5px solid var(--bd);color:var(--t3);display:flex;gap:10px}
+.log-line.ok{color:var(--g)}
+.log-line.err{color:var(--r)}
+.log-line.info{color:var(--c)}
+.log-ts{color:var(--t4);flex-shrink:0}
+
+/* AI PAGE */
+.ai-messages{display:flex;flex-direction:column;gap:10px;min-height:200px;margin-bottom:14px}
+.msg-bubble{padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.6;max-width:85%}
+.msg-user{background:var(--g)15;border:0.5px solid var(--g)30;margin-left:auto;border-bottom-right-radius:3px}
+.msg-ai{background:var(--bg2);border:0.5px solid var(--p)25;margin-right:auto;border-bottom-left-radius:3px}
+.msg-ai-label{font-family:var(--mono);font-size:9px;color:var(--p);margin-bottom:4px;letter-spacing:1px}
+.code-block-msg{background:var(--bg0);border-radius:8px;padding:10px;font-family:var(--mono);font-size:10px;color:var(--c);margin-top:6px;line-height:1.6}
+.ai-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.chip{background:var(--bg2);border:0.5px solid var(--bd2);border-radius:20px;padding:6px 12px;font-size:11px;cursor:pointer;transition:all .18s;color:var(--t2)}
+.chip:hover{border-color:var(--g);color:var(--g)}
+.ai-input-row{display:flex;gap:8px}
+.ai-textarea{flex:1;background:var(--bg2);border:0.5px solid var(--bd2);border-radius:10px;padding:10px 13px;color:var(--t1);font-family:var(--ui);font-size:13px;outline:none;resize:none}
+.ai-textarea:focus{border-color:var(--p)}
+.ai-send{background:var(--p);border:none;border-radius:10px;width:40px;height:40px;cursor:pointer;font-size:15px;color:#fff;transition:opacity .18s}
+.ai-send:hover{opacity:.85}
+.history-list{display:flex;flex-direction:column;gap:8px}
+.hist-row{background:var(--bg2);border:0.5px solid var(--bd);border-radius:10px;padding:10px 13px;cursor:pointer;transition:border-color .18s}
+.hist-row:hover{border-color:var(--p)50}
+.hist-q{font-size:12px;color:var(--t1);margin-bottom:3px}
+.hist-meta{font-family:var(--mono);font-size:9px;color:var(--t4)}
+
+/* XP PAGE */
+.badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.badge-card{background:var(--bg1);border:0.5px solid var(--bd);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:all .2s}
+.badge-card:hover{transform:translateY(-2px);border-color:var(--bd3)}
+.badge-card.earned{border-color:var(--y)40;background:var(--y)06}
+.badge-icon{font-size:24px;margin-bottom:6px}
+.badge-name{font-family:var(--mono);font-size:9px;color:var(--t3)}
+.badge-card.earned .badge-name{color:var(--y)}
+.streak-row{display:flex;gap:6px;margin-bottom:16px}
+.streak-day{flex:1;height:36px;background:var(--bg2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--t4);border:0.5px solid var(--bd)}
+.streak-day.done{background:var(--g)15;border-color:var(--g)40;color:var(--g)}
+.lang-bar{margin-bottom:10px}
+.lb-row{display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px}
+.lb-name{color:var(--t2)}
+.lb-count{font-family:var(--mono);font-size:10px;color:var(--t3)}
+.lb-track{background:var(--bg0);border-radius:3px;height:5px;overflow:hidden}
+.lb-fill{height:100%;border-radius:3px}
+
+/* PROFILE PAGE */
+.profile-hero{background:var(--bg1);border:0.5px solid var(--bd2);border-radius:16px;padding:28px;margin-bottom:18px;display:flex;align-items:center;gap:24px}
+.profile-avatar-lg{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--g));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:26px;color:#000;flex-shrink:0;border:2px solid var(--g)30}
+.profile-info{flex:1}
+.profile-name{font-size:20px;font-weight:700;margin-bottom:3px}
+.profile-username{font-family:var(--mono);font-size:12px;color:var(--t3);margin-bottom:8px}
+.profile-bio{font-size:12px;color:var(--t2);line-height:1.5}
+.profile-stats{display:flex;gap:24px;margin-top:12px}
+.ps{text-align:center}
+.ps-n{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--g)}
+.ps-l{font-size:10px;color:var(--t3);margin-top:2px}
+.edit-btn{background:var(--bg2);border:0.5px solid var(--bd2);border-radius:10px;padding:8px 16px;font-size:12px;color:var(--t1);cursor:pointer;transition:all .18s;margin-left:auto;align-self:flex-start}
+.edit-btn:hover{border-color:var(--g);color:var(--g)}
+
+.settings-section{margin-bottom:20px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:0.5px solid var(--bd)}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-size:13px;color:var(--t1)}
+.setting-desc{font-size:11px;color:var(--t3);margin-top:2px}
+.toggle{width:40px;height:22px;background:var(--bg3);border-radius:11px;cursor:pointer;position:relative;transition:background .2s;border:0.5px solid var(--bd2);flex-shrink:0}
+.toggle.on{background:var(--g)30;border-color:var(--g)50}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--t3);border-radius:50%;transition:all .2s}
+.toggle.on::after{left:21px;background:var(--g)}
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:8px}
+.theme-swatch{height:40px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .2s;position:relative;display:flex;align-items:flex-end;padding:4px}
+.theme-swatch.active{border-color:var(--g)}
+.theme-swatch-label{font-size:8px;font-family:var(--mono);color:rgba(255,255,255,.7)}
+.theme-swatch.locked::after{content:'🔒';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px}
+.theme-swatch.locked{opacity:.5;cursor:not-allowed}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:#000b;z-index:100;display:none;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg1);border:0.5px solid var(--bd3);border-radius:16px;padding:24px;width:440px;max-width:90vw;max-height:80vh;overflow-y:auto}
+.modal-title{font-family:var(--mono);font-size:14px;color:var(--g);margin-bottom:16px}
+.form-row{margin-bottom:12px}
+.form-label{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;display:block}
+.form-input{width:100%;background:var(--bg0);border:0.5px solid var(--bd2);border-radius:8px;padding:9px 12px;color:var(--t1);font-family:var(--ui);font-size:13px;outline:none}
+.form-input:focus{border-color:var(--g)}
+.form-textarea{width:100%;background:var(--bg0);border:0.5px solid var(--bd2);border-radius:8px;padding:9px 12px;color:var(--c);font-family:var(--mono);font-size:11px;outline:none;resize:none;min-height:80px;line-height:1.6}
+.form-textarea:focus{border-color:var(--g)}
+.form-btn{width:100%;background:var(--g);color:#000;font-weight:700;border:none;border-radius:10px;padding:11px;font-family:var(--ui);font-size:13px;cursor:pointer;transition:opacity .18s;margin-top:6px}
+.form-btn:hover{opacity:.88}
+.form-btn.cancel{background:var(--bg2);color:var(--t1);border:0.5px solid var(--bd2);margin-top:6px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg2);border:0.5px solid var(--g)40;color:var(--g);font-family:var(--mono);font-size:12px;padding:10px 18px;border-radius:20px;opacity:0;transition:all .25s;z-index:200;pointer-events:none}
+.toast.show{opacity:1}
+
+/* SECTION HEADER */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:15px;font-weight:700;color:var(--t1)}
+.section-action{font-family:var(--mono);font-size:10px;color:var(--g);cursor:pointer;background:var(--g)12;border:0.5px solid var(--g)30;border-radius:20px;padding:4px 12px}
+
+/* CODE SYNTAX */
+.kw{color:#c792ea}.fn{color:#82aaff}.st{color:#c3e88d}.cm{color:var(--t3)}.nm{color:#f78c6c}.op{color:var(--c)}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}.badge-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">Snip<em>IT</em></div>
+    <div class="logo-sub">Web Portal v2.0</div>
+  </div>
+
+  <div class="user-card" onclick="goPage('profile')">
+    <div class="user-avatar">LZ</div>
+    <div class="user-name">Lyzette</div>
+    <div class="user-handle">@lyzette.dev · Lv 7</div>
+    <div class="user-xp">
+      <div class="xp-bar-bg"><div class="xp-bar-fill"></div></div>
+      <span class="xp-label">340 XP</span>
+    </div>
+  </div>
+
+  <div class="nav-section">Main</div>
+  <div class="nav-item active" id="nav-dashboard" onclick="goPage('dashboard')">
+    <span class="nav-icon">◉</span> Dashboard
+  </div>
+  <div class="nav-item" id="nav-vault" onclick="goPage('vault')">
+    <span class="nav-icon">⊟</span> Vault
+    <span class="nav-badge">24</span>
+  </div>
+
+  <div class="nav-section">Tools</div>
+  <div class="nav-item" id="nav-beam" onclick="goPage('beam')">
+    <span class="nav-icon">📡</span> Beam Station
+  </div>
+  <div class="nav-item" id="nav-ai" onclick="goPage('ai')">
+    <span class="nav-icon">◈</span> Snip-AI
+  </div>
+
+  <div class="nav-section">Account</div>
+  <div class="nav-item" id="nav-xp" onclick="goPage('xp')">
+    <span class="nav-icon">⚡</span> Dev-XP
+  </div>
+  <div class="nav-item" id="nav-profile" onclick="goPage('profile')">
+    <span class="nav-icon">◎</span> Profile
+  </div>
+  <div class="nav-item" id="nav-settings" onclick="goPage('settings')">
+    <span class="nav-icon">⚙</span> Settings
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="connection-card">
+      <div class="conn-row">
+        <span class="conn-label">Local IP</span>
+        <span class="conn-ip">192.168.1.42</span>
+      </div>
+      <div class="conn-status">
+        <div class="conn-dot online"></div>
+        <span>Portal online · synced</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar" id="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-sub" id="topbar-sub">Welcome back, Lyzette</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-status" id="topbar-status">
+        <div class="conn-dot offline" id="beam-dot"></div>
+        <span id="beam-status-txt">No device paired</span>
+      </div>
+      <button class="topbar-btn" onclick="openModal('new-snip')">+ New Snip</button>
+      <button class="topbar-btn primary" onclick="goPage('beam')">📡 Beam Station</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-n" style="color:var(--g)">24</div>
+          <div class="stat-l">Snippets in Vault</div>
+          <div class="stat-d" style="color:var(--g)">+3 this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-n" style="color:var(--p)">7</div>
+          <div class="stat-l">Languages</div>
+          <div class="stat-d" style="color:var(--p)">Java, Kotlin, SQL...</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-n" style="color:var(--y)">340</div>
+          <div class="stat-l">XP Earned</div>
+          <div class="stat-d" style="color:var(--y)">Level 7 — Code Wizard</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-n" style="color:var(--c)">5</div>
+          <div class="stat-l">Beams this week</div>
+          <div class="stat-d" style="color:var(--c)">Last: 2h ago</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:18px">
+        <div class="card">
+          <div class="card-title">Recent Snippets</div>
+          <div class="snip-list">
+            <div class="snip-card" onclick="openModal('snip-detail')">
+              <div class="snip-header">
+                <span class="snip-title">Firebase Auth Init</span>
+                <span class="lang-badge" style="background:var(--p)20;color:var(--p);border:0.5px solid var(--p)40">Java</span>
+              </div>
+              <div class="snip-code"><span class="kw">FirebaseApp</span>.<span class="fn">initializeApp</span>(this);
+<span class="kw">FirebaseAuth</span> auth = <span class="fn">getInstance</span>();</div>
+              <div class="snip-foot">
+                <span class="snip-tags">#Java  #Firebase  #Backend</span>
+                <div class="snip-actions">
+                  <button class="ic-btn beam" onclick="event.stopPropagation();beamSnip('Firebase Auth Init')">📡</button>
+                  <button class="ic-btn" onclick="event.stopPropagation();toast('Copied!')">⎘</button>
+                </div>
+              </div>
+            </div>
+            <div class="snip-card">
+              <div class="snip-header">
+                <span class="snip-title">RecyclerView Adapter</span>
+                <span class="lang-badge" style="background:var(--c)20;color:var(--c);border:0.5px solid var(--c)40">Kotlin</span>
+              </div>
+              <div class="snip-code"><span class="kw">class</span> <span class="fn">SnipAdapter</span>(<span class="kw">private val</span> items: <span class="fn">List</span>&lt;Snip&gt;)</div>
+              <div class="snip-foot">
+                <span class="snip-tags">#Kotlin  #Android</span>
+                <div class="snip-actions">
+                  <button class="ic-btn beam" onclick="event.stopPropagation();beamSnip('RecyclerView Adapter')">📡</button>
+                  <button class="ic-btn" onclick="event.stopPropagation();toast('Copied!')">⎘</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">AI Chat History</div>
+          <div class="history-list">
+            <div class="hist-row" onclick="goPage('ai')">
+              <div class="hist-q">Optimize Firebase query for mobile</div>
+              <div class="hist-meta">Today 9:41 AM · 3 messages</div>
+            </div>
+            <div class="hist-row" onclick="goPage('ai')">
+              <div class="hist-q">Convert Java RecyclerView to Kotlin</div>
+              <div class="hist-meta">Yesterday 8:22 AM · 5 messages</div>
+            </div>
+            <div class="hist-row" onclick="goPage('ai')">
+              <div class="hist-q">Explain this Regex in Tagalog</div>
+              <div class="hist-meta">Mar 28 11:04 PM · 2 messages</div>
+            </div>
+            <div class="hist-row" onclick="goPage('ai')">
+              <div class="hist-q">Add error handling to Flask route</div>
+              <div class="hist-meta">Mar 28 7:15 PM · 4 messages</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Activity this week</div>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+            <div style="background:var(--g)30;border-radius:4px;width:100%;height:48px"></div>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--t4)">Mon</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+            <div style="background:var(--g)20;border-radius:4px;width:100%;height:32px"></div>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--t4)">Tue</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+            <div style="background:var(--g)40;border-radius:4px;width:100%;height:64px"></div>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--t4)">Wed</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+            <div style="background:var(--g)25;border-radius:4px;width:100%;height:40px"></div>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--t4)">Thu</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+            <div style="background:var(--g)50;border-radius:4px;width:100%;height:80px"></div>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--t4)">Fri</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+            <div style="background:var(--t4)30;border-radius:4px;width:100%;height:16px"></div>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--t4)">Sat</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+            <div style="background:var(--t4)15;border-radius:4px;width:100%;height:8px"></div>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--t4)">Sun</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VAULT -->
+    <div class="page" id="page-vault">
+      <div class="section-hdr">
+        <div>
+          <div class="section-title">Snippet Vault</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px">24 snippets · 7 languages · offline-ready</div>
+        </div>
+        <button class="section-action" onclick="openModal('new-snip')">+ New Snip</button>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:16px">
+        <div style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg1);border:0.5px solid var(--bd2);border-radius:10px;padding:9px 13px">
+          <span style="color:var(--t3);font-size:15px">⌕</span>
+          <input placeholder="Search snippets, tags, languages..." style="background:none;border:none;outline:none;color:var(--t1);font-family:var(--ui);font-size:13px;flex:1" />
+        </div>
+        <select style="background:var(--bg1);border:0.5px solid var(--bd2);border-radius:10px;padding:9px 13px;color:var(--t2);font-family:var(--mono);font-size:11px;outline:none">
+          <option>All Languages</option>
+          <option>Java</option><option>Kotlin</option><option>Python</option><option>SQL</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">
+        <span class="chip" style="background:var(--g)15;border-color:var(--g)40;color:var(--g)">#All</span>
+        <span class="chip">#Java</span><span class="chip">#Kotlin</span><span class="chip">#Firebase</span>
+        <span class="chip">#Network</span><span class="chip">#Python</span><span class="chip">#Backend</span>
+      </div>
+      <div class="snip-list">
+        <div class="snip-card" onclick="openModal('snip-detail')">
+          <div class="snip-header"><span class="snip-title">Firebase Auth Init</span><span class="lang-badge" style="background:var(--p)20;color:var(--p);border:0.5px solid var(--p)40">Java</span></div>
+          <div class="snip-code"><span class="kw">FirebaseApp</span>.<span class="fn">initializeApp</span>(this); <span class="kw">FirebaseAuth</span> auth = <span class="fn">getInstance</span>();</div>
+          <div class="snip-foot"><span class="snip-tags">#Java  #Firebase</span><div class="snip-actions"><button class="ic-btn beam" onclick="event.stopPropagation();beamSnip('Firebase Auth Init')">📡 Beam</button><button class="ic-btn" onclick="event.stopPropagation();toast('Copied!')">⎘</button><button class="ic-btn" onclick="event.stopPropagation();sendToAI()">✦ AI</button></div></div>
+        </div>
+        <div class="snip-card">
+          <div class="snip-header"><span class="snip-title">RecyclerView Adapter</span><span class="lang-badge" style="background:var(--c)20;color:var(--c);border:0.5px solid var(--c)40">Kotlin</span></div>
+          <div class="snip-code"><span class="kw">class</span> <span class="fn">SnipAdapter</span>(items: <span class="fn">List</span>&lt;Snip&gt;) : <span class="fn">RecyclerView.Adapter</span>()</div>
+          <div class="snip-foot"><span class="snip-tags">#Kotlin  #Android</span><div class="snip-actions"><button class="ic-btn beam" onclick="event.stopPropagation();beamSnip('RecyclerView Adapter')">📡 Beam</button><button class="ic-btn" onclick="event.stopPropagation();toast('Copied!')">⎘</button><button class="ic-btn" onclick="event.stopPropagation();sendToAI()">✦ AI</button></div></div>
+        </div>
+        <div class="snip-card">
+          <div class="snip-header"><span class="snip-title">Flask REST Route</span><span class="lang-badge" style="background:var(--y)20;color:var(--y);border:0.5px solid var(--y)40">Python</span></div>
+          <div class="snip-code"><span class="op">@</span><span class="fn">app.route</span>(<span class="st">'/api/users'</span>, methods=[<span class="st">'GET'</span>])</div>
+          <div class="snip-foot"><span class="snip-tags">#Python  #Backend</span><div class="snip-actions"><button class="ic-btn beam" onclick="event.stopPropagation();beamSnip('Flask REST Route')">📡 Beam</button><button class="ic-btn" onclick="event.stopPropagation();toast('Copied!')">⎘</button><button class="ic-btn" onclick="event.stopPropagation();sendToAI()">✦ AI</button></div></div>
+        </div>
+        <div class="snip-card">
+          <div class="snip-header"><span class="snip-title">Git Undo Last Commit</span><span class="lang-badge" style="background:var(--g)20;color:var(--g);border:0.5px solid var(--g)40">CLI</span></div>
+          <div class="snip-code">git reset --soft HEAD~1</div>
+          <div class="snip-foot"><span class="snip-tags">#Git  #CLI</span><div class="snip-actions"><button class="ic-btn beam" onclick="event.stopPropagation();beamSnip('Git Reset')">📡 Beam</button><button class="ic-btn" onclick="event.stopPropagation();toast('Copied!')">⎘</button><button class="ic-btn" onclick="event.stopPropagation();sendToAI()">✦ AI</button></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEAM STATION -->
+    <div class="page" id="page-beam">
+      <div class="beam-status-bar">
+        <div class="beam-pulse" id="bpulse"></div>
+        <div class="beam-status-txt" id="bstatus-txt">Waiting for phone — open SnipIT app and tap Beam IT</div>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="topbar-btn" onclick="disconnectBeam()">Disconnect</button>
+          <button class="topbar-btn primary" onclick="simulateConnect()">Simulate Connect</button>
+        </div>
+      </div>
+
+      <div class="grid-beam" style="margin-bottom:18px">
+        <div class="card">
+          <div class="card-title">Connection Hub</div>
+          <div style="display:flex;gap:20px;align-items:flex-start;margin-bottom:16px">
+            <div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-bottom:8px">SCAN QR OR ENTER PIN</div>
+              <div class="qr-container" id="qr-wrap" onclick="simulateConnect()">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=SNIPIT:BEAM:SESSION:LZ001" style="width:100%;height:100%;object-fit:contain" alt="QR"/>
+              </div>
+            </div>
+            <div style="flex:1">
+              <div class="code-incoming">
+                <div class="incoming-label">INCOMING SNIPPET</div>
+                <div class="code-area" id="incoming-code">No snippet received yet.
+Open SnipIT on your phone,
+select a snippet and tap
+the 📡 Beam IT button.</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="topbar-btn primary" style="flex:1;justify-content:center" onclick="injectVSCode()">📥 Inject to VS Code</button>
+            <button class="topbar-btn" style="flex:1;justify-content:center" onclick="copyReceived()">⎘ Copy to Clipboard</button>
+            <button class="topbar-btn" style="flex:1;justify-content:center" onclick="saveToVault()">⊟ Save to Vault</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Enter PIN from phone</div>
+          <div class="pin-display-row">
+            <div class="pin-box" id="pe0">_</div>
+            <div class="pin-box" id="pe1">_</div>
+            <div class="pin-box" id="pe2">_</div>
+            <div class="pin-box" id="pe3">_</div>
+            <div class="pin-box" id="pe4">_</div>
+            <div class="pin-box" id="pe5">_</div>
+          </div>
+          <div class="numpad" style="margin-bottom:12px">
+            <div class="nk" onclick="pressPin('1')">1</div>
+            <div class="nk" onclick="pressPin('2')">2</div>
+            <div class="nk" onclick="pressPin('3')">3</div>
+            <div class="nk" onclick="pressPin('4')">4</div>
+            <div class="nk" onclick="pressPin('5')">5</div>
+            <div class="nk" onclick="pressPin('6')">6</div>
+            <div class="nk" onclick="pressPin('7')">7</div>
+            <div class="nk" onclick="pressPin('8')">8</div>
+            <div class="nk" onclick="pressPin('9')">9</div>
+            <div class="nk del" onclick="pressPin('clr')">CLR</div>
+            <div class="nk" onclick="pressPin('0')">0</div>
+            <div class="nk del" onclick="pressPin('del')">⌫</div>
+          </div>
+          <div style="font-size:11px;color:var(--t3);text-align:center">PIN shown on your phone · expires in 5 min</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Session Log</div>
+        <div class="session-log" id="session-log">
+          <div class="log-line info"><span class="log-ts">[09:41:00]</span><span>Beam Station initialized — listening for connections</span></div>
+          <div class="log-line"><span class="log-ts">[09:41:01]</span><span>Firebase Realtime DB listener active</span></div>
+          <div class="log-line"><span class="log-ts">[09:41:02]</span><span>Waiting for PIN or QR scan...</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI AGENT -->
+    <div class="page" id="page-ai">
+      <div class="grid-2">
+        <div class="card" style="display:flex;flex-direction:column">
+          <div class="section-hdr" style="margin-bottom:10px">
+            <div class="card-title" style="margin:0">Snip-AI Chat</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t3)">
+              <div class="conn-dot online"></div>Claude Sonnet 4.6
+            </div>
+          </div>
+          <div class="ai-chips">
+            <span class="chip" onclick="fillAI('Explain this in Tagalog: ')">Explain in Tagalog</span>
+            <span class="chip" onclick="fillAI('Convert this Java to Kotlin: ')">To Kotlin</span>
+            <span class="chip" onclick="fillAI('Optimize for mobile performance: ')">Optimize</span>
+            <span class="chip" onclick="fillAI('Find the bug in this code: ')">Find Bug</span>
+            <span class="chip" onclick="fillAI('Add error handling to: ')">Add Error Handling</span>
+          </div>
+          <div class="ai-messages" id="ai-msgs">
+            <div class="msg-bubble msg-ai">
+              <div class="msg-ai-label">SNIP-AI · CLAUDE SONNET</div>
+              Huy! I'm your AI code assistant. Paste any snippet or ask me anything. I can refactor, explain, convert, or debug — and save the result straight to your Vault.
+            </div>
+            <div class="msg-bubble msg-user">Optimize this Firebase query for mobile performance</div>
+            <div class="msg-bubble msg-ai">
+              <div class="msg-ai-label">SNIP-AI · CLAUDE SONNET</div>
+              Added pagination + field selection — reduces data transfer by ~70% on mobile:
+              <div class="code-block-msg">db.collection("users")
+  .select("name","email")
+  .limit(20)
+  .orderBy("created")
+  .startAfter(lastDoc)
+  .get();</div>
+              <div style="display:flex;gap:6px;margin-top:8px">
+                <button class="ic-btn" style="background:var(--g)15;border-color:var(--g)40;color:var(--g)" onclick="toast('Auto-Snipped! +15 XP ⚡')">⚡ Auto-Snip</button>
+                <button class="ic-btn" onclick="toast('Copied!')">⎘ Copy</button>
+                <button class="ic-btn beam" onclick="beamSnip('AI Result')">📡 Beam</button>
+              </div>
+            </div>
+          </div>
+          <div class="ai-input-row" style="margin-top:auto">
+            <textarea class="ai-textarea" id="ai-in" rows="2" placeholder="Ask anything or paste code..."></textarea>
+            <button class="ai-send" onclick="sendAI()">➤</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Chat History</div>
+          <div class="history-list" id="hist-list">
+            <div class="hist-row"><div class="hist-q">Optimize Firebase query for mobile</div><div class="hist-meta">Today · 3 messages</div></div>
+            <div class="hist-row"><div class="hist-q">Convert Java RecyclerView to Kotlin</div><div class="hist-meta">Yesterday · 5 messages</div></div>
+            <div class="hist-row"><div class="hist-q">Explain this Regex in Tagalog</div><div class="hist-meta">Mar 28 · 2 messages</div></div>
+            <div class="hist-row"><div class="hist-q">Add error handling to Flask route</div><div class="hist-meta">Mar 28 · 4 messages</div></div>
+            <div class="hist-row"><div class="hist-q">Optimize BubbleSort for large arrays</div><div class="hist-meta">Mar 27 · 6 messages</div></div>
+            <div class="hist-row"><div class="hist-q">Find bug in subnet mask calc</div><div class="hist-meta">Mar 26 · 2 messages</div></div>
+          </div>
+          <button style="width:100%;background:var(--r)12;border:0.5px solid var(--r)30;border-radius:8px;padding:8px;color:var(--r);font-size:11px;cursor:pointer;margin-top:10px" onclick="toast('History cleared!')">Clear All History</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEV XP -->
+    <div class="page" id="page-xp">
+      <div class="grid-2" style="margin-bottom:18px">
+        <div class="card">
+          <div class="card-title">XP Progress</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:14px;font-weight:600">Level 7 — Code Wizard</span>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--y)">340 / 500 XP</span>
+          </div>
+          <div style="background:var(--bg0);border-radius:6px;height:8px;overflow:hidden;margin-bottom:10px">
+            <div style="width:68%;height:100%;background:var(--y);border-radius:6px"></div>
+          </div>
+          <div style="font-size:11px;color:var(--t3);margin-bottom:16px">160 XP to Level 8 · Syntax Master</div>
+          <div class="card-title">Language Breakdown</div>
+          <div class="lang-bar"><div class="lb-row"><span class="lb-name">Java</span><span class="lb-count">9 snips</span></div><div class="lb-track"><div class="lb-fill" style="width:75%;background:var(--p)"></div></div></div>
+          <div class="lang-bar"><div class="lb-row"><span class="lb-name">Python</span><span class="lb-count">7 snips</span></div><div class="lb-track"><div class="lb-fill" style="width:58%;background:var(--r)"></div></div></div>
+          <div class="lang-bar"><div class="lb-row"><span class="lb-name">Kotlin</span><span class="lb-count">5 snips</span></div><div class="lb-track"><div class="lb-fill" style="width:42%;background:var(--c)"></div></div></div>
+          <div class="lang-bar"><div class="lb-row"><span class="lb-name">SQL</span><span class="lb-count">3 snips</span></div><div class="lb-track"><div class="lb-fill" style="width:25%;background:var(--y)"></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">7-Day Streak</div>
+          <div class="streak-row">
+            <div class="streak-day done">M</div><div class="streak-day done">T</div>
+            <div class="streak-day done">W</div><div class="streak-day done">T</div>
+            <div class="streak-day done">F</div><div class="streak-day">S</div><div class="streak-day">S</div>
+          </div>
+          <div class="card-title">XP Actions</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--bd);font-size:12px"><span style="color:var(--t2)">Save a snippet</span><span style="font-family:var(--mono);color:var(--y)">+15 XP</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--bd);font-size:12px"><span style="color:var(--t2)">Snap-to-Snip OCR</span><span style="font-family:var(--mono);color:var(--y)">+20 XP</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--bd);font-size:12px"><span style="color:var(--t2)">Auto-Snip from AI</span><span style="font-family:var(--mono);color:var(--y)">+15 XP</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--bd);font-size:12px"><span style="color:var(--t2)">Beam IT transfer</span><span style="font-family:var(--mono);color:var(--y)">+10 XP</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12px"><span style="color:var(--t2)">Copy from Dev-Dex</span><span style="font-family:var(--mono);color:var(--y)">+2 XP</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Badges — click to see details</div>
+        <div class="badge-grid">
+          <div class="badge-card earned" onclick="toast('Syntax Wizard: Earned by saving your first 5 snippets!')"><div class="badge-icon">🧙</div><div class="badge-name">Syntax Wizard</div></div>
+          <div class="badge-card earned" onclick="toast('Beam Operator: Generated 3 Beam IT sessions!')"><div class="badge-icon">📡</div><div class="badge-name">Beam Operator</div></div>
+          <div class="badge-card earned" onclick="toast('CLI Scout: Copied 10 Dev-Dex commands!')"><div class="badge-icon">⌗</div><div class="badge-name">CLI Scout</div></div>
+          <div class="badge-card earned" onclick="toast('Network Guru: Looked up IP tools 5 times!')"><div class="badge-icon">🌐</div><div class="badge-name">Network Guru</div></div>
+          <div class="badge-card" onclick="toast('AI Refactor: Use Auto-Snip from AI Agent to unlock!')"><div class="badge-icon" style="opacity:.3">🤖</div><div class="badge-name">AI Refactor</div></div>
+          <div class="badge-card" onclick="toast('Snap Hunter: Save 3 snippets via OCR to unlock!')"><div class="badge-icon" style="opacity:.3">📷</div><div class="badge-name">Snap Hunter</div></div>
+          <div class="badge-card" onclick="toast('7-Day Streak: Use SnipIT 7 days in a row!')"><div class="badge-icon" style="opacity:.3">🔥</div><div class="badge-name">7-Day Streak</div></div>
+          <div class="badge-card" onclick="toast('Polyglot: Save snippets in 5+ languages!')"><div class="badge-icon" style="opacity:.3">🗣️</div><div class="badge-name">Polyglot</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="page" id="page-profile">
+      <div class="profile-hero">
+        <div class="profile-avatar-lg">LZ</div>
+        <div class="profile-info">
+          <div class="profile-name">Lyzette</div>
+          <div class="profile-username">@lyzette.dev · CNSC · IT Student</div>
+          <div class="profile-bio">CS/IT student building SnipIT. Java, Kotlin, Python. "Huy, Snip it Quick!" 🔥</div>
+          <div class="profile-stats">
+            <div class="ps"><div class="ps-n">24</div><div class="ps-l">Snippets</div></div>
+            <div class="ps"><div class="ps-n" style="color:var(--p)">7</div><div class="ps-l">Languages</div></div>
+            <div class="ps"><div class="ps-n" style="color:var(--y)">340</div><div class="ps-l">XP</div></div>
+            <div class="ps"><div class="ps-n" style="color:var(--c)">5</div><div class="ps-l">Beams</div></div>
+          </div>
+        </div>
+        <button class="edit-btn" onclick="openModal('edit-profile')">Edit Profile</button>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Account Info</div>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div class="setting-row"><div><div class="setting-label">Email</div><div class="setting-desc">lyzette@student.cnsc.edu.ph</div></div></div>
+            <div class="setting-row"><div><div class="setting-label">School</div><div class="setting-desc">Camarines Norte State College</div></div></div>
+            <div class="setting-row"><div><div class="setting-label">Course</div><div class="setting-desc">Bachelor of Science in Information Technology</div></div></div>
+            <div class="setting-row"><div><div class="setting-label">Member since</div><div class="setting-desc">March 2026</div></div></div>
+            <div class="setting-row"><div><div class="setting-label">Vault sync</div><div class="setting-desc">Last synced: just now</div></div><span style="font-family:var(--mono);font-size:10px;color:var(--g)">● Live</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Connected Devices</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg2);border-radius:10px;border:0.5px solid var(--g)30">
+              <span style="font-size:18px">📱</span>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:500">Pixel 7 Pro</div>
+                <div style="font-family:var(--mono);font-size:9px;color:var(--t4)">Android 14 · SnipIT v1.0</div>
+              </div>
+              <span style="font-family:var(--mono);font-size:9px;color:var(--g)">● Active</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg2);border-radius:10px;border:0.5px solid var(--bd)">
+              <span style="font-size:18px">💻</span>
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:500">This Browser</div>
+                <div style="font-family:var(--mono);font-size:9px;color:var(--t4)">Chrome 124 · Web Portal</div>
+              </div>
+              <span style="font-family:var(--mono);font-size:9px;color:var(--c)">● Now</span>
+            </div>
+            <button class="ic-btn" style="width:100%;justify-content:center;padding:9px" onclick="toast('Device pairing opened!')">+ Pair New Device</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="grid-2">
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Appearance</div>
+            <div class="settings-section">
+              <div style="font-size:12px;color:var(--t2);margin-bottom:8px">Terminal Theme</div>
+              <div class="theme-grid">
+                <div class="theme-swatch active" style="background:linear-gradient(135deg,#07080d,#131520)" onclick="toast('Dark Kernel active!')"><span class="theme-swatch-label">Dark Kernel</span></div>
+                <div class="theme-swatch locked" style="background:linear-gradient(135deg,#001a0d,#003d1a)" onclick="toast('Unlock at Level 10!')"><span class="theme-swatch-label">Matrix</span></div>
+                <div class="theme-swatch locked" style="background:linear-gradient(135deg,#1a0030,#3d0060)" onclick="toast('Unlock at Level 15!')"><span class="theme-swatch-label">Cyberpunk</span></div>
+                <div class="theme-swatch locked" style="background:linear-gradient(135deg,#1a1000,#3d2600)" onclick="toast('Unlock at Level 20!')"><span class="theme-swatch-label">80s Hacker</span></div>
+                <div class="theme-swatch locked" style="background:linear-gradient(135deg,#001a2e,#003d6b)" onclick="toast('Unlock at Level 25!')"><span class="theme-swatch-label">Arctic</span></div>
+              </div>
+            </div>
+            <div class="setting-row">
+              <div><div class="setting-label">Font size (code blocks)</div><div class="setting-desc">Adjust code preview font size</div></div>
+              <select style="background:var(--bg2);border:0.5px solid var(--bd2);border-radius:8px;padding:5px 10px;color:var(--t1);font-family:var(--mono);font-size:11px;outline:none">
+                <option>Small (10px)</option><option selected>Medium (12px)</option><option>Large (14px)</option>
+              </select>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Beam IT Settings</div>
+            <div class="setting-row"><div><div class="setting-label">Auto-copy on receive</div><div class="setting-desc">Automatically copy beamed code to clipboard</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="setting-row"><div><div class="setting-label">PIN expiry</div><div class="setting-desc">How long PINs stay valid</div></div>
+              <select style="background:var(--bg2);border:0.5px solid var(--bd2);border-radius:8px;padding:5px 10px;color:var(--t1);font-family:var(--mono);font-size:11px;outline:none">
+                <option>2 min</option><option selected>5 min</option><option>10 min</option>
+              </select>
+            </div>
+            <div class="setting-row"><div><div class="setting-label">Show transfer animation</div><div class="setting-desc">Visual effect when code is beamed</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Notifications</div>
+            <div class="setting-row"><div><div class="setting-label">Beam received</div><div class="setting-desc">Alert when a snippet arrives via Beam IT</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="setting-row"><div><div class="setting-label">XP milestones</div><div class="setting-desc">Notify when you level up</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="setting-row"><div><div class="setting-label">Weekly summary</div><div class="setting-desc">Sunday report of your activity</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">AI Agent</div>
+            <div class="setting-row"><div><div class="setting-label">Model</div><div class="setting-desc">Claude Sonnet 4.6 (recommended)</div></div><span style="font-family:var(--mono);font-size:10px;color:var(--g)">Active</span></div>
+            <div class="setting-row"><div><div class="setting-label">Save AI chats</div><div class="setting-desc">Keep conversation history</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="setting-row"><div><div class="setting-label">Auto-tag suggestions</div><div class="setting-desc">AI suggests tags when saving</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Data & Privacy</div>
+            <div class="setting-row"><div><div class="setting-label">Export Vault</div><div class="setting-desc">Download all snippets as JSON</div></div><button class="ic-btn" onclick="toast('Vault exported! 24 snippets → snipit_backup.json')">Export</button></div>
+            <div class="setting-row"><div><div class="setting-label">Clear AI history</div><div class="setting-desc">Delete all chat conversations</div></div><button class="ic-btn" style="color:var(--r);border-color:var(--r)20" onclick="toast('AI history cleared!')">Clear</button></div>
+            <div class="setting-row"><div><div class="setting-label">Account</div><div class="setting-desc">Signed in as lyzette@student.cnsc.edu.ph</div></div><button class="ic-btn" style="color:var(--r);border-color:var(--r)20" onclick="toast('Signed out!')">Sign out</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()" id="modal-inner">
+  </div>
+</div>
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+const pages={dashboard:'Dashboard',vault:'Snippet Vault',beam:'Beam Station',ai:'Snip-AI Agent',xp:'Dev-XP',profile:'Profile',settings:'Settings'};
+const subs={dashboard:'Welcome back, Lyzette',vault:'Your offline code library',beam:'Real-time code transfer to PC',ai:'Powered by Claude Sonnet 4.6',xp:'Your developer journey',profile:'Your account and devices',settings:'App preferences'};
+
+function goPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  const nav=document.getElementById('nav-'+name);
+  if(nav)nav.classList.add('active');
+  document.getElementById('topbar-title').textContent=pages[name]||name;
+  document.getElementById('topbar-sub').textContent=subs[name]||'';
+  document.querySelector('.content').scrollTop=0;
+}
+
+let pinDigits=[];
+const correctPin='482951';
+
+function pressPin(k){
+  if(k==='del'){pinDigits.pop();}
+  else if(k==='clr'){pinDigits=[];}
+  else if(pinDigits.length<6){pinDigits.push(k);}
+  updatePinDisplay();
+  if(pinDigits.length===6) validatePin();
+}
+
+function updatePinDisplay(){
+  for(let i=0;i<6;i++){
+    const el=document.getElementById('pe'+i);
+    if(pinDigits[i]!==undefined){
+      el.textContent=pinDigits[i];
+      el.classList.add('active');
+    } else {
+      el.textContent='_';
+      el.classList.remove('active','success');
+    }
+  }
+}
+
+function validatePin(){
+  const entered=pinDigits.join('');
+  if(entered===correctPin||pinDigits.length===6){
+    for(let i=0;i<6;i++){
+      document.getElementById('pe'+i).classList.add('success');
+    }
+    setTimeout(()=>{
+      simulateConnect();
+      pinDigits=[];
+      updatePinDisplay();
+    },800);
+  } else {
+    for(let i=0;i<6;i++){
+      document.getElementById('pe'+i).style.borderColor='var(--r)';
+      document.getElementById('pe'+i).style.color='var(--r)';
+    }
+    setTimeout(()=>{
+      pinDigits=[];
+      updatePinDisplay();
+      for(let i=0;i<6;i++){
+        document.getElementById('pe'+i).style.borderColor='';
+        document.getElementById('pe'+i).style.color='';
+      }
+    },1000);
+  }
+}
+
+let connected=false;
+function simulateConnect(){
+  connected=true;
+  document.getElementById('bpulse').classList.add('connected');
+  document.getElementById('bstatus-txt').innerHTML='Connected: <span>Pixel_7_SnipIT</span> · Lyzette · 192.168.1.55';
+  document.getElementById('beam-dot').classList.remove('offline');
+  document.getElementById('beam-dot').classList.add('online');
+  document.getElementById('beam-status-txt').textContent='Pixel_7 connected';
+  addLog('Device "Pixel_7_SnipIT" paired successfully.','ok');
+  addLog('Handshake established via Firebase Realtime DB.','info');
+  setTimeout(()=>{
+    document.getElementById('incoming-code').textContent=`FirebaseApp.initializeApp(this);\nFirebaseAuth auth =\n  FirebaseAuth.getInstance();\nauth.signInAnonymously()\n  .addOnSuccessListener(r -> {\n    Log.d("Auth","Signed in!");\n  });`;
+    addLog('Snippet received: "Firebase Auth Init" (Java · 127 bytes)','ok');
+    toast('📡 Code received from phone! +10 XP');
+  },1200);
+}
+
+function disconnectBeam(){
+  connected=false;
+  document.getElementById('bpulse').classList.remove('connected');
+  document.getElementById('bstatus-txt').textContent='Disconnected — waiting for device';
+  document.getElementById('beam-dot').classList.remove('online');
+  document.getElementById('beam-dot').classList.add('offline');
+  document.getElementById('beam-status-txt').textContent='No device paired';
+  addLog('Session ended.','');
+  toast('Device disconnected');
+}
+
+function addLog(msg,type){
+  const log=document.getElementById('session-log');
+  const t=new Date().toLocaleTimeString([],{hour12:false});
+  const div=document.createElement('div');
+  div.className='log-line '+(type||'');
+  div.innerHTML=`<span class="log-ts">[${t}]</span><span>${msg}</span>`;
+  log.appendChild(div);
+  log.scrollTop=log.scrollHeight;
+}
+
+function injectVSCode(){
+  if(!connected){toast('Connect a device first!');return;}
+  addLog('Injecting to VS Code extension...','info');
+  addLog('Transfer complete. Check your IDE.','ok');
+  toast('Injected to VS Code! +20 XP ⚡');
+}
+
+function copyReceived(){
+  addLog('Copied to system clipboard.','ok');
+  toast('Copied to clipboard! +5 XP');
+}
+
+function saveToVault(){
+  addLog('Snippet saved to Vault.','ok');
+  toast('Saved to Vault! +15 XP ⊟');
+}
+
+function beamSnip(name){
+  goPage('beam');
+  setTimeout(simulateConnect,500);
+  toast('Beaming "'+name+'"...');
+}
+
+function sendToAI(){
+  goPage('ai');
+  document.getElementById('ai-in').value='Refactor this snippet:\n';
+  toast('Snippet loaded into AI Agent');
+}
+
+const aiReplies=[
+  {pre:'Here is the optimized version:',code:`val auth by lazy {\n  FirebaseAuth.getInstance()\n}\nlifecycleScope.launch {\n  auth.signInAnonymously().await()\n}`},
+  {pre:'Converted to Kotlin with coroutines:',code:`suspend fun fetchUsers() =\n  withContext(Dispatchers.IO) {\n    db.collection("users")\n      .limit(20).get().await()\n  }`},
+  {pre:'Found the issue — null check missing:',code:`// Fix: add null safety\nval result = response?.body\n  ?: throw NullPointerException(\n    "Response body is null"\n  )`}
+];
+let aiIdx=0;
+
+function fillAI(txt){
+  document.getElementById('ai-in').value=txt;
+  document.getElementById('ai-in').focus();
+}
+
+function sendAI(){
+  const inp=document.getElementById('ai-in');
+  const val=inp.value.trim();
+  if(!val)return;
+  const msgs=document.getElementById('ai-msgs');
+  const ub=document.createElement('div');
+  ub.className='msg-bubble msg-user';
+  ub.textContent=val;
+  msgs.appendChild(ub);
+  inp.value='';
+  setTimeout(()=>{
+    const r=aiReplies[aiIdx%aiReplies.length];aiIdx++;
+    const ab=document.createElement('div');
+    ab.className='msg-bubble msg-ai';
+    ab.innerHTML=`<div class="msg-ai-label">SNIP-AI · CLAUDE SONNET</div>${r.pre}<div class="code-block-msg">${r.code}</div><div style="display:flex;gap:6px;margin-top:8px"><button class="ic-btn" style="background:var(--g)15;border-color:var(--g)40;color:var(--g)" onclick="toast('Auto-Snipped! +15 XP ⚡')">⚡ Auto-Snip</button><button class="ic-btn" onclick="toast('Copied!')">⎘ Copy</button></div>`;
+    msgs.appendChild(ab);
+    msgs.scrollTop=msgs.scrollHeight;
+    const histList=document.getElementById('hist-list');
+    const hr=document.createElement('div');
+    hr.className='hist-row';
+    hr.innerHTML=`<div class="hist-q">${val.substring(0,50)}${val.length>50?'...':''}</div><div class="hist-meta">Just now · new</div>`;
+    histList.prepend(hr);
+  },900);
+}
+
+document.getElementById('ai-in').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendAI();}});
+
+const modals={
+  'new-snip':`<div class="modal-title">// New Snip</div>
+    <div class="form-row"><label class="form-label">Title</label><input class="form-input" placeholder="e.g. Firebase Auth Init"/></div>
+    <div class="form-row"><label class="form-label">Language</label>
+    <select class="form-input" style="color:var(--p)">
+      <option>Java</option><option>Kotlin</option><option>Python</option><option>JavaScript</option>
+      <option>SQL</option><option>CLI / Bash</option><option>XML</option><option>C++</option>
+    </select></div>
+    <div class="form-row"><label class="form-label">Tags</label><input class="form-input" placeholder="#Java,#Firebase,#Backend"/></div>
+    <div class="form-row"><label class="form-label">Code</label><textarea class="form-textarea" rows="6" placeholder="Paste your code here..."></textarea></div>
+    <button class="form-btn" onclick="closeModal();toast('Snip saved! +15 XP ⚡')">⚡ Commit to Vault</button>
+    <button class="form-btn cancel" onclick="closeModal()">Cancel</button>`,
+  'snip-detail':`<div class="modal-title">Firebase Auth Init</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <span style="font-family:var(--mono);font-size:10px;background:var(--p)20;color:var(--p);border:0.5px solid var(--p)40;padding:3px 9px;border-radius:20px">Java</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--t3)">Saved Mar 27 · Used 14×</span>
+    </div>
+    <div class="form-row"><textarea class="form-textarea" rows="7">FirebaseApp.initializeApp(this);
+FirebaseAuth auth = FirebaseAuth.getInstance();
+auth.signInAnonymously()
+  .addOnSuccessListener(result -> {
+    Log.d("Auth", "Signed in!");
+  });</textarea></div>
+    <div style="display:flex;gap:8px">
+      <button class="form-btn" onclick="closeModal();beamSnip('Firebase Auth')">📡 Beam IT</button>
+      <button class="form-btn cancel" onclick="closeModal();sendToAI()">✦ Fix with AI</button>
+    </div>
+    <button class="form-btn cancel" onclick="closeModal();toast('Copied!')">⎘ Copy Code</button>`,
+  'edit-profile':`<div class="modal-title">Edit Profile</div>
+    <div class="form-row"><label class="form-label">Display Name</label><input class="form-input" value="Lyzette"/></div>
+    <div class="form-row"><label class="form-label">Username</label><input class="form-input" value="lyzette.dev"/></div>
+    <div class="form-row"><label class="form-label">Bio</label><textarea class="form-textarea" rows="3">CS/IT student building SnipIT. Java, Kotlin, Python.</textarea></div>
+    <div class="form-row"><label class="form-label">School</label><input class="form-input" value="Camarines Norte State College"/></div>
+    <div class="form-row"><label class="form-label">Course</label><input class="form-input" value="BSIT"/></div>
+    <button class="form-btn" onclick="closeModal();toast('Profile updated!')">Save Changes</button>
+    <button class="form-btn cancel" onclick="closeModal()">Cancel</button>`
+};
+
+function openModal(name){
+  document.getElementById('modal-inner').innerHTML=modals[name]||'<p>Modal not found</p>';
+  document.getElementById('modal-bg').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('open')}
+
+function toast(msg){
+  const el=document.getElementById('toast-el');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2400);
+}
+</script>
+</body>
+</html>

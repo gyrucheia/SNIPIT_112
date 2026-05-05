@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.lifecycle.LiveData;
 import com.example.snipit.app.models.Snip;
+import com.example.snipit.app.util.VaultSyncService;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,10 +15,16 @@ public class SnipRepository {
     private final SnipDao snipDao;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final VaultSyncService syncService;
 
     public SnipRepository(Application application) {
         SnipDatabase db = SnipDatabase.getInstance(application);
         snipDao = db.snipDao();
+        syncService = new VaultSyncService(application);
+    }
+
+    public void sync(Runnable onDone) {
+        syncService.sync(onDone);
     }
 
     /** Seeds demo rows once when the vault is empty (offline UI walkthrough). */
@@ -27,27 +34,10 @@ public class SnipRepository {
             Snip a = new Snip();
             a.title = "Firebase Auth Init";
             a.language = "Java";
-            a.code =
-                    "FirebaseApp.initializeApp(this);\n"
-                            + "FirebaseAuth auth = FirebaseAuth.getInstance();";
+            a.code = "FirebaseApp.initializeApp(this);\n" + "FirebaseAuth auth = FirebaseAuth.getInstance();";
             a.tags = "#Java,#Firebase";
             snipDao.insert(a);
-
-            Snip b = new Snip();
-            b.title = "RecyclerView adapter";
-            b.language = "Kotlin";
-            b.code =
-                    "class SnipAdapter(private val items: List<Snip>) :\n"
-                            + "    RecyclerView.Adapter<SnipAdapter.VH>() { }";
-            b.tags = "#Kotlin,#Android";
-            snipDao.insert(b);
-
-            Snip c = new Snip();
-            c.title = "Git: undo last commit";
-            c.language = "CLI";
-            c.code = "git reset --soft HEAD~1";
-            c.tags = "#Git,#CLI";
-            snipDao.insert(c);
+            // Optionally push these to remote as well if needed
         });
     }
 
@@ -66,56 +56,60 @@ public class SnipRepository {
     }
 
     public void insert(Snip snip) {
-        executor.execute(() -> snipDao.insert(snip));
+        executor.execute(() -> {
+            snipDao.insert(snip);
+            syncService.sync(null); // Simple sync after insert
+        });
     }
 
-    /** Inserts a snip and runs onDone on the main thread after the write completes. */
     public void insert(Snip snip, Runnable onDone) {
-        executor.execute(
-                () -> {
-                    snipDao.insert(snip);
-                    if (onDone != null) {
-                        mainHandler.post(onDone);
-                    }
-                });
+        executor.execute(() -> {
+            snipDao.insert(snip);
+            syncService.sync(() -> {
+                if (onDone != null) mainHandler.post(onDone);
+            });
+        });
     }
 
     public void getSnippetCount(java.util.function.Consumer<Integer> onResult) {
-        executor.execute(
-                () -> {
-                    int n = snipDao.getTotalCount();
-                    mainHandler.post(() -> onResult.accept(n));
-                });
+        executor.execute(() -> {
+            int n = snipDao.getTotalCount();
+            mainHandler.post(() -> onResult.accept(n));
+        });
     }
 
     public void update(Snip snip) {
-        executor.execute(() -> snipDao.update(snip));
+        executor.execute(() -> {
+            snipDao.update(snip);
+            syncService.updateRemote(snip);
+        });
     }
 
-    /** Updates and runs {@code onDone} on the main thread after the write completes. */
     public void update(Snip snip, Runnable onDone) {
-        executor.execute(
-                () -> {
-                    snipDao.update(snip);
-                    if (onDone != null) {
-                        mainHandler.post(onDone);
-                    }
-                });
+        executor.execute(() -> {
+            snipDao.update(snip);
+            syncService.updateRemote(snip);
+            if (onDone != null) mainHandler.post(onDone);
+        });
     }
 
     public void delete(Snip snip) {
-        executor.execute(() -> snipDao.delete(snip));
+        executor.execute(() -> {
+            if (snip.remoteId != null) {
+                syncService.deleteRemote(snip.remoteId);
+            }
+            snipDao.delete(snip);
+        });
     }
 
-    /** Deletes and runs {@code onDone} on the main thread after the delete completes. */
     public void delete(Snip snip, Runnable onDone) {
-        executor.execute(
-                () -> {
-                    snipDao.delete(snip);
-                    if (onDone != null) {
-                        mainHandler.post(onDone);
-                    }
-                });
+        executor.execute(() -> {
+            if (snip.remoteId != null) {
+                syncService.deleteRemote(snip.remoteId);
+            }
+            snipDao.delete(snip);
+            if (onDone != null) mainHandler.post(onDone);
+        });
     }
 
     public LiveData<List<Snip>> getAllSnips() {

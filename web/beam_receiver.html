@@ -28,6 +28,20 @@
     }
     .hint { font-size: 0.75rem; color: #484f58; margin-top: 12px; }
     #status { font-size: 0.8rem; color: #d29922; margin: 8px 0; }
+    button {
+      margin-top: 12px; padding: 8px 16px; font-size: 0.9rem;
+      background: #238636; color: white; border: none; border-radius: 6px;
+      cursor: pointer; transition: background 0.2s;
+    }
+    button:hover { background: #2ea043; }
+    button:active { opacity: 0.8; }
+    #manualInput {
+      margin-top: 12px; padding: 8px; width: 100%; max-width: 400px;
+      background: #161b22; border: 1px solid #30363d; border-radius: 6px;
+      color: #c9d1d9; font-family: monospace; font-size: 0.85rem;
+    }
+    .success { color: #3fb950; }
+    .error { color: #f85149; }
   </style>
 </head>
 <body>
@@ -40,7 +54,22 @@
   <video id="cam" playsinline muted autoplay></video>
   <canvas id="canvas" hidden></canvas>
   <pre id="out">(decoded payload will show here)</pre>
-  <p class="hint">Host this file as HTTPS or open via localhost — browsers require a secure context for camera.</p>
+  <button id="copyBtn" style="display:none">📋 Copy to Clipboard</button>
+  <button id="toggleManualBtn">⌨️ Manual Input</button>
+  <textarea id="manualInput" placeholder="Paste or type payload here (if QR doesn't work)…" style="display:none"></textarea>
+  <p class="hint">Host this file as HTTPS or open via localhost — browsers require a secure context for camera. <strong>Numpad not needed</strong> — QR codes work with any keyboard.</p>
+  
+  <!-- IMPROVEMENTS & NOTES:
+    ✓ Auto-copy: Consider adding auto-copy-to-clipboard when QR is decoded
+    ✓ Manual fallback: Add input field for manual pasting if QR scanning fails
+    ✓ Numpad: NOT needed — regular keyboard works fine. QR codes contain text, not just numbers.
+    ✓ Mobile optimization: Already done (playsinline, responsive video)
+    ✓ Keyboard shortcuts: Add Ctrl+C shortcut to copy output, or paste decoded text directly
+    ✓ Better error states: Add retry button, display clearer error messages
+    ✓ Performance: Could optimize jsQR inversionAttempts or use WebWorker for heavy processing
+    ✓ Accessibility: Consider adding keyboard navigation and focus management
+    ✓ Format detection: Could auto-detect if payload is JSON/URL/plain text and format accordingly
+  -->
 
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <script>
@@ -50,9 +79,50 @@
       var ctx = canvas.getContext('2d');
       var out = document.getElementById('out');
       var statusEl = document.getElementById('status');
+      var copyBtn = document.getElementById('copyBtn');
+      var toggleManualBtn = document.getElementById('toggleManualBtn');
+      var manualInput = document.getElementById('manualInput');
+
+      // Copy button handler
+      copyBtn.addEventListener('click', function () {
+        navigator.clipboard.writeText(out.textContent).then(function () {
+          var oldText = copyBtn.textContent;
+          copyBtn.textContent = '✓ Copied!';
+          copyBtn.classList.add('success');
+          setTimeout(function () {
+            copyBtn.textContent = oldText;
+            copyBtn.classList.remove('success');
+          }, 2000);
+        }).catch(function () {
+          alert('Failed to copy. Try Ctrl+C instead.');
+        });
+      });
+
+      // Manual input toggle
+      toggleManualBtn.addEventListener('click', function () {
+        var isHidden = manualInput.style.display === 'none';
+        manualInput.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+          manualInput.focus();
+          toggleManualBtn.textContent = '✕ Close Manual Input';
+        } else {
+          toggleManualBtn.textContent = '⌨️ Manual Input';
+        }
+      });
+
+      // Manual input handler - update output when user types/pastes
+      manualInput.addEventListener('input', function () {
+        if (manualInput.value.trim()) {
+          out.textContent = manualInput.value;
+          statusEl.textContent = 'Using manual input — ready to copy.';
+          copyBtn.style.display = 'inline-block';
+        }
+      });
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         statusEl.textContent = 'Camera API not available. Use Chrome/Edge/Firefox over HTTPS or localhost.';
+        statusEl.classList.add('error');
+        toggleManualBtn.style.display = 'block'; // Ensure manual input is available
         return;
       }
 
@@ -64,7 +134,9 @@
           requestAnimationFrame(tick);
         })
         .catch(function (err) {
-          statusEl.textContent = 'Camera error: ' + (err && err.message ? err.message : String(err));
+          var errMsg = err && err.message ? err.message : String(err);
+          statusEl.textContent = 'Camera error: ' + errMsg + ' (try manual input)';
+          statusEl.classList.add('error');
         });
 
       function tick() {
@@ -77,12 +149,26 @@
             var code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
             if (code && code.data) {
               out.textContent = code.data;
-              statusEl.textContent = 'Got payload — you can copy from the box above.';
+              statusEl.textContent = '✓ Decoded successfully — copy from below or use keyboard shortcut.';
+              statusEl.classList.remove('error');
+              statusEl.classList.add('success');
+              copyBtn.style.display = 'inline-block';
+              manualInput.value = ''; // Clear manual input if QR was found
             }
           }
         }
         requestAnimationFrame(tick);
       }
+
+      // Keyboard shortcut: Ctrl/Cmd + Shift + C to copy output
+      document.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'c') {
+          e.preventDefault();
+          if (out.textContent.trim() && out.textContent !== '(decoded payload will show here)') {
+            copyBtn.click();
+          }
+        }
+      });
     })();
   </script>
 </body>

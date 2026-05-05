@@ -44,4 +44,10 @@ public interface SnipDao {
 
     @Query("SELECT COUNT(DISTINCT language) FROM snippets")
     int getLanguageCount();
+
+    @Query("SELECT * FROM snippets WHERE remoteId = :rid LIMIT 1")
+    Snip getSnipByRemoteId(String rid);
+
+    @Query("SELECT * FROM snippets WHERE remoteId IS NULL")
+    List<Snip> getSnipsWithoutRemoteId();
 }
