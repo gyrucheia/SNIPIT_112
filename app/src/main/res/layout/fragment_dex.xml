@@ -1,178 +1,271 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/bg_primary"
-    android:padding="16dp">
+    android:background="@color/bg_primary">
 
-    <!-- Header -->
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="Dev-Dex"
-        android:fontFamily="monospace" android:textSize="22sp"
-        android:textStyle="bold" android:textColor="@color/accent_green"
-        android:layout_marginBottom="14dp"/>
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_primary"
+        app:elevation="0dp">
 
-    <!-- Slide Tabs -->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="44dp"
-        android:orientation="horizontal"
-        android:background="@drawable/bg_code_block"
-        android:padding="3dp"
-        android:layout_marginBottom="14dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="12dp">
 
-        <TextView android:id="@+id/tab_categories"
-            android:layout_width="0dp" android:layout_height="match_parent"
-            android:layout_weight="1" android:text="Categories"
-            android:gravity="center" android:textSize="11sp"
-            android:fontFamily="monospace" android:textColor="@color/accent_green"
-            android:background="@drawable/bg_card"/>
-        <TextView android:id="@+id/tab_http"
-            android:layout_width="0dp" android:layout_height="match_parent"
-            android:layout_weight="1" android:text="HTTP Codes"
-            android:gravity="center" android:textSize="11sp"
-            android:fontFamily="monospace" android:textColor="@color/text_muted"
-            android:background="@null"/>
-        <TextView android:id="@+id/tab_ip"
-            android:layout_width="0dp" android:layout_height="match_parent"
-            android:layout_weight="1" android:text="IP Tools"
-            android:gravity="center" android:textSize="11sp"
-            android:fontFamily="monospace" android:textColor="@color/text_muted"
-            android:background="@null"/>
-    </LinearLayout>
-
-    <!-- Tab content container -->
-    <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
-
-        <!-- Categories Panel -->
-        <LinearLayout android:id="@+id/panel_categories"
-            android:layout_width="match_parent" android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:text="CLI REFERENCE"
-                android:fontFamily="monospace" android:textSize="10sp"
-                android:textColor="@color/text_muted" android:letterSpacing="0.15"
-                android:layout_marginBottom="10dp"/>
-
-            <!-- 2x2 category grid -->
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:orientation="horizontal" android:layout_marginBottom="10dp">
-
-                <LinearLayout android:id="@+id/card_git"
-                    android:layout_width="0dp" android:layout_height="90dp"
-                    android:layout_weight="1" android:orientation="vertical"
-                    android:background="@drawable/bg_card" android:padding="14dp"
-                    android:layout_marginEnd="10dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="⎇" android:textSize="22sp" android:layout_marginBottom="4dp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Git" android:textSize="13sp" android:textStyle="bold"
-                        android:textColor="@color/text_primary"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Version control" android:textSize="11sp"
-                        android:textColor="@color/text_secondary"/>
+            <!-- HEADER -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="20dp">
+                
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DEV-DEX"
+                        android:textColor="@color/terminal_green"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:fontFamily="monospace"
+                        android:letterSpacing="0.05"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Master handbook of IT intelligence."
+                        android:textColor="@color/text_muted"
+                        android:textSize="11sp"/>
                 </LinearLayout>
 
-                <LinearLayout android:id="@+id/card_linux"
-                    android:layout_width="0dp" android:layout_height="90dp"
-                    android:layout_weight="1" android:orientation="vertical"
-                    android:background="@drawable/bg_card" android:padding="14dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="🐧" android:textSize="22sp" android:layout_marginBottom="4dp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Linux" android:textSize="13sp" android:textStyle="bold"
-                        android:textColor="@color/text_primary"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Shell commands" android:textSize="11sp"
-                        android:textColor="@color/text_secondary"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:orientation="horizontal" android:layout_marginBottom="16dp">
-
-                <LinearLayout android:id="@+id/card_powershell"
-                    android:layout_width="0dp" android:layout_height="90dp"
-                    android:layout_weight="1" android:orientation="vertical"
-                    android:background="@drawable/bg_card" android:padding="14dp"
-                    android:layout_marginEnd="10dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="⊞" android:textSize="22sp" android:layout_marginBottom="4dp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="PowerShell" android:textSize="13sp" android:textStyle="bold"
-                        android:textColor="@color/text_primary"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Windows CLI" android:textSize="11sp"
-                        android:textColor="@color/text_secondary"/>
-                </LinearLayout>
-
-                <LinearLayout android:id="@+id/card_adb"
-                    android:layout_width="0dp" android:layout_height="90dp"
-                    android:layout_weight="1" android:orientation="vertical"
-                    android:background="@drawable/bg_card" android:padding="14dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="📱" android:textSize="22sp" android:layout_marginBottom="4dp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="ADB" android:textSize="13sp" android:textStyle="bold"
-                        android:textColor="@color/text_primary"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Android debug" android:textSize="11sp"
-                        android:textColor="@color/text_secondary"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Command list (shown when category tapped) -->
-            <LinearLayout android:id="@+id/cmd_list_container"
-                android:layout_width="match_parent" android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:gravity="center_vertical"
-                    android:layout_marginBottom="10dp">
-                    <Button android:id="@+id/btn_back_categories"
-                        android:layout_width="wrap_content" android:layout_height="36dp"
-                        android:text="← Back"
-                        android:background="@drawable/bg_card"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp"
-                        android:layout_marginEnd="10dp"/>
-                    <TextView android:id="@+id/cmd_list_title"
-                        android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="GIT Commands"
-                        android:fontFamily="monospace" android:textSize="13sp"
-                        android:textColor="@color/accent_green"/>
-                </LinearLayout>
-
-                <TextView android:id="@+id/cmd_list_hint"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="@string/dex_more_info_hint"
-                    android:textSize="10sp"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="v3.1"
                     android:textColor="@color/text_muted"
-                    android:fontFamily="monospace"
-                    android:lineSpacingMultiplier="1.15"
-                    android:layout_marginBottom="8dp"/>
+                    android:textSize="10sp"
+                    android:fontFamily="monospace"/>
+            </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/cmd_recycler"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scrollbars="none"/>
+            <!-- STANDARDIZED SEARCH BAR -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/bg_card"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/border_primary">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="52dp"
+                    android:orientation="horizontal" android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+                    
+                    <ImageView android:layout_width="20dp" android:layout_height="20dp"
+                        android:src="@android:drawable/ic_menu_search"
+                        app:tint="@color/text_muted"/>
+
+                    <EditText
+                        android:id="@+id/dex_search_input"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="Search..."
+                        android:layout_marginStart="12dp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:textSize="14sp"
+                        android:fontFamily="monospace" />
+                        
+                    <ImageView android:id="@+id/btn_clear_search"
+                        android:layout_width="20dp" android:layout_height="20dp"
+                        android:src="@android:drawable/ic_menu_close_clear_cancel"
+                        app:tint="@color/text_muted"
+                        android:visibility="gone"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- TABS -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="44dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_code_block"
+                android:padding="3dp"
+                android:layout_marginTop="16dp">
+
+                <TextView android:id="@+id/tab_categories"
+                    android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="1" android:text="CATEGORIES"
+                    android:gravity="center" android:textSize="11sp"
+                    android:fontFamily="monospace" android:textColor="@color/terminal_green"
+                    android:background="@drawable/bg_card"/>
+                <TextView android:id="@+id/tab_http"
+                    android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="1" android:text="HTTP CODES"
+                    android:gravity="center" android:textSize="11sp"
+                    android:fontFamily="monospace" android:textColor="@color/text_muted"
+                    android:background="@null"/>
+                <TextView android:id="@+id/tab_ip"
+                    android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="1" android:text="IP TOOLS"
+                    android:gravity="center" android:textSize="11sp"
+                    android:fontFamily="monospace" android:textColor="@color/text_muted"
+                    android:background="@null"/>
             </LinearLayout>
         </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- HTTP Codes Panel -->
-        <LinearLayout android:id="@+id/panel_http"
+    <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:padding="16dp">
+
+        <!-- CATEGORIES PANEL (GRID) -->
+        <ScrollView android:id="@+id/panel_categories"
+            android:layout_width="match_parent" android:layout_height="match_parent"
+            android:scrollbars="none">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="CLI DIRECTORY"
+                    android:fontFamily="monospace" android:textSize="10sp"
+                    android:textColor="@color/text_muted" android:letterSpacing="0.15"
+                    android:layout_marginBottom="12dp"/>
+
+                <GridLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:columnCount="2" android:alignmentMode="alignMargins"
+                    android:columnOrderPreserved="false">
+                    
+                    <!-- Git Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_git"
+                        android:layout_width="0dp" android:layout_height="90dp"
+                        android:layout_columnWeight="1" android:layout_margin="4dp"
+                        app:cardBackgroundColor="@color/bg_card" app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/border_primary">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:orientation="vertical" android:padding="14dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="⎇" android:textSize="22sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Git" android:textSize="13sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Linux Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_linux"
+                        android:layout_width="0dp" android:layout_height="90dp"
+                        android:layout_columnWeight="1" android:layout_margin="4dp"
+                        app:cardBackgroundColor="@color/bg_card" app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/border_primary">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:orientation="vertical" android:padding="14dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="🐧" android:textSize="22sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Linux" android:textSize="13sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- PS Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_powershell"
+                        android:layout_width="0dp" android:layout_height="90dp"
+                        android:layout_columnWeight="1" android:layout_margin="4dp"
+                        app:cardBackgroundColor="@color/bg_card" app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/border_primary">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:orientation="vertical" android:padding="14dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="⊞" android:textSize="22sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="PowerShell" android:textSize="13sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- ADB Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_adb"
+                        android:layout_width="0dp" android:layout_height="90dp"
+                        android:layout_columnWeight="1" android:layout_margin="4dp"
+                        app:cardBackgroundColor="@color/bg_card" app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/border_primary">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:orientation="vertical" android:padding="14dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="📱" android:textSize="22sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="ADB" android:textSize="13sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Regex Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_regex"
+                        android:layout_width="0dp" android:layout_height="90dp"
+                        android:layout_columnWeight="1" android:layout_margin="4dp"
+                        app:cardBackgroundColor="@color/bg_card" app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp" app:strokeWidth="1dp" app:strokeColor="@color/border_primary">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                            android:orientation="vertical" android:padding="14dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="[.*]" android:textSize="22sp" android:textColor="@color/accent_purple" android:fontFamily="monospace"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Regex Hub" android:textSize="13sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </GridLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- COMMAND LIST PANEL (HIDDEN BY DEFAULT) -->
+        <LinearLayout android:id="@+id/cmd_list_container"
             android:layout_width="match_parent" android:layout_height="match_parent"
             android:orientation="vertical"
             android:visibility="gone">
 
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:text="HTTP STATUS CODES"
-                android:fontFamily="monospace" android:textSize="10sp"
-                android:textColor="@color/text_muted" android:letterSpacing="0.15"
-                android:layout_marginBottom="10dp"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+                <TextView android:id="@+id/cmd_list_title"
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="GIT COMMANDS"
+                    android:fontFamily="monospace" android:textSize="11sp"
+                    android:textColor="@color/terminal_green" android:letterSpacing="0.15"/>
+                <TextView android:id="@+id/btn_close_list"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="EXIT [ESC]"
+                    android:fontFamily="monospace" android:textSize="10sp"
+                    android:textColor="@color/text_muted"
+                    android:padding="8dp"/>
+            </LinearLayout>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cmd_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"/>
+        </LinearLayout>
+
+        <!-- HTTP CODES PANEL -->
+        <LinearLayout android:id="@+id/panel_http"
+            android:layout_width="match_parent" android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="STATUS CODES"
+                android:fontFamily="monospace" android:textSize="10sp"
+                android:textColor="@color/text_muted" android:layout_marginBottom="12dp"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/http_recycler"
                 android:layout_width="match_parent"
@@ -180,79 +273,50 @@
                 android:scrollbars="none"/>
         </LinearLayout>
 
-        <!-- IP Tools Panel -->
+        <!-- IP TOOLS PANEL -->
         <ScrollView android:id="@+id/panel_ip"
             android:layout_width="match_parent" android:layout_height="match_parent"
             android:scrollbars="none"
             android:visibility="gone">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="vertical">
-
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="IP ADDRESS TRACKER"
+                    android:text="NETWORK DIAGNOSTICS"
                     android:fontFamily="monospace" android:textSize="10sp"
-                    android:textColor="@color/text_muted" android:letterSpacing="0.15"
-                    android:layout_marginBottom="10dp"/>
+                    android:textColor="@color/text_muted" android:layout_marginBottom="12dp"/>
+                
+                <!-- Info cards same as before but inside standard Material containers -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/bg_card" app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp" android:layout_marginBottom="12dp">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:padding="16dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="LOCAL ADDR" android:textSize="9sp" android:fontFamily="monospace" android:textColor="@color/text_muted"/>
+                        <TextView android:id="@+id/local_ip" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="127.0.0.1" android:textSize="20sp" android:textStyle="bold" android:fontFamily="monospace" android:textColor="@color/cyber_blue"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                <!-- Local IP card -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_card" android:padding="14dp"
-                    android:layout_marginBottom="10dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="LOCAL IP"
-                        android:fontFamily="monospace" android:textSize="10sp"
-                        android:textColor="@color/text_muted" android:letterSpacing="0.12"
-                        android:layout_marginBottom="4dp"/>
-                    <TextView android:id="@+id/local_ip"
-                        android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="192.168.1.42"
-                        android:fontFamily="monospace" android:textSize="20sp"
-                        android:textStyle="bold" android:textColor="@color/accent_cyan"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="LAN — Active"
-                        android:textSize="11sp" android:textColor="@color/text_secondary"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/bg_card" app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp" android:layout_marginBottom="12dp">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:padding="16dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="PUBLIC ADDR" android:textSize="9sp" android:fontFamily="monospace" android:textColor="@color/text_muted"/>
+                        <TextView android:id="@+id/public_ip" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Fetching..." android:textSize="20sp" android:textStyle="bold" android:fontFamily="monospace" android:textColor="@color/cyber_blue"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                <!-- Public IP card -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_card" android:padding="14dp"
-                    android:layout_marginBottom="10dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="PUBLIC IP"
-                        android:fontFamily="monospace" android:textSize="10sp"
-                        android:textColor="@color/text_muted" android:letterSpacing="0.12"
-                        android:layout_marginBottom="4dp"/>
-                    <TextView android:id="@+id/public_ip"
-                        android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Fetching..."
-                        android:fontFamily="monospace" android:textSize="20sp"
-                        android:textStyle="bold" android:textColor="@color/accent_cyan"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="ISP: Globe Telecom PH"
-                        android:textSize="11sp" android:textColor="@color/text_secondary"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="COMMON PORTS"
-                    android:fontFamily="monospace" android:textSize="10sp"
-                    android:textColor="@color/text_muted" android:letterSpacing="0.15"
-                    android:layout_marginBottom="8dp"/>
-
-                <!-- Port list items -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/port_recycler"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_card"
-                    android:padding="4dp"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"/>
-
             </LinearLayout>
         </ScrollView>
-
     </FrameLayout>
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -17,11 +17,11 @@
             android:layout_marginBottom="14dp">
             <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="BeamIT"
+                android:text="BEAM IT"
                 android:fontFamily="monospace" android:textSize="22sp"
-                android:textStyle="bold" android:textColor="@color/accent_green"/>
+                android:textStyle="bold" android:textColor="@color/terminal_green"/>
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="📱 Sender"
+                android:text="SENDER NODE"
                 android:textSize="11sp" android:textColor="@color/text_secondary"
                 android:background="@drawable/bg_card"
                 android:paddingStart="10dp" android:paddingEnd="10dp"
@@ -56,7 +56,7 @@
                 android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:text="FirebaseApp.initializeApp(this);\nFirebaseAuth auth =\n  FirebaseAuth.getInstance();"
                 android:fontFamily="monospace" android:textSize="10sp"
-                android:textColor="@color/accent_cyan"
+                android:textColor="@color/cyber_blue"
                 android:background="@drawable/bg_code_block"
                 android:padding="8dp"
                 android:maxLines="3"/>
@@ -90,7 +90,7 @@
                 android:gravity="center"
                 android:textSize="12sp"
                 android:fontFamily="monospace"
-                android:textColor="@color/accent_green"
+                android:textColor="@color/terminal_green"
                 android:background="@drawable/bg_card"/>
             <TextView android:id="@+id/tab_qr"
                 android:layout_width="0dp" android:layout_height="match_parent"
@@ -112,9 +112,17 @@
             android:gravity="center"
             android:layout_marginBottom="14dp">
 
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="TRANSFER PIN — VALID FOR"
+            <TextView android:id="@+id/beam_status_label"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="ESTABLISHING SECURE CHANNEL..."
                 android:fontFamily="monospace" android:textSize="9sp"
+                android:textColor="@color/accent_green" android:letterSpacing="0.1"
+                android:layout_marginBottom="12dp"
+                android:textAllCaps="true"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="6-DIGIT TRANSFER PIN"
+                android:fontFamily="monospace" android:textSize="10sp"
                 android:textColor="@color/text_muted" android:letterSpacing="0.15"
                 android:layout_marginBottom="12dp"/>
 
@@ -213,7 +221,7 @@
 
             <Button android:id="@+id/btn_scan_pc"
                 android:layout_width="160dp" android:layout_height="44dp"
-                android:text="📷 Scan PC"
+                android:text="Scan PC"
                 android:background="@drawable/bg_button_green"
                 android:textColor="@color/black"
                 android:textStyle="bold"
@@ -244,7 +252,7 @@
                 <TextView android:layout_width="22dp" android:layout_height="22dp"
                     android:text="1" android:gravity="center"
                     android:fontFamily="monospace" android:textSize="10sp"
-                    android:textColor="@color/accent_green"
+                    android:textColor="@color/terminal_green"
                     android:background="@drawable/bg_tag" android:layout_marginEnd="10dp"/>
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -257,7 +265,7 @@
                 <TextView android:layout_width="22dp" android:layout_height="22dp"
                     android:text="2" android:gravity="center"
                     android:fontFamily="monospace" android:textSize="10sp"
-                    android:textColor="@color/accent_green"
+                    android:textColor="@color/terminal_green"
                     android:background="@drawable/bg_tag" android:layout_marginEnd="10dp"/>
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -270,7 +278,7 @@
                 <TextView android:layout_width="22dp" android:layout_height="22dp"
                     android:text="3" android:gravity="center"
                     android:fontFamily="monospace" android:textSize="10sp"
-                    android:textColor="@color/accent_green"
+                    android:textColor="@color/terminal_green"
                     android:background="@drawable/bg_tag" android:layout_marginEnd="10dp"/>
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -283,7 +291,7 @@
                 <TextView android:layout_width="22dp" android:layout_height="22dp"
                     android:text="4" android:gravity="center"
                     android:fontFamily="monospace" android:textSize="10sp"
-                    android:textColor="@color/accent_green"
+                    android:textColor="@color/terminal_green"
                     android:background="@drawable/bg_tag" android:layout_marginEnd="10dp"/>
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_weight="1"

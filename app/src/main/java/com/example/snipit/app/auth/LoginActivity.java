@@ -234,10 +234,23 @@ public class LoginActivity extends AppCompatActivity {
         btnGoogle = findViewById(R.id.btn_google);
         btnGithub = findViewById(R.id.btn_github);
 
-        String webClientId = getString(R.string.default_web_client_id);
+        String webClientId = "";
+        try {
+            int resId = getResources().getIdentifier("default_web_client_id", "string", getPackageName());
+            if (resId != 0) {
+                webClientId = getString(resId);
+            }
+        } catch (Exception ignored) {}
+
+        if (webClientId == null || webClientId.isEmpty()) {
+            // Log warning but don't crash yet, it might work for some flows
+            android.util.Log.w("LoginActivity", "Google Web Client ID missing!");
+            // Provide a fallback or developer toast
+        }
+
         GoogleSignInOptions gso =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(webClientId)
+                        .requestIdToken(webClientId != null && !webClientId.isEmpty() ? webClientId : "MISSING_ID")
                         .requestEmail()
                         .build();
         googleClient = GoogleSignIn.getClient(this, gso);
@@ -341,18 +354,19 @@ public class LoginActivity extends AppCompatActivity {
                         task -> {
                             setLoading(false);
                             if (task.isSuccessful()) {
+                                android.util.Log.d("LoginActivity", "GitHub Login Success");
                                 goToApp();
                             } else {
-                                showError(
-                                        task.getException() != null
-                                                ? task.getException().getMessage()
-                                                : "GitHub sign-in failed.");
-                                }
+                                String msg = task.getException() != null ? task.getException().getMessage() : "GitHub Auth Failed";
+                                android.util.Log.e("LoginActivity", "GitHub sign-in failed: " + msg);
+                                showError("GitHub sign-in failed: " + msg);
+                            }
                         })
                 .addOnFailureListener(
                         e -> {
                             setLoading(false);
-                            showError(e.getMessage() != null ? e.getMessage() : "GitHub sign-in failed.");
+                            android.util.Log.e("LoginActivity", "GitHub provider failure", e);
+                            showError("GitHub Error: " + e.getMessage());
                         });
     }
 
@@ -361,9 +375,12 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             if (account == null || account.getIdToken() == null) {
                 setLoading(false);
-                showError("Google sign-in failed.");
+                android.util.Log.e("LoginActivity", "Google Account or ID Token is NULL");
+                showError("Google sign-in failed: Missing ID Token.");
                 return;
             }
+            
+            android.util.Log.d("LoginActivity", "Google Login Success: " + account.getEmail());
             auth.signInWithCredential(GoogleAuthProvider.getCredential(account.getIdToken(), null))
                     .addOnCompleteListener(
                             task -> {
@@ -371,15 +388,22 @@ public class LoginActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     goToApp();
                                 } else {
-                                    showError(
-                                            task.getException() != null
-                                                    ? task.getException().getMessage()
-                                                    : "Google sign-in failed.");
+                                    String msg = task.getException() != null ? task.getException().getMessage() : "Firebase Auth Failed";
+                                    android.util.Log.e("LoginActivity", "Firebase Auth with Google Failed: " + msg);
+                                    showError("Auth Failed: " + msg);
                                 }
                             });
         } catch (ApiException e) {
             setLoading(false);
-            showError(e.getMessage() != null ? e.getMessage() : "Google sign-in cancelled.");
+            android.util.Log.e("LoginActivity", "Google ApiException: Code " + e.getStatusCode() + " | Msg: " + e.getMessage());
+            String friendlyMsg = "Google login cancelled or failed.";
+            if (e.getStatusCode() == 10) friendlyMsg = "Developer Error: Check SHA-1 in Firebase Console.";
+            if (e.getStatusCode() == 12500) friendlyMsg = "Google Play Services error.";
+            showError(friendlyMsg);
+        } catch (Exception e) {
+            setLoading(false);
+            android.util.Log.e("LoginActivity", "Unexpected Google Auth Error", e);
+            showError("Unexpected error during Google login.");
         }
     }
 

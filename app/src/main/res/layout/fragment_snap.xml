@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
-    <!-- Camera Section: Fixed at top half -->
+    <!-- Camera Section: Cinematic View -->
     <FrameLayout
         android:id="@+id/camera_section"
         android:layout_width="0dp"
@@ -21,36 +21,59 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!-- Overlay/Scanner Box -->
+        <!-- Static Capture Preview (Hidden until capture) -->
+        <ImageView
+            android:id="@+id/capture_preview_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:background="@color/black" />
+
+        <!-- High-Tech Overlay -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <View
+                android:id="@+id/scrim_overlay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#66000000" />
+                android:background="#99000000" />
 
+            <!-- The Targeting Frame -->
             <FrameLayout
                 android:id="@+id/scanner_box"
-                android:layout_width="280dp"
-                android:layout_height="140dp"
+                android:layout_width="260dp"
+                android:layout_height="120dp"
                 android:layout_gravity="center"
-                android:background="@drawable/scanner_frame_corners" />
+                android:background="@drawable/scanner_targeting_frame" />
         </FrameLayout>
 
+        <!-- Floating Status Badge -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_snap_header_scrim"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_margin="20dp"
+            android:background="@drawable/bg_status_badge"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/ic_circle_filled"
+                android:backgroundTint="@color/terminal_green"
+                android:layout_marginEnd="8dp"/>
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/snap_screen_headline"
-                android:textColor="@color/text_primary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:text="SCANNER ACTIVE"
+                android:textColor="@color/terminal_green"
+                android:fontFamily="monospace"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"/>
         </LinearLayout>
     </FrameLayout>
 
@@ -59,17 +82,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.45" />
+        app:layout_constraintGuide_percent="0.55" />
 
-    <!-- Result Section: Scrollable bottom card -->
+    <!-- Professional Control Card -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottom_card"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:cardBackgroundColor="@color/bg_secondary"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="12dp"
-        android:layout_marginTop="-16dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="20dp"
+        android:layout_marginTop="-30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,16 +101,17 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp">
+            android:padding="24dp">
 
             <TextView
                 android:id="@+id/ocr_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/snap_status_preview"
-                android:textColor="@color/accent_green"
-                android:textSize="12sp"
-                android:textStyle="bold"
+                android:text="SYSTEM READY"
+                android:textColor="@color/text_secondary"
+                android:fontFamily="monospace"
+                android:textSize="11sp"
+                android:letterSpacing="0.05"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -95,96 +119,90 @@
                 android:id="@+id/ocr_progress"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"
-                android:layout_height="4dp"
-                android:layout_marginTop="8dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="12dp"
                 android:indeterminate="true"
-                android:indeterminateTint="@color/accent_green"
+                android:indeterminateTint="@color/terminal_green"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ocr_status" />
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/scroll_container"
-                android:layout_width="0dp"
+            <!-- The Code Result Box -->
+            <FrameLayout
+                android:id="@+id/result_container"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="12dp"
-                app:layout_constraintBottom_toTopOf="@+id/btn_scan"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ocr_progress">
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_terminal_window"
+                app:layout_constraintTop_toBottomOf="@id/ocr_progress"
+                app:layout_constraintBottom_toTopOf="@+id/btn_scan">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/extracted_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <TextView
+                    android:id="@+id/extracted_preview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:boxBackgroundColor="@color/bg_input"
-                    app:boxCornerRadiusBottomEnd="10dp"
-                    app:boxCornerRadiusBottomStart="10dp"
-                    app:boxCornerRadiusTopEnd="10dp"
-                    app:boxCornerRadiusTopStart="10dp"
-                    app:boxStrokeColor="@color/text_muted"
-                    app:hintEnabled="false">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/extracted_code"
-                        android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:fontFamily="monospace"
+                    android:textSize="12sp"
+                    android:textColor="@color/cyber_blue"
+                    android:hint="Captured source will appear here..."
+                    android:textColorHint="@color/text_muted"
+                    android:scrollbars="vertical"
+                    android:gravity="top|start"/>
+                
+                <!-- Hint View -->
+                <LinearLayout
+                    android:id="@+id/scanner_hint_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="20dp">
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_camera"
+                        app:tint="@color/text_muted"
+                        android:alpha="0.2"/>
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="ADJUST FRAME &amp; CAPTURE"
+                        android:textColor="@color/text_muted"
                         android:fontFamily="monospace"
-                        android:gravity="top|start"
-                        android:hint="@string/snap_code_hint"
-                        android:inputType="textMultiLine|textNoSuggestions"
-                        android:minLines="5"
-                        android:padding="12dp"
-                        android:textColor="@color/accent_cyan"
-                        android:textSize="13sp" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </androidx.core.widget.NestedScrollView>
+                        android:textSize="9sp"
+                        android:layout_marginTop="8dp"/>
+                </LinearLayout>
+            </FrameLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_scan"
-                style="@style/SnipIT.Button.Primary"
-                android:layout_width="0dp"
-                android:layout_height="52dp"
-                android:layout_marginBottom="12dp"
-                android:text="@string/snap_take_picture"
-                app:cornerRadius="12dp"
-                app:layout_constraintBottom_toTopOf="@+id/actions_row"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <LinearLayout
-                android:id="@+id/actions_row"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent">
+                android:layout_height="56dp"
+                android:text="INITIATE CAPTURE"
+                android:fontFamily="monospace"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                app:backgroundTint="@color/terminal_green"
+                app:cornerRadius="14dp"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_save_extracted"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/save_snip"
-                    app:cornerRadius="10dp"
-                    app:strokeColor="@color/accent_green" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_fix_ai"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/fix_with_ai"
-                    app:cornerRadius="10dp"
-                    app:strokeColor="@color/accent_purple" />
-            </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_continue_to_editor"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="PROCEED TO EDITOR"
+                android:fontFamily="monospace"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:backgroundTint="@color/accent_purple"
+                app:cornerRadius="14dp"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

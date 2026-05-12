@@ -87,23 +87,33 @@ public class BeamFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
-        repo = new SnipRepository(requireActivity().getApplication());
+        
+        try {
+            repo = new SnipRepository(requireActivity().getApplication());
+        } catch (Exception e) {
+            repo = null;
+            return;
+        }
 
-        title = v.findViewById(R.id.beam_snip_title);
-        lang = v.findViewById(R.id.beam_snip_lang);
-        code = v.findViewById(R.id.beam_snip_code);
-        beamActiveSection = v.findViewById(R.id.beam_active_section);
-        beamEmptyState = v.findViewById(R.id.beam_empty_state);
-        btnNewPin = v.findViewById(R.id.btn_new_pin);
-        btnCopyPin = v.findViewById(R.id.btn_copy_pin);
-        pinMode = v.findViewById(R.id.pin_mode_container);
-        qrMode = v.findViewById(R.id.qr_mode_container);
-        tabPin = v.findViewById(R.id.tab_pin);
-        tabQr = v.findViewById(R.id.tab_qr);
-        pinTimer = v.findViewById(R.id.pin_timer);
-        barL = v.findViewById(R.id.timer_bar_left);
-        barR = v.findViewById(R.id.timer_bar_right);
-        qrImage = v.findViewById(R.id.qr_image);
+        try {
+            title = v.findViewById(R.id.beam_snip_title);
+            lang = v.findViewById(R.id.beam_snip_lang);
+            code = v.findViewById(R.id.beam_snip_code);
+            beamActiveSection = v.findViewById(R.id.beam_active_section);
+            beamEmptyState = v.findViewById(R.id.beam_empty_state);
+            btnNewPin = v.findViewById(R.id.btn_new_pin);
+            btnCopyPin = v.findViewById(R.id.btn_copy_pin);
+            pinMode = v.findViewById(R.id.pin_mode_container);
+            qrMode = v.findViewById(R.id.qr_mode_container);
+            tabPin = v.findViewById(R.id.tab_pin);
+            tabQr = v.findViewById(R.id.tab_qr);
+            pinTimer = v.findViewById(R.id.pin_timer);
+            barL = v.findViewById(R.id.timer_bar_left);
+            barR = v.findViewById(R.id.timer_bar_right);
+            qrImage = v.findViewById(R.id.qr_image);
+        } catch (Exception e) {
+            return;
+        }
 
         pinDigits =
                 new TextView[] {
@@ -115,20 +125,29 @@ public class BeamFragment extends Fragment {
                     v.findViewById(R.id.pin_d5)
                 };
 
-        barL.setMax(TIMER_SEC);
-        barR.setMax(TIMER_SEC);
+        try {
+            barL.setMax(TIMER_SEC);
+            barR.setMax(TIMER_SEC);
 
-        tabPin.setOnClickListener(x -> showMode(true));
-        tabQr.setOnClickListener(x -> showMode(false));
+            tabPin.setOnClickListener(x -> showMode(true));
+            tabQr.setOnClickListener(x -> showMode(false));
 
-        v.findViewById(R.id.btn_new_pin).setOnClickListener(x -> regeneratePinAndTimer());
-        v.findViewById(R.id.btn_copy_pin).setOnClickListener(x -> copyPin());
-        btnScanPc = v.findViewById(R.id.btn_scan_pc);
-        btnScanPc.setOnClickListener(x -> {
-            android.content.Intent i = new android.content.Intent(requireContext(), com.example.snipit.app.QrScanActivity.class);
-            i.putExtra("result_only", true);
-            scanLauncher.launch(i);
-        });
+            v.findViewById(R.id.btn_new_pin).setOnClickListener(x -> regeneratePinAndTimer());
+            v.findViewById(R.id.btn_copy_pin).setOnClickListener(x -> copyPin());
+            btnScanPc = v.findViewById(R.id.btn_scan_pc);
+            btnScanPc.setOnClickListener(x -> {
+                if (!isAdded()) return;
+                try {
+                    android.content.Intent i = new android.content.Intent(requireContext(), com.example.snipit.app.QrScanActivity.class);
+                    i.putExtra("result_only", true);
+                    scanLauncher.launch(i);
+                } catch (Exception e) {
+                    // Ignore if fragment detaching
+                }
+            });
+        } catch (Exception e) {
+            return;
+        }
 
         int snipId = -1;
         Bundle args = getArguments();
@@ -189,41 +208,62 @@ public class BeamFragment extends Fragment {
     }
 
     private void beamToSession(String sessionId) {
-        if (current == null) return;
+        if (!isAdded() || current == null) return;
+        
         beamService.uploadToSession(
                 sessionId,
                 current.code != null ? current.code : "",
                 current.title != null ? current.title : "",
                 current.language != null ? current.language : "",
-                false // Don't auto-delete session ID beams immediately, keep for receiver
+                false 
         );
-        Toast.makeText(requireContext(), "📡 Beaming to PC...", Toast.LENGTH_SHORT).show();
-        XpManager.addXp(requireContext(), 10);
-        BadgeTracker.recordBeamSession(requireContext());
+        
+        Context ctx = getContext();
+        if (ctx != null) {
+            Toast.makeText(ctx, "📡 Beaming to PC...", Toast.LENGTH_SHORT).show();
+            XpManager.addXp(ctx, 10);
+            BadgeTracker.recordBeamSession(ctx);
+        }
     }
 
     private void showMode(boolean pin) {
-        tabPin.setTextColor(
-                requireContext()
-                        .getResources()
-                        .getColor(pin ? R.color.accent_green : R.color.text_muted, null));
-        tabQr.setTextColor(
-                requireContext()
-                        .getResources()
-                        .getColor(!pin ? R.color.accent_green : R.color.text_muted, null));
+        if (!isAdded()) return;
+        Context ctx = getContext();
+        if (ctx == null) return;
+
+        tabPin.setTextColor(ctx.getResources().getColor(pin ? R.color.accent_green : R.color.text_muted, null));
+        tabQr.setTextColor(ctx.getResources().getColor(!pin ? R.color.accent_green : R.color.text_muted, null));
         tabPin.setBackgroundResource(pin ? R.drawable.bg_card : 0);
         tabQr.setBackgroundResource(!pin ? R.drawable.bg_card : 0);
         pinMode.setVisibility(pin ? View.VISIBLE : View.GONE);
         qrMode.setVisibility(pin ? View.GONE : View.VISIBLE);
-        if (!pin) buildQr();
+        if (!pin) {
+            buildQr();
+            adjustBrightness(1.0f);
+        } else {
+            adjustBrightness(-1.0f); // Reset to system default
+        }
+    }
+
+    private void adjustBrightness(float value) {
+        if (getActivity() != null && getActivity().getWindow() != null) {
+            android.view.WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();
+            lp.screenBrightness = value;
+            getActivity().getWindow().setAttributes(lp);
+        }
     }
 
     private void regeneratePinAndTimer() {
+        if (!isAdded()) return;
+        
         if (activeFirebasePin != null) {
             beamService.deletePin(activeFirebasePin);
             activeFirebasePin = null;
         }
         pin = String.format("%06d", secureRandom.nextInt(1_000_000));
+        TextView statusLabel = getView() != null ? getView().findViewById(R.id.beam_status_label) : null;
+        if (statusLabel != null) statusLabel.setText("SYNCHRONIZING SECURE CHANNEL...");
+        
         for (int i = 0; i < 6; i++) {
             pinDigits[i].setText(String.valueOf(pin.charAt(i)));
         }
@@ -234,7 +274,12 @@ public class BeamFragment extends Fragment {
                     current.title != null ? current.title : "",
                     current.language != null ? current.language : "");
             activeFirebasePin = pin;
-            BadgeTracker.recordBeamSession(requireContext());
+            BadgeTracker.recordBeamSession(getContext());
+            if (statusLabel != null) {
+                handler.postDelayed(() -> {
+                    if (isAdded()) statusLabel.setText("READY FOR PC SYNC");
+                }, 800);
+            }
         }
         secondsLeft = TIMER_SEC;
         if (ticker != null) handler.removeCallbacks(ticker);
@@ -242,10 +287,12 @@ public class BeamFragment extends Fragment {
                 new Runnable() {
                     @Override
                     public void run() {
-                        if (secondsLeft <= 0) {
-                            pinTimer.setText("0:00");
-                            barL.setProgress(0);
-                            barR.setProgress(0);
+                        if (!isAdded() || secondsLeft <= 0) {
+                            if (isAdded()) {
+                                pinTimer.setText("0:00");
+                                barL.setProgress(0);
+                                barR.setProgress(0);
+                            }
                             return;
                         }
                         secondsLeft--;
@@ -258,22 +305,40 @@ public class BeamFragment extends Fragment {
                     }
                 };
         handler.post(ticker);
-        XpManager.addXp(requireContext(), 3);
+        Context ctx = getContext();
+        if (ctx != null) XpManager.addXp(ctx, 3);
     }
 
     private void copyPin() {
-        ClipboardManager cm =
-                (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        cm.setPrimaryClip(ClipData.newPlainText("pin", pin));
-        Toast.makeText(requireContext(), "PIN copied", Toast.LENGTH_SHORT).show();
+        try {
+            if (!isAdded()) return;
+            ClipboardManager cm =
+                    (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            if (cm != null) {
+                cm.setPrimaryClip(ClipData.newPlainText("pin", pin));
+                Toast.makeText(requireContext(), "PIN copied", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            // Ignore if fragment detaching
+        }
     }
 
     private void buildQr() {
         if (current == null || current.code == null) return;
         try {
-            qrImage.setImageBitmap(QrUtils.encodeQr(current.code, 384));
+            if (!isAdded() || qrImage == null) return;
+            String dataToEncode = com.example.snipit.app.util.GzipUtil.compress(current.code);
+            qrImage.setImageBitmap(QrUtils.encodeQr(dataToEncode, 384));
         } catch (WriterException e) {
-            Toast.makeText(requireContext(), "Code too long for QR", Toast.LENGTH_SHORT).show();
+            try {
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), "Code too long for QR", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception ex) {
+                // Ignore if fragment detaching
+            }
+        } catch (Exception e) {
+            // Ignore other errors
         }
     }
 

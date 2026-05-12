@@ -127,4 +127,11 @@ public class SnipRepository {
     public void incrementUsage(int id) {
         executor.execute(() -> snipDao.incrementUsage(id));
     }
+
+    public void getRecentSnips(int limit, java.util.function.Consumer<List<Snip>> onResult) {
+        executor.execute(() -> {
+            List<Snip> snips = snipDao.getRecentSnipsSync(limit);
+            mainHandler.post(() -> onResult.accept(snips));
+        });
+    }
 }

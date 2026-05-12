@@ -37,7 +37,7 @@ public class CmdRowAdapter extends RecyclerView.Adapter<CmdRowAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
         DexDoc d = docs[position];
-        h.code.setText(d.command);
+        h.code.setText(com.example.snipit.app.util.CodeHighlighter.highlight(h.itemView.getContext(), d.command, "CLI"));
         h.desc.setText(d.summary);
         h.itemView.setOnClickListener(
                 v -> {

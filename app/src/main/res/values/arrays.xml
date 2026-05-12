@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Searchable dropdown: emoji + canonical name (typos avoided vs free text). -->
+    <!-- Searchable dropdown: Canonical names for professional Dark-Kernel UI. -->
     <string-array name="language_picker">
-        <item>☕ Java</item>
-        <item>🟣 Kotlin</item>
-        <item>🐍 Python</item>
-        <item>⚡ JavaScript</item>
-        <item>🔷 TypeScript</item>
-        <item>🧱 C#</item>
-        <item>⚙️ C / C++</item>
-        <item>🦀 Rust</item>
-        <item>🐘 SQL</item>
-        <item>🐚 Bash</item>
-        <item>💎 Ruby</item>
-        <item>🐹 Go</item>
-        <item>🐘 PHP</item>
-        <item>🎯 Swift</item>
-        <item>📱 Android XML</item>
-        <item>🌐 HTML/CSS</item>
-        <item>📦 JSON / YAML</item>
-        <item>🧪 GraphQL</item>
-        <item>🗄️ MongoDB shell</item>
-        <item>🐳 Docker</item>
-        <item>☸️ Kubernetes</item>
-        <item>📜 PowerShell</item>
-        <item>🐧 Linux CLI</item>
-        <item>🔧 Git</item>
-        <item>📄 Plain text</item>
+        <item>Java</item>
+        <item>Kotlin</item>
+        <item>Python</item>
+        <item>JavaScript</item>
+        <item>TypeScript</item>
+        <item>C#</item>
+        <item>C / C++</item>
+        <item>Rust</item>
+        <item>SQL</item>
+        <item>Bash</item>
+        <item>Ruby</item>
+        <item>Go</item>
+        <item>PHP</item>
+        <item>Swift</item>
+        <item>Android XML</item>
+        <item>HTML/CSS</item>
+        <item>JSON / YAML</item>
+        <item>GraphQL</item>
+        <item>MongoDB shell</item>
+        <item>Docker</item>
+        <item>Kubernetes</item>
+        <item>PowerShell</item>
+        <item>Linux CLI</item>
+        <item>Git</item>
+        <item>Plain text</item>
     </string-array>
 </resources>

@@ -1,12 +1,11 @@
 package com.example.snipit.app.ui;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.BackgroundColorSpan;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.snipit.app.R;
@@ -19,27 +18,17 @@ public class SnipAdapter extends RecyclerView.Adapter<SnipAdapter.VH> {
 
     public interface Listener {
         void onCopy(Snip snip);
-
         void onBeam(Snip snip);
-
-        /** Opens the full IDE-style editor for this vault snip. */
         void onOpenEditor(Snip snip);
-
-        /** Same vault row — opens editor (Fix with AI is available inside the editor). */
         void onFixWithAi(Snip snip);
+        void onDelete(Snip snip);
     }
 
     private final List<Snip> items = new ArrayList<>();
     private final Listener listener;
-    private List<String> highlightTokens = Collections.emptyList();
 
     public SnipAdapter(Listener listener) {
         this.listener = listener;
-    }
-
-    public void setHighlightTokens(List<String> tokens) {
-        highlightTokens = tokens != null ? tokens : Collections.emptyList();
-        notifyDataSetChanged();
     }
 
     public void setItems(List<Snip> snips) {
@@ -51,23 +40,59 @@ public class SnipAdapter extends RecyclerView.Adapter<SnipAdapter.VH> {
     @NonNull
     @Override
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v =
-                LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_snip, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_snip, parent, false);
         return new VH(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
         Snip s = items.get(position);
-        h.title.setText(highlight(s.title != null ? s.title : "(untitled)"));
-        h.lang.setText(highlight(s.language != null ? s.language : "—"));
-        h.code.setText(highlight(s.code != null ? s.code : ""));
-        h.tags.setText(highlight(s.tags != null ? s.tags.replace(",", "  ") : ""));
-        h.btnCopy.setOnClickListener(v -> listener.onCopy(s));
-        h.btnBeam.setOnClickListener(v -> listener.onBeam(s));
-        h.btnFixAi.setOnClickListener(v -> listener.onFixWithAi(s));
-        h.clickArea.setOnClickListener(v -> listener.onOpenEditor(s));
+        
+        // Professional Header: Branded text colors
+        h.title.setText(s.title != null ? s.title : "Untitled_Snippet");
+        h.title.setTextColor(h.itemView.getContext().getResources().getColor(R.color.text_primary, null));
+
+        // Language Pill: Professional branded colors (No emojis)
+        String langStr = s.language != null ? s.language.toUpperCase() : "PLAINTEXT";
+        h.lang.setText(langStr);
+        applyLanguageStyle(h.lang, langStr);
+
+        // Code Workspace: Mono-spaced high-contrast preview
+        h.code.setText(com.example.snipit.app.util.CodeHighlighter.highlight(h.itemView.getContext(), s.code, s.language));
+        
+        // Tags: Subdued metadata
+        h.tags.setText(s.tags != null ? s.tags.replace(",", "  ") : "");
+
+        // Actions with Safety Checks
+        h.btnEdit.setOnClickListener(v -> {
+            if (listener != null && s != null) listener.onOpenEditor(s);
+        });
+        h.btnBeam.setOnClickListener(v -> {
+            if (listener != null && s != null) listener.onBeam(s);
+        });
+        h.btnFixAi.setOnClickListener(v -> {
+            if (listener != null && s != null) listener.onFixWithAi(s);
+        });
+        h.clickArea.setOnClickListener(v -> {
+            if (listener != null && s != null) listener.onCopy(s);
+        });
+        h.btnDelete.setOnClickListener(v -> {
+            if (listener != null && s != null) listener.onDelete(s);
+        });
+    }
+
+    private void applyLanguageStyle(TextView tv, String lang) {
+        int color;
+        switch (lang) {
+            case "JAVA": case "KOTLIN": color = Color.parseColor("#f89820"); break;
+            case "PYTHON": color = Color.parseColor("#3776ab"); break;
+            case "JAVASCRIPT": case "JS": case "TYPESCRIPT": color = Color.parseColor("#61dafb"); break;
+            case "BASH": case "SHELL": case "CLI": color = Color.parseColor("#3fb950"); break;
+            case "GO": color = Color.parseColor("#00add8"); break;
+            default: color = Color.parseColor("#00CCFF"); break; // Default Cyber Blue
+        }
+        tv.setTextColor(color);
+        // Add a subtle border or background if needed via bg_search or bg_tag
     }
 
     @Override
@@ -81,9 +106,10 @@ public class SnipAdapter extends RecyclerView.Adapter<SnipAdapter.VH> {
         final TextView lang;
         final TextView code;
         final TextView tags;
-        final TextView btnCopy;
-        final TextView btnBeam;
-        final TextView btnFixAi;
+        final View btnEdit;
+        final View btnBeam;
+        final View btnFixAi;
+        final View btnDelete;
 
         VH(View v) {
             super(v);
@@ -92,35 +118,10 @@ public class SnipAdapter extends RecyclerView.Adapter<SnipAdapter.VH> {
             lang = v.findViewById(R.id.snip_language);
             code = v.findViewById(R.id.snip_code);
             tags = v.findViewById(R.id.snip_tags);
-            btnCopy = v.findViewById(R.id.btn_copy);
+            btnEdit = v.findViewById(R.id.btn_edit);
             btnBeam = v.findViewById(R.id.btn_beam);
             btnFixAi = v.findViewById(R.id.btn_fix_ai);
+            btnDelete = v.findViewById(R.id.btn_delete);
         }
     }
-
-    private CharSequence highlight(String text) {
-        if (text == null) return "";
-        if (highlightTokens == null || highlightTokens.isEmpty()) return text;
-        String lower = text.toLowerCase();
-        SpannableString sp = new SpannableString(text);
-        int color = sp.length() > 0 ? HIGHLIGHT_BG : 0;
-        for (String raw : highlightTokens) {
-            if (raw == null) continue;
-            String token = raw.trim().toLowerCase();
-            if (token.isEmpty()) continue;
-            int from = 0;
-            while (from < lower.length()) {
-                int idx = lower.indexOf(token, from);
-                if (idx < 0) break;
-                int end = idx + token.length();
-                if (end > idx) {
-                    sp.setSpan(new BackgroundColorSpan(color), idx, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-                from = end;
-            }
-        }
-        return sp;
-    }
-
-    private static final int HIGHLIGHT_BG = 0x3347FF9A;
 }

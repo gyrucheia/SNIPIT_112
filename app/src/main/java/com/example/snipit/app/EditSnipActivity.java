@@ -9,6 +9,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -89,13 +90,24 @@ public class EditSnipActivity extends AppCompatActivity {
 
                     @Override
                     public void onTextChanged(CharSequence seq, int start, int before, int count) {
+                        String codeStr = seq.toString();
+                        
+                        // Auto-detect language if not set or if it's default
+                        String currentLang = lang.getText().toString();
+                        if (currentLang.isEmpty() || currentLang.equals("Plain Text")) {
+                            String detected = AutoTagger.detectLanguage(codeStr);
+                            if (!detected.isEmpty()) {
+                                LanguagePickerHelper.setDisplayFromVaultLabel(lang, EditSnipActivity.this, detected);
+                            }
+                        }
+
                         if (tags.getText() == null || tags.getText().toString().trim().length() > 0) {
                             return;
                         }
                         String langLabel =
                                 LanguagePickerHelper.vaultLabel(
                                         lang.getText() != null ? lang.getText().toString() : "");
-                        String suggested = AutoTagger.suggest(seq.toString(), langLabel);
+                        String suggested = AutoTagger.suggest(codeStr, langLabel);
                         if (!suggested.isEmpty()) {
                             tags.setText(suggested);
                         }
@@ -104,6 +116,32 @@ public class EditSnipActivity extends AppCompatActivity {
                     @Override
                     public void afterTextChanged(Editable s) {}
                 });
+
+        TextView btnTogglePreview = findViewById(R.id.btn_toggle_preview);
+        android.webkit.WebView webView = findViewById(R.id.code_preview_web);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl("file:///android_asset/highlighting/render.html");
+
+        btnTogglePreview.setOnClickListener(v -> {
+            boolean isSyntaxOn = webView.getVisibility() == View.VISIBLE;
+            if (isSyntaxOn) {
+                webView.setVisibility(View.GONE);
+                code.setVisibility(View.VISIBLE);
+                btnTogglePreview.setText("SYNTAX ON");
+                btnTogglePreview.setTextColor(getResources().getColor(R.color.terminal_green, null));
+            } else {
+                String raw = code.getText().toString();
+                String langLabel = lang.getText().toString().trim();
+                // Inject code into WebView using the correct bridge function
+                webView.evaluateJavascript("highlightCode(" + 
+                    android.database.DatabaseUtils.sqlEscapeString(raw) + ", '" + langLabel + "')", null);
+                
+                webView.setVisibility(View.VISIBLE);
+                code.setVisibility(View.GONE);
+                btnTogglePreview.setText("SYNTAX OFF");
+                btnTogglePreview.setTextColor(getResources().getColor(R.color.syntax_orange, null));
+            }
+        });
 
         btnFixAi.setOnClickListener(
                 v -> {
@@ -127,6 +165,12 @@ public class EditSnipActivity extends AppCompatActivity {
                                     btnFixAi.setEnabled(true);
                                     if (result != null) {
                                         code.setText(result.trim());
+                                        // Refresh preview if visible
+                                        if (webView.getVisibility() == View.VISIBLE) {
+                                            String currentLang = lang.getText().toString().trim();
+                                            webView.evaluateJavascript("highlightCode(" + 
+                                                android.database.DatabaseUtils.sqlEscapeString(result.trim()) + ", '" + currentLang + "')", null);
+                                        }
                                     }
                                 }
 

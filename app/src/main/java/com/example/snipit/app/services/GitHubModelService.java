@@ -48,7 +48,11 @@ public class GitHubModelService {
     private final Handler main = new Handler(Looper.getMainLooper());
 
     public void analyzeCode(String userMessage, JSONArray history, AiCallback aiCb) {
-        sendMessage(userMessage, history, new Callback() {
+        analyzeCodeWithContext(userMessage, null, history, aiCb);
+    }
+
+    public void analyzeCodeWithContext(String userMessage, String vaultContext, JSONArray history, AiCallback aiCb) {
+        sendMessage(userMessage, vaultContext, history, new Callback() {
             @Override
             public void onResult(String result) {
                 if (result.contains("```")) {
@@ -101,6 +105,10 @@ public class GitHubModelService {
     }
 
     public void sendMessage(String userMessage, JSONArray history, Callback cb) {
+        sendMessage(userMessage, null, history, cb);
+    }
+
+    public void sendMessage(String userMessage, String vaultContext, JSONArray history, Callback cb) {
         String apiKey = BuildConfig.OPENROUTER_API_KEY;
 
         if (TextUtils.isEmpty(apiKey)) {
@@ -114,7 +122,12 @@ public class GitHubModelService {
                 jsonBody.put("model", MODEL_NAME);
 
                 JSONArray messages = new JSONArray();
-                messages.put(new JSONObject().put("role", "system").put("content", SNIPIT_SYSTEM_PROMPT));
+                String systemPrompt = SNIPIT_SYSTEM_PROMPT;
+                if (!TextUtils.isEmpty(vaultContext)) {
+                    systemPrompt += "\n\nUser's Vault Context (Recent Snippets):\n" + vaultContext;
+                }
+                
+                messages.put(new JSONObject().put("role", "system").put("content", systemPrompt));
                 
                 if (history != null) {
                     for (int i = 0; i < history.length(); i++) {

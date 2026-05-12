@@ -93,12 +93,6 @@ public class VaultFragment extends Fragment implements SnipAdapter.Listener {
         LinearLayout tagRow = v.findViewById(R.id.filter_chips_container);
         if (tagRow != null) buildTagRow(tagRow);
 
-        View fab = v.findViewById(R.id.btn_add_snip);
-        if (fab != null) {
-            fab.setOnClickListener(
-                x -> startActivity(new Intent(requireContext(), NewSnipActivity.class)));
-        }
-
         repo.sync(null);
 
         repo.getAllSnips()
@@ -115,15 +109,15 @@ public class VaultFragment extends Fragment implements SnipAdapter.Listener {
         for (String tag : TAG_FILTERS) {
             TextView chip = new TextView(requireContext());
             chip.setText(tag);
-            chip.setPadding(dp(12), dp(6), dp(12), dp(6));
-            chip.setTextSize(10);
+            chip.setPadding(dp(16), dp(8), dp(16), dp(8));
+            chip.setTextSize(11);
             chip.setTypeface(Typeface.MONOSPACE);
-            chip.setBackgroundResource(R.drawable.bg_tag);
+            chip.setBackgroundResource(R.drawable.bg_search);
             LinearLayout.LayoutParams lp =
                     new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.WRAP_CONTENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMarginEnd(dp(6));
+            lp.setMarginEnd(dp(8));
             chip.setLayoutParams(lp);
             chip.setOnClickListener(
                     x -> {
@@ -143,7 +137,8 @@ public class VaultFragment extends Fragment implements SnipAdapter.Listener {
             chip.setTextColor(
                     requireContext()
                             .getResources()
-                            .getColor(on ? R.color.accent_green : R.color.text_muted, null));
+                            .getColor(on ? R.color.terminal_green : R.color.text_muted, null));
+            chip.setAlpha(on ? 1.0f : 0.6f);
         }
     }
 
@@ -180,8 +175,17 @@ public class VaultFragment extends Fragment implements SnipAdapter.Listener {
             }
             out.add(s);
         }
-        adapter.setHighlightTokens(tokens);
         adapter.setItems(out);
+        
+        if (getView() != null) {
+            View empty = getView().findViewById(R.id.vault_empty_state);
+            View rv = getView().findViewById(R.id.vault_recycler);
+            if (empty != null && rv != null) {
+                boolean isEmpty = out.isEmpty();
+                empty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+                rv.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+            }
+        }
     }
 
     private int dp(int v) {
@@ -228,18 +232,23 @@ public class VaultFragment extends Fragment implements SnipAdapter.Listener {
     public void onFixWithAi(Snip snip) {
         if (getActivity() instanceof com.example.snipit.app.MainActivity) {
             com.example.snipit.app.MainActivity main = (com.example.snipit.app.MainActivity) getActivity();
-            // Switch to AI Tab (Index 3)
+            
+            // 1. Instantly switch to the AI tab
             main.switchTab(3);
             
-            // Post a small delay to allow the fragment to load, then send the code
-            View view = getView();
-            if (view != null) {
-                view.postDelayed(() -> {
-                    AIFragment aiFrag = (AIFragment) getParentFragmentManager().findFragmentByTag("frag_ai");
-                    if (aiFrag != null && snip.code != null) {
-                        aiFrag.startFixSession(snip.code);
+            // 2. Locate the AIFragment and initiate the "Doctor" session
+            // We use a postDelayed to ensure the fragment transaction is complete
+            if (getView() != null) {
+                getView().postDelayed(() -> {
+                    try {
+                        AIFragment aiFrag = (AIFragment) getParentFragmentManager().findFragmentByTag("frag_3");
+                        if (aiFrag != null && snip.code != null) {
+                            aiFrag.startFixSession(snip.code);
+                        }
+                    } catch (Exception e) {
+                        // Safe fallback if fragment is not ready
                     }
-                }, 300);
+                }, 200);
             }
         }
     }
@@ -250,5 +259,20 @@ public class VaultFragment extends Fragment implements SnipAdapter.Listener {
         android.content.ClipData data = android.content.ClipData.newPlainText("SnipIT Code", snip.code);
         cb.setPrimaryClip(data);
         android.widget.Toast.makeText(requireContext(), "Code copied!", android.widget.Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDelete(Snip snip) {
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.delete_snip)
+                .setMessage(R.string.delete_snip_confirm)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.delete_snip, (d, w) -> {
+                    if (repo != null && snip != null) {
+                        repo.delete(snip, () -> {
+                            android.widget.Toast.makeText(requireContext(), "Deleted", android.widget.Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                }).show();
     }
 }

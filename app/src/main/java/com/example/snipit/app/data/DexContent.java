@@ -25,6 +25,11 @@ public final class DexContent {
         return DexAssetLoader.concat(ADB, DexAssetLoader.loadArray(ctx, "dex/adb_extra.json"));
     }
 
+    public static DexDoc[] regexWith(Context ctx) {
+        // Regex is primarily in handbook.json, but we can add built-ins here
+        return DexAssetLoader.concat(REGEX, DexAssetLoader.loadArray(ctx, "dex/regex_extra.json"));
+    }
+
     public static final DexDoc[] GIT =
             new DexDoc[] {
                 new DexDoc(
@@ -123,6 +128,22 @@ public final class DexContent {
                         "Install APK",
                         "Pushes APK to device and installs. Use -r to replace existing app.\n\n"
                                 + "Example:\n  adb install -r app-debug.apk"),
+            };
+
+    public static final DexDoc[] REGEX =
+            new DexDoc[] {
+                new DexDoc(
+                        "Email Pattern",
+                        "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+                        "Validates standard email addresses. Supports dots, dashes, and underscores in the local part."),
+                new DexDoc(
+                        "Strong Password",
+                        "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$",
+                        "Minimum eight characters, at least one letter and one number."),
+                new DexDoc(
+                        "URL Validation",
+                        "^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?$",
+                        "Matches http, https, or domain-only URLs with paths."),
             };
 
     /** HTTP code, short label, long explanation */

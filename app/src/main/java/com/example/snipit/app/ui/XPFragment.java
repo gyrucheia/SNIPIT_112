@@ -37,15 +37,7 @@ public class XPFragment extends Fragment {
         super.onViewCreated(v, savedInstanceState);
         snipRepo = new SnipRepository(requireActivity().getApplication());
 
-        v.findViewById(R.id.btn_sign_out)
-                .setOnClickListener(
-                        x -> {
-                            FirebaseAuth.getInstance().signOut();
-                            Intent i = new Intent(requireContext(), LoginActivity.class);
-                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(i);
-                            requireActivity().finishAffinity();
-                        });
+
 
         v.findViewById(R.id.badge_snip)
                 .setOnClickListener(

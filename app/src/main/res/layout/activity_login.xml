@@ -1,118 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_primary"
-    android:scrollbars="none">
+    android:background="@color/bg_primary">
 
     <LinearLayout
+        android:id="@+id/login_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:background="@drawable/bg_card"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@mipmap/ic_launcher_round"
+            android:layout_gravity="center"
+            android:layout_marginBottom="24dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:text="@string/app_name"
-            android:textColor="@color/accent_green"
+            android:text="Welcome Back"
+            android:textColor="@color/text_primary"
             android:textSize="28sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:letterSpacing="-0.02"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="18dp"
-            android:text="@string/login_subtitle"
+            android:layout_marginBottom="32dp"
+            android:text="Sign in to your SnipIT account to continue building your secure repository."
             android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
+            android:textSize="13sp"
+            android:lineSpacingExtra="3dp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EMAIL ADDRESS"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_muted"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="8dp"/>
 
         <EditText
             android:id="@+id/input_email"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/bg_search"
-            android:hint="@string/email"
+            android:hint="name@company.com"
             android:inputType="textEmailAddress"
-            android:padding="12dp"
+            android:paddingHorizontal="16dp"
             android:textColor="@color/text_primary"
-            android:textColorHint="@color/text_muted" />
+            android:textColorHint="@color/text_muted"
+            android:textSize="15sp"/>
 
-        <EditText
-            android:id="@+id/input_password"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PASSWORD"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_muted"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="8dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:background="@drawable/bg_search"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:padding="12dp"
-            android:textColor="@color/text_primary"
-            android:textColorHint="@color/text_muted" />
+            app:hintEnabled="false"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/text_muted">
+
+            <EditText
+                android:id="@+id/input_password"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_search"
+                android:hint="••••••••"
+                android:inputType="textPassword"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_muted"
+                android:textSize="15sp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/btn_forgot_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forgot password?"
+            android:textColor="@color/cyber_blue"
+            android:textSize="12sp"
+            android:layout_gravity="end"
+            android:layout_marginBottom="32dp"/>
 
         <Button
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:background="@drawable/bg_button_green"
-            android:text="@string/login"
+            android:layout_height="56dp"
+            android:backgroundTint="@color/terminal_green"
+            android:text="Sign In"
             android:textColor="@color/black"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:textSize="16sp"/>
 
         <ProgressBar
             android:id="@+id/progress_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="16dp"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/error_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/accent_red"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/syntax_orange"
             android:textSize="12sp"
+            android:gravity="center"
             android:visibility="gone" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="14dp"
-            android:background="@color/bg_secondary" />
-
-        <Button
-            android:id="@+id/btn_google"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/bg_card"
-            android:text="@string/continue_with_google"
-            android:textColor="@color/text_primary" />
-
-        <Button
-            android:id="@+id/btn_github"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_card"
-            android:text="@string/continue_with_github"
-            android:textColor="@color/text_primary" />
-
-        <TextView
-            android:id="@+id/btn_go_signup"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="@string/no_account_create"
-            android:textColor="@color/accent_cyan"
-            android:textSize="13sp" />
-    </LinearLayout>
-</ScrollView>
+            android:orientation="horizontal"
+            android:layout_marginTop="24dp">
+            
+            <Button
+                android:id="@+id/btn_google"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Google"
+                android:textAllCaps="false"
+                android:layout_marginEnd="8dp"
+                app:icon="@drawable/ic_google"
+                app:iconGravity="textStart"
+                app:strokeColor="@color/border_primary"/>
+                
+            <Button
+                android:id="@+id/btn_github"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="GitHub"
+                android:textAllCaps="false"
+                app:icon="@drawable/ic_github"
+                app:iconGravity="textStart"
+                app:iconTint="@color/white"
+                app:strokeColor="@color/border_primary"/>
+        </LinearLayout>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Don't have an account?"
+            android:textColor="@color/text_muted"
+            android:textSize="13sp"/>
+            
+        <TextView
+            android:id="@+id/btn_go_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" Create one"
+            android:textColor="@color/terminal_green"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:padding="8dp"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

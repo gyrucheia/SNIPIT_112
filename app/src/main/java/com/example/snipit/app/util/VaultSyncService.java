@@ -91,7 +91,10 @@ public class VaultSyncService {
 
                 @Override
                 public void onCancelled(DatabaseError error) {
-                    if (next != null) next.run();
+                    Log.e(TAG, "Firebase Sync Cancelled: " + error.getMessage() + " (Code: " + error.getCode() + ")");
+                    executor.execute(() -> {
+                        if (next != null) next.run();
+                    });
                 }
             });
         } catch (Exception e) {

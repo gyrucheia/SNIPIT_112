@@ -10,21 +10,44 @@
     <string name="dev_xp">Dev-XP</string>
     <string name="search_hint">Search snippets...</string>
     <string name="new_snip">New Snip</string>
-    <string name="commit_to_vault">⚡ Commit to Vault</string>
-    <string name="offline_ready">● Offline-ready</string>
+    <string name="commit_to_vault">COMMIT TO VAULT</string>
+    <string name="offline_ready">OFFLINE READY</string>
     <string name="generate_pin">Generate PIN</string>
     <string name="new_pin">New PIN</string>
-    <string name="profile">Profile</string>
+    <string name="profile">Me</string>
     <string name="beam_description">Type this PIN on snipit.beam on your PC — code pastes straight into your IDE</string>
 
+    <!-- Auth Terminal Style -->
+    <string name="auth_terminal_login">user@snipit:~$ authenticate</string>
+    <string name="sidebar_dev_root">DEVELOPER ROOT</string>
+    <string name="sidebar_xp_line">LVL. %1$d | %2$s (%3$d XP)</string>
+
+    <string name="auth_terminal_signup">user@snipit:~$ create account</string>
+    <string name="login_header">SnipIT Access</string>
+    <string name="signup_header">Registration</string>
+    <string name="login_btn_init">INITIALIZE SESSION</string>
+    <string name="signup_btn_init">INITIALIZE ACCOUNT</string>
+    <string name="back_to_login">RETURN TO LOGIN</string>
+    <string name="email_label">EMAIL ADDRESS</string>
+    <string name="password_label">ACCESS TOKEN</string>
+    <string name="confirm_password_label">SECRET ACCESS TOKEN</string>
+    
+    <!-- Profile Professional -->
+    <string name="account_info_label">ACCOUNT INFO</string>
+    <string name="member_since_label">MEMBER SINCE</string>
+    <string name="terminate_session">TERMINATE SESSION</string>
+    <string name="stats_snips">SNIPS</string>
+    <string name="stats_xp">XP</string>
+    <string name="stats_beams">BEAMS</string>
+
     <!-- Auth -->
-    <string name="login_subtitle">Sign in to sync, share, and unlock collaboration features.</string>
-    <string name="signup_subtitle">Create an account to start building your Vault.</string>
+    <string name="login_subtitle">Enter your credentials to access the repository.</string>
+    <string name="signup_subtitle">Join the SnipIT developer network.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm password</string>
     <string name="login">Login</string>
-    <string name="back">← Back</string>
+    <string name="back">Back</string>
     <string name="create_account">Create account</string>
     <string name="no_account_create">No account? Create one</string>
     <string name="continue_with_google">Continue with Google</string>
@@ -33,19 +56,19 @@
     <string name="default_web_client_id" translatable="false">YOUR_WEB_CLIENT_ID_HERE</string>
 
     <!-- AI Agent Strings -->
-    <string name="snip_ai">Snip-AI</string>
-    <string name="ai_agent_label">SNIP-AI AGENT</string>
-    <string name="ai_greeting">I\'m Snip-AI — your in-app copilot for SnipIT. Paste code or ask anything about your Vault, Beam, Snap, or Dev-Dex. I answer like we\'re pair-programming here, not like a random web chat.</string>
+    <string name="snip_ai">Snip AI</string>
+    <string name="ai_agent_label">SNIP AI AGENT</string>
+    <string name="ai_greeting">I\'m Snip AI — your in-app copilot for SnipIT. Paste code or ask anything about your Vault, Beam, Snap, or Dev-Dex. I answer like we\'re pair-programming here, not like a random web chat.</string>
     <string name="explain_tagalog">Explain in Tagalog</string>
     <string name="convert_kotlin">Convert to Kotlin</string>
     <string name="optimize_mobile">Optimize for Mobile</string>
     <string name="find_bug">Find the Bug</string>
     <string name="ai_input_hint">Ask anything or paste code...</string>
-    <string name="send_icon">➤</string>
+    <string name="send_icon">SEND</string>
     <string name="ai_history">History</string>
     <string name="clear_all_history">Clear all history</string>
-    <string name="clear_history_confirm">Delete every Snip-AI session and message on this device? This cannot be undone.</string>
-    <string name="new_chat">＋ New chat</string>
+    <string name="clear_history_confirm">Delete every Snip AI session and message on this device? This cannot be undone.</string>
+    <string name="new_chat">NEW CHAT</string>
     <string name="snap_review_title">Review capture</string>
     <string name="ai_fix">AI Fix</string>
     <string name="format_indent">Format</string>
@@ -62,16 +85,16 @@
     <string name="badge_cli_scout_title">CLI Scout</string>
     <string name="badge_cli_scout_desc">Open Dev-Dex, tap a command for the full mini man-page, then use Copy command. Each copy increments progress.</string>
     <string name="language_search_hint">Search languages…</string>
-    <string name="fix_with_ai">✨ Fix with AI</string>
+    <string name="fix_with_ai">FIX WITH AI</string>
     <string name="fix_ai_need_code">Paste or type some code first.</string>
-    <string name="snip_ai_improved">Snip-AI updated your snippet.</string>
+    <string name="snip_ai_improved">Snip AI updated your snippet.</string>
     <string name="badge_earned_label">Unlocked — keep using SnipIT to level up.</string>
     <string name="badge_progress_label">%1$d / %2$d toward this badge</string>
     <string name="badge_next_steps">Next: %1$d more to unlock.</string>
     <string name="ai_status_online">Online</string>
     <string name="ai_status_offline">Offline</string>
     <string name="add_error_handling">Add error handling</string>
-    <string name="auto_snip_short">⚡ Auto-Snip</string>
+    <string name="auto_snip_short">AUTO-SNIP</string>
     <string name="copy_code">Copy</string>
     <string name="prompt_actions">Prompt</string>
     <string name="copy_prompt">Copy prompt</string>
@@ -81,9 +104,9 @@
     <string name="snip_it">Snip it</string>
     <string name="share">Share</string>
     <string name="mlkit_ocr_label">ML Kit OCR</string>
-    <string name="ai_fix_first">✦ AI Fix first</string>
+    <string name="ai_fix_first">AI FIX FIRST</string>
     <string name="badge_ai_refactor_title">AI Refactor</string>
-    <string name="badge_ai_refactor_desc">Use Auto-Snip at least once from a Snip-AI reply to save AI output straight to your Vault.</string>
+    <string name="badge_ai_refactor_desc">Use Auto-Snip at least once from a Snip AI reply to save AI output straight to your Vault.</string>
     <string name="badge_snap_hunter_title">Snap Hunter</string>
     <string name="badge_snap_hunter_desc">Save snippets that came from Snap-to-Snip (OCR) to the Vault — real-world captures count.</string>
     <string name="badge_streak_title">7-Day Streak</string>
@@ -95,14 +118,20 @@
     <string name="rank_5">Logic Architect</string>
     <string name="rank_6">Syntax Wizard</string>
     <string name="rank_7">Code Deity</string>
-    <string name="xp_level_line">Lv %1$d — %2$s</string>
-    <string name="xp_how_title">HOW TO EARN XP</string>
-    <string name="xp_earn_save">Save a snippet</string>
-    <string name="xp_earn_snap">Snap-to-Snip scan</string>
-    <string name="xp_earn_autosnip">Auto-Snip from AI</string>
-    <string name="xp_earn_beam">Beam IT (generate PIN)</string>
-    <string name="xp_earn_dex">Copy from Dev-Dex</string>
-    <string name="xp_footer_note">XP is stored on device. Earn by saving, scanning, beaming, chatting, and copying from Dev-Dex.</string>
+
+    <string name="xp_level_line">LV. %1$d - %2$s</string>
+    <string name="xp_rank_methodology_title">DEVELOPER RANK &amp; XP</string>
+    <string name="xp_rank_methodology_content">Your progression within the SnipIT ecosystem is measured by the quality and frequency of your platform interactions. Points are distributed based on the following algorithm:\n\n[REAL-TIME SCAN]: +20 XP\nManual or background session OCR capture from physical documents.\n\n[COMMIT TO VAULT]: +15 XP\nSaving unique snippets or blueprints to your local secure repository.\n\n[AI AUTO-SNIP]: +15 XP\nLeveraging Snip AI for code refactoring and direct vault storage.\n\n[BEAM SYNC]: +10 XP\nSuccessfully synchronizing code across multi-node hardware sessions.\n\n[DEX LOOKUP]: +2 XP\nReferencing command blueprints from the Dev-Dex central repository.</string>
+    
+    <string name="about_snipit_title">ABOUT SNIPIT</string>
+    <string name="about_snipit_content">SnipIT was engineered to bridge the gap between physical references and digital execution. It serves as a unified repository for high-value code blocks, command references, and development blueprints. By centralizing your knowledge base with AI-augmented tools, SnipIT accelerates your workflow from capture to deployment.\n\nCORE MISSION: To empower developers with a portable, secure, and intelligent environment that turns every piece of information into an actionable asset.</string>
+
+    <string name="xp_earn_save">COMMIT TO VAULT (Core Contribution)</string>
+    <string name="xp_earn_snap">REAL-TIME SNAP (OCR Intelligence)</string>
+    <string name="xp_earn_autosnip">AI AUTO-SNIP (Copilot Refactor)</string>
+    <string name="xp_earn_beam">BEAM IT (Multi-Node Sync)</string>
+    <string name="xp_earn_dex">DEX REPOSITORY (Reference Lookup)</string>
+    <string name="xp_footer_note">Your Dev-XP reflects your activity within the SnipIT ecosystem. Earn points by: \n• Saving code (+15 XP)\n• Real-time scanning (+20 XP)\n• AI-driven refactoring (+15 XP)\n• Cross-device beaming (+10 XP)\n• Command reference lookups (+2 XP)\nAll progress is securely hashed and stored on-device to track your journey from Novice to Code Deity.</string>
     <string name="badges_section_title">BADGES — tap for details</string>
 
     <string name="edit_snip_title">Snippet editor</string>
@@ -133,7 +162,7 @@
     <string name="beam_no_snippet_title">No snippet selected</string>
     <string name="beam_empty_hint">Open the Vault tab, open a snippet (or tap 📡 on a card), and Beam will load here. Opening Beam alone does not pick a snippet.</string>
 
-    <string name="saved_to_vault_done">Saved to Vault ✓</string>
+    <string name="saved_to_vault_done">SAVED TO VAULT</string>
     <string name="snap_ready_again">Ready — scan again for a new capture.</string>
 
     <!-- Snap screen (capture first — no live OCR) -->
@@ -144,7 +173,7 @@
     <string name="snap_status_preview">Frame your shot. Nothing is read until you capture.</string>
     <string name="snap_status_ocr">Reading text from your photo…</string>
     <string name="snap_status_result">Done — you can edit, save, or run Fix with AI.</string>
-    <string name="snap_status_ai_working">Snip-AI is cleaning up the text…</string>
+    <string name="snap_status_working">Snip AI is cleaning up the text…</string>
     <string name="snap_take_picture">Take picture</string>
     <string name="snap_retake">New picture</string>
     <string name="snap_code_hint">Appears here after capture</string>
@@ -152,6 +181,6 @@
     <string name="snap_capture_failed">Couldn\'t take a photo. Try again.</string>
     <string name="snap_ocr_failed">Couldn\'t read text from the photo.</string>
     <string name="snap_camera_not_ready">Camera is still starting…</string>
-    <string name="snap_ai_failed">Snip-AI request failed. Check your connection and OPENROUTER_API_KEY in local.properties (use your GitHub Models PAT with models scope as this value).</string>
+    <string name="snap_ai_failed">Snip AI request failed. Check your connection and OPENROUTER_API_KEY in local.properties (use your GitHub Models PAT with models scope as this value).</string>
     <string name="save_snip">Save Snip</string>
 </resources>

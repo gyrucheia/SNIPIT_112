@@ -21,19 +21,7 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/btn_sign_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
-            android:background="@drawable/bg_card"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="@string/sign_out"
-            android:textColor="@color/accent_red"
-            android:textSize="12sp" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -95,7 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:fontFamily="monospace"
-            android:text="@string/badges_section_title"
+            android:text="BADGE REPOSITORY"
             android:letterSpacing="0.12"
             android:textColor="@color/text_muted"
             android:textSize="10sp" />
@@ -120,14 +108,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🧙"
-                    android:textSize="20sp" />
+                    android:text="[SNIP]"
+                    android:textColor="@color/terminal_green"
+                    android:fontFamily="monospace"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/badge_syntax_wizard_title"
+                    android:text="SYNTAX WIZARD"
                     android:textColor="@color/text_secondary"
                     android:textSize="8sp" />
             </LinearLayout>
@@ -146,14 +137,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="📡"
-                    android:textSize="20sp" />
+                    android:text="[BEAM]"
+                    android:textColor="@color/cyber_blue"
+                    android:fontFamily="monospace"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/badge_beam_operator_title"
+                    android:text="BEAM OPERATOR"
                     android:textColor="@color/text_secondary"
                     android:textSize="8sp" />
             </LinearLayout>
@@ -171,14 +165,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="⌗"
-                    android:textSize="20sp" />
+                    android:text="[DEX]"
+                    android:textColor="@color/accent_yellow"
+                    android:fontFamily="monospace"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/badge_cli_scout_title"
+                    android:text="CLI SCOUT"
                     android:textColor="@color/text_secondary"
                     android:textSize="8sp" />
             </LinearLayout>
@@ -187,7 +184,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="24dp"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -204,14 +201,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🤖"
-                    android:textSize="20sp" />
+                    android:text="[AI]"
+                    android:textColor="@color/syntax_orange"
+                    android:fontFamily="monospace"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/badge_ai_refactor_title"
+                    android:text="AI REFACTOR"
                     android:textColor="@color/text_secondary"
                     android:textSize="8sp" />
             </LinearLayout>
@@ -230,14 +230,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="📷"
-                    android:textSize="20sp" />
+                    android:text="[SNAP]"
+                    android:textColor="@color/accent_green"
+                    android:fontFamily="monospace"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/badge_snap_hunter_title"
+                    android:text="SNAP HUNTER"
                     android:textColor="@color/text_secondary"
                     android:textSize="8sp" />
             </LinearLayout>
@@ -255,163 +258,204 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🔥"
-                    android:textSize="20sp" />
+                    android:text="[FIRE]"
+                    android:textColor="@color/error_red"
+                    android:fontFamily="monospace"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/badge_streak_title"
+                    android:text="DEV STREAK"
                     android:textColor="@color/text_secondary"
                     android:textSize="8sp" />
             </LinearLayout>
         </LinearLayout>
 
+        <!-- SYSTEM ARCHITECTURE -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="8dp"
             android:fontFamily="monospace"
-            android:text="@string/xp_how_title"
+            android:text="SYSTEM ARCHITECTURE"
+            android:letterSpacing="0.12"
             android:textColor="@color/text_muted"
             android:textSize="10sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="24dp"
             android:background="@drawable/bg_card"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="16dp">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/xp_earn_save"
-                    android:textColor="@color/text_muted"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
-                    android:text="+15 XP"
-                    android:textColor="@color/accent_yellow"
-                    android:textSize="11sp" />
-            </LinearLayout>
-
-            <LinearLayout
+                android:text="1. SECURE ON-DEVICE REPOSITORY"
+                android:textColor="@color/terminal_green"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace"
+                android:layout_marginBottom="4dp"/>
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp">
+                android:text="SnipIT utilizes a Room-based SQLite implementation to ensure your code snippets never leave your hardware without your explicit intent. Every commitment is hashed and indexed for instant retrieval."
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="12dp"/>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/xp_earn_snap"
-                    android:textColor="@color/text_muted"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
-                    android:text="+20 XP"
-                    android:textColor="@color/accent_yellow"
-                    android:textSize="11sp" />
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/xp_earn_autosnip"
-                    android:textColor="@color/text_muted"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
-                    android:text="+15 XP"
-                    android:textColor="@color/accent_yellow"
-                    android:textSize="11sp" />
-            </LinearLayout>
-
-            <LinearLayout
+                android:text="2. REAL-TIME OCR INTELLIGENCE"
+                android:textColor="@color/cyber_blue"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace"
+                android:layout_marginBottom="4dp"/>
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp">
+                android:text="The Snap engine leverages Google's ML Kit with high-precision text recognition. It captures code from physical screens or documents and converts it into structured data in real-time."
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="12dp"/>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/xp_earn_beam"
-                    android:textColor="@color/text_muted"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
-                    android:text="+10 XP"
-                    android:textColor="@color/accent_yellow"
-                    android:textSize="11sp" />
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/xp_earn_dex"
-                    android:textColor="@color/text_muted"
-                    android:textSize="11sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
-                    android:text="+2 XP"
-                    android:textColor="@color/accent_yellow"
-                    android:textSize="11sp" />
-            </LinearLayout>
+                android:text="3. AI-DRIVEN REFACTORING"
+                android:textColor="@color/syntax_orange"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace"
+                android:layout_marginBottom="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Integrates with high-capacity LLMs via secure API endpoints to provide context-aware refactoring, bug fixing, and documentation generation directly within the editor."
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:lineSpacingExtra="4dp"/>
         </LinearLayout>
 
+        <!-- ABOUT SNIPIT -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:lineSpacingMultiplier="1.35"
-            android:text="@string/xp_footer_note"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="monospace"
+            android:text="PLATFORM OVERVIEW"
+            android:letterSpacing="0.12"
             android:textColor="@color/text_muted"
-            android:textSize="11sp" />
+            android:textSize="10sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SNIPIT: THE DEVELOPER'S VAULT"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace"
+                android:layout_marginBottom="8dp"/>
+            
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SnipIT was engineered to bridge the gap between physical references and digital execution. It serves as a unified repository for high-value code blocks, command references, and development blueprints. By centralizing your knowledge base with AI-augmented tools, SnipIT accelerates your workflow from capture to deployment."
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CORE MISSION"
+                android:textColor="@color/text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="To empower developers with a portable, secure, and intelligent environment that turns every piece of information into an actionable asset."
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:fontStyle="italic"/>
+        </LinearLayout>
+
+        <!-- XP ALGORITHM -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="monospace"
+            android:text="PROGRESSION ALGORITHM"
+            android:letterSpacing="0.12"
+            android:textColor="@color/text_muted"
+            android:textSize="10sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Your Dev-XP is calculated based on the complexity and frequency of your platform interactions. Points are distributed as follows:"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:layout_marginBottom="12dp"
+                android:lineSpacingExtra="4dp"/>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingVertical="4dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="COMMIT TO VAULT" android:textColor="@color/text_muted" android:textSize="11sp" android:fontFamily="monospace"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+15 XP" android:textColor="@color/terminal_green" android:textSize="11sp" android:fontFamily="monospace"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingVertical="4dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="REAL-TIME SCAN" android:textColor="@color/text_muted" android:textSize="11sp" android:fontFamily="monospace"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+20 XP" android:textColor="@color/terminal_green" android:textSize="11sp" android:fontFamily="monospace"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingVertical="4dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="AI REFACTOR" android:textColor="@color/text_muted" android:textSize="11sp" android:fontFamily="monospace"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+15 XP" android:textColor="@color/terminal_green" android:textSize="11sp" android:fontFamily="monospace"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingVertical="4dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="BEAM SYNC" android:textColor="@color/text_muted" android:textSize="11sp" android:fontFamily="monospace"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+10 XP" android:textColor="@color/terminal_green" android:textSize="11sp" android:fontFamily="monospace"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingVertical="4dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="DEX LOOKUP" android:textColor="@color/text_muted" android:textSize="11sp" android:fontFamily="monospace"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+2 XP" android:textColor="@color/terminal_green" android:textSize="11sp" android:fontFamily="monospace"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

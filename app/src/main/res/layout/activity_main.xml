@@ -9,7 +9,51 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/bg_primary">
+        android:background="@color/bg_primary"
+        android:fitsSystemWindows="true">
+
+        <!-- TERMINAL HEADER -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:background="@color/bg_primary">
+
+            <ImageView
+                android:id="@+id/btn_open_drawer"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_vault"
+                app:tint="@color/terminal_green"
+                android:padding="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SNIPIT TERMINAL"
+                android:textColor="@color/terminal_green"
+                android:fontFamily="monospace"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:layout_marginStart="16dp"/>
+
+            <ImageView
+                android:id="@+id/btn_global_add"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_add"
+                app:tint="@color/terminal_green"
+                android:padding="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/fragment_container"
@@ -17,77 +61,105 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- TEXT-ONLY NAVIGATION BAR -->
+        <!-- TERMINAL-STYLE NAVIGATION BAR -->
         <LinearLayout
             android:id="@+id/bottom_nav"
             android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:orientation="horizontal"
-            android:background="@color/bg_secondary"
-            android:elevation="20dp"
-            android:paddingBottom="16dp"
-            android:gravity="center_vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/bg_secondary">
+            
+            <!-- Top Border Line (Now correctly above the buttons) -->
+            <View android:layout_width="match_parent" android:layout_height="1dp" 
+                android:background="@color/border_primary"/>
 
-            <LinearLayout android:id="@+id/nav_vault"
-                android:layout_width="0dp" android:layout_height="match_parent"
-                android:layout_weight="1" android:orientation="vertical"
-                android:gravity="center" android:clickable="true" android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Vault" android:textSize="12sp" android:textStyle="bold"
-                    android:textColor="@color/accent_green"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingBottom="4dp">
+
+                <LinearLayout android:id="@+id/nav_vault"
+                    android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="1" android:orientation="vertical"
+                    android:gravity="center" android:clickable="true" android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <ImageView android:id="@+id/nav_icon_vault"
+                        android:layout_width="22dp" android:layout_height="22dp"
+                        android:src="@drawable/ic_vault" app:tint="@color/terminal_green"/>
+                    <TextView android:id="@+id/nav_label_vault"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="VAULT" android:textSize="9sp" android:textStyle="bold"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/terminal_green"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+
+                <LinearLayout android:id="@+id/nav_dex"
+                    android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="1" android:orientation="vertical"
+                    android:gravity="center" android:clickable="true" android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <ImageView android:id="@+id/nav_icon_dex"
+                        android:layout_width="22dp" android:layout_height="22dp"
+                        android:src="@drawable/ic_dex" app:tint="@color/text_secondary"/>
+                    <TextView android:id="@+id/nav_label_dex"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="DEX" android:textSize="9sp" android:textStyle="bold"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+
+                <LinearLayout android:id="@+id/nav_beam"
+                    android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="1" android:orientation="vertical"
+                    android:gravity="center" android:clickable="true" android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <ImageView android:id="@+id/nav_icon_beam"
+                        android:layout_width="22dp" android:layout_height="22dp"
+                        android:src="@drawable/ic_beam" app:tint="@color/text_secondary"/>
+                    <TextView android:id="@+id/nav_label_beam"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="BEAM" android:textSize="9sp" android:textStyle="bold"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+
+                <LinearLayout android:id="@+id/nav_ai"
+                    android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="1" android:orientation="vertical"
+                    android:gravity="center" android:clickable="true" android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <ImageView android:id="@+id/nav_icon_ai"
+                        android:layout_width="22dp" android:layout_height="22dp"
+                        android:src="@drawable/ic_ai" app:tint="@color/text_secondary"/>
+                    <TextView android:id="@+id/nav_label_ai"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="AI" android:textSize="9sp" android:textStyle="bold"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+
+                <LinearLayout android:id="@+id/nav_snap"
+                    android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="1" android:orientation="vertical"
+                    android:gravity="center" android:clickable="true" android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <ImageView android:id="@+id/nav_icon_snap"
+                        android:layout_width="22dp" android:layout_height="22dp"
+                        android:src="@drawable/ic_snap" app:tint="@color/text_secondary"/>
+                    <TextView android:id="@+id/nav_label_snap"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="SNAP" android:textSize="9sp" android:textStyle="bold"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
             </LinearLayout>
-
-            <LinearLayout android:id="@+id/nav_dex"
-                android:layout_width="0dp" android:layout_height="match_parent"
-                android:layout_weight="1" android:orientation="vertical"
-                android:gravity="center" android:clickable="true" android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Dex" android:textSize="12sp" android:textStyle="bold"
-                    android:textColor="@color/text_secondary"/>
-            </LinearLayout>
-
-            <LinearLayout android:id="@+id/nav_beam"
-                android:layout_width="0dp" android:layout_height="match_parent"
-                android:layout_weight="1" android:orientation="vertical"
-                android:gravity="center" android:clickable="true" android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Beam" android:textSize="12sp" android:textStyle="bold"
-                    android:textColor="@color/text_secondary"/>
-            </LinearLayout>
-
-            <LinearLayout android:id="@+id/nav_ai"
-                android:layout_width="0dp" android:layout_height="match_parent"
-                android:layout_weight="1" android:orientation="vertical"
-                android:gravity="center" android:clickable="true" android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="AI" android:textSize="12sp" android:textStyle="bold"
-                    android:textColor="@color/text_secondary"/>
-            </LinearLayout>
-
-            <LinearLayout android:id="@+id/nav_snap"
-                android:layout_width="0dp" android:layout_height="match_parent"
-                android:layout_weight="1" android:orientation="vertical"
-                android:gravity="center" android:clickable="true" android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Snap" android:textSize="12sp" android:textStyle="bold"
-                    android:textColor="@color/text_secondary"/>
-            </LinearLayout>
-
-            <LinearLayout android:id="@+id/nav_xp"
-                android:layout_width="0dp" android:layout_height="match_parent"
-                android:layout_weight="1" android:orientation="vertical"
-                android:gravity="center" android:clickable="true" android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="XP" android:textSize="12sp" android:textStyle="bold"
-                    android:textColor="@color/text_secondary"/>
-            </LinearLayout>
-
         </LinearLayout>
     </LinearLayout>
 
@@ -96,6 +168,10 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/bg_secondary" />
+        android:background="@color/bg_secondary"
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/nav_header_main"
+        app:itemTextColor="@color/text_primary"
+        app:itemIconTint="@color/terminal_green" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

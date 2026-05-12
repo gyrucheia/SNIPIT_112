@@ -1,102 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/bg_card"
-    android:layout_marginBottom="6dp"
-    android:padding="10dp">
+    android:layout_marginBottom="16dp"
+    app:cardBackgroundColor="@color/bg_card"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/border_primary">
 
     <LinearLayout
-        android:id="@+id/snip_click_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="?attr/selectableItemBackground">
+        android:padding="20dp">
 
-        <!-- Snip Header: Title + Language badge -->
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        <!-- HEADER: Title & Language -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="6dp">
+            android:layout_marginBottom="16dp">
 
-            <TextView android:id="@+id/snip_title"
-                android:layout_width="0dp" android:layout_height="wrap_content"
+            <TextView
+                android:id="@+id/snip_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Firebase Auth Init"
+                android:text="Data Sync Logic"
                 android:textColor="@color/text_primary"
-                android:textSize="13sp"
-                android:textStyle="bold"/>
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:letterSpacing="-0.01"/>
 
-            <TextView android:id="@+id/snip_language"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="Java"
-                android:textColor="@color/accent_purple"
-                android:fontFamily="monospace"
-                android:textSize="9sp"
-                android:paddingStart="6dp" android:paddingEnd="6dp"
-                android:paddingTop="1dp" android:paddingBottom="1dp"
-                android:background="@drawable/bg_tag"/>
+            <TextView
+                android:id="@+id/snip_language"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TYPESCRIPT"
+                android:textColor="@color/cyber_blue"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:background="@drawable/bg_search"
+                android:fontFamily="monospace"/>
         </LinearLayout>
 
-        <!-- Code preview block -->
-        <TextView android:id="@+id/snip_code"
+        <!-- CODE BLOCK: High-contrast area -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:maxHeight="64dp"
-            android:background="@drawable/bg_code_block"
-            android:padding="8dp"
-            android:fontFamily="monospace"
-            android:textSize="10sp"
-            android:textColor="@color/text_secondary"
-            android:ellipsize="end"
-            android:maxLines="3"
-            android:layout_marginBottom="6dp"/>
+            app:cardBackgroundColor="#0d1117"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            android:layout_marginBottom="16dp">
 
-        <TextView android:id="@+id/snip_tags"
+            <TextView
+                android:id="@+id/snip_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:fontFamily="monospace"
+                android:textSize="12sp"
+                android:textColor="#8b949e"
+                android:ellipsize="end"
+                android:maxLines="5"
+                android:lineSpacingExtra="4dp"/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- TAGS -->
+        <TextView
+            android:id="@+id/snip_tags"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="#Java  #Firebase"
+            android:text="#firebase #cloud-functions"
+            android:textColor="@color/text_muted"
+            android:textSize="11sp"
             android:fontFamily="monospace"
-            android:textSize="9sp"
-            android:textColor="@color/text_muted"/>
+            android:layout_marginBottom="20dp"
+            android:alpha="0.7"/>
+
+        <!-- ACTIONS: Clean, Pro Buttons -->
+        <LinearLayout
+            android:id="@+id/snip_click_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="COPY TO CLIPBOARD"
+                android:textColor="@color/terminal_green"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btn_fix_ai"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_ai_large"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/syntax_orange"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"/>
+
+                <ImageButton
+                    android:id="@+id/btn_beam"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/indicator_active"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/cyber_blue"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"/>
+
+                <ImageButton
+                    android:id="@+id/btn_edit"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/text_primary"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"/>
+
+                <ImageButton
+                    android:id="@+id/btn_delete"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@android:drawable/ic_menu_delete"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/error_red"
+                    android:padding="12dp"
+                    android:scaleType="fitCenter"/>
+            </LinearLayout>
+        </LinearLayout>
+
     </LinearLayout>
-
-    <!-- Action buttons (outside tap-to-edit area) -->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end|center_vertical"
-        android:layout_marginTop="6dp">
-
-        <TextView android:id="@+id/btn_fix_ai"
-            android:layout_width="32dp" android:layout_height="32dp"
-            android:text="✨"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:background="@drawable/bg_card"
-            android:layout_marginEnd="6dp"
-            android:contentDescription="@string/fix_with_ai"
-            android:padding="4dp"/>
-
-        <TextView android:id="@+id/btn_beam"
-            android:layout_width="32dp" android:layout_height="32dp"
-            android:text="📡"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:background="@drawable/bg_card"
-            android:layout_marginEnd="6dp"
-            android:padding="4dp"/>
-
-        <TextView android:id="@+id/btn_copy"
-            android:layout_width="32dp" android:layout_height="32dp"
-            android:text="⎘"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:background="@drawable/bg_card"
-            android:padding="4dp"/>
-    </LinearLayout>
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

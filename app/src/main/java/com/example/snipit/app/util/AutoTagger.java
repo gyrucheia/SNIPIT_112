@@ -43,6 +43,24 @@ public final class AutoTagger {
         return tags.toString();
     }
 
+    public static String detectLanguage(String code) {
+        if (code == null || code.isEmpty()) return "";
+        String c = code.toLowerCase();
+        
+        if (c.contains("public class") || c.contains("import java.")) return "Java";
+        if (c.contains("fun ") && c.contains("val ")) return "Kotlin";
+        if (c.contains("def ") && c.endsWith(":")) return "Python";
+        if (c.contains("import react") || c.contains("const ") && c.contains("=>")) return "JavaScript";
+        if (c.contains("<?php")) return "PHP";
+        if (c.contains("package main") && c.contains("func ")) return "Go";
+        if (c.contains("using system;") || c.contains("namespace ")) return "C#";
+        if (c.contains("#include <") && c.contains("int main()")) return "C++";
+        if (c.contains("<html>") || c.contains("<!doctype html>")) return "HTML";
+        if (c.contains("SELECT ") && c.contains(" FROM ")) return "SQL";
+        
+        return "";
+    }
+
     private static void append(StringBuilder sb, String tag) {
         if (sb.length() > 0) sb.append(",");
         sb.append(tag);

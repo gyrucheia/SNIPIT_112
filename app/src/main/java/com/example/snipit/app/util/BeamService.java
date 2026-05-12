@@ -16,9 +16,13 @@ public class BeamService {
     private static final String PATH = "beam_sessions";
     private static final long TTL_MS = 5 * 60 * 1000L;
 
-    private final DatabaseReference db =
-            FirebaseDatabase.getInstance().getReference(PATH);
-    private final Handler main = new Handler(Looper.getMainLooper());
+    private DatabaseReference getDb() {
+        try {
+            return FirebaseDatabase.getInstance().getReference(PATH);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public void uploadPin(
             String pin, String snippetCode, String snippetTitle, String language) {
@@ -28,6 +32,10 @@ public class BeamService {
     public void uploadToSession(
             String sessionId, String snippetCode, String snippetTitle, String language, boolean autoDelete) {
         if (sessionId == null || sessionId.isEmpty()) return;
+        
+        DatabaseReference db = getDb();
+        if (db == null) return;
+
         Map<String, Object> data = new HashMap<>();
         data.put("code", snippetCode != null ? snippetCode : "");
         data.put("title", snippetTitle != null ? snippetTitle : "");
@@ -36,12 +44,18 @@ public class BeamService {
 
         db.child(sessionId).setValue(data);
         if (autoDelete) {
-            main.postDelayed(() -> db.child(sessionId).removeValue(), TTL_MS);
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                DatabaseReference db2 = getDb();
+                if (db2 != null) db2.child(sessionId).removeValue();
+            }, TTL_MS);
         }
     }
 
     public void deletePin(String pin) {
         if (pin == null || pin.isEmpty()) return;
-        db.child(pin).removeValue();
+        DatabaseReference db = getDb();
+        if (db != null) {
+            db.child(pin).removeValue();
+        }
     }
 }
