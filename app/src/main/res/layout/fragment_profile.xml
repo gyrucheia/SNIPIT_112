@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- BRANDED HEADER -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginBottom="32dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="8dp"
+                app:strokeWidth="3dp"
+                app:strokeColor="@color/terminal_green"
+                android:layout_marginBottom="16dp">
+                
+                <ImageView
+                    android:id="@+id/profile_avatar_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_launcher"
+                    android:scaleType="centerCrop"/>
+
+                <TextView
+                    android:id="@+id/profile_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="G"
+                    android:textColor="@color/black"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="gyrucheia"
+                android:textColor="@color/text_primary"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:letterSpacing="-0.02"/>
+
+            <TextView
+                android:id="@+id/profile_handle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@gyrucheia"
+                android:textColor="@color/terminal_green"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:id="@+id/profile_bio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Developer, Architect, &amp; Code Enthusiast.\nBuilding a smarter Vault."
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"/>
+        </LinearLayout>
+
+        <!-- STATISTICS GRID -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/bg_card"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="24dp">
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                    <TextView android:id="@+id/stat_snips" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="1" android:textColor="@color/text_primary" android:textSize="24sp" android:textStyle="bold"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="SNIPS" android:textColor="@color/text_muted" android:textSize="10sp" android:letterSpacing="0.1"/>
+                </LinearLayout>
+
+                <View android:layout_width="1dp" android:layout_height="40dp" android:background="@color/border_primary" android:layout_gravity="center_vertical"/>
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                    <TextView android:id="@+id/stat_xp" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="0" android:textColor="@color/syntax_orange" android:textSize="24sp" android:textStyle="bold"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="XP" android:textColor="@color/text_muted" android:textSize="10sp" android:letterSpacing="0.1"/>
+                </LinearLayout>
+
+                <View android:layout_width="1dp" android:layout_height="40dp" android:background="@color/border_primary" android:layout_gravity="center_vertical"/>
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                    <TextView android:id="@+id/stat_beams" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="0" android:textColor="@color/cyber_blue" android:textSize="24sp" android:textStyle="bold"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="BEAMS" android:textColor="@color/text_muted" android:textSize="10sp" android:letterSpacing="0.1"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ACTION BUTTONS -->
+        <Button
+            android:id="@+id/btn_edit_profile"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Update Developer Profile"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:backgroundTint="@color/terminal_green"
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="12dp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/btn_pair_device"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Sync via Beam IT"
+            android:textAllCaps="false"
+            android:textColor="@color/terminal_green"
+            app:strokeColor="@color/terminal_green"
+            app:cornerRadius="16dp"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- ACCOUNT DETAILS -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ACCOUNT SECURITY"
+            android:textColor="@color/text_muted"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="4dp"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/bg_card"
+            app:cardCornerRadius="16dp"
+            android:layout_marginBottom="32dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="16dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Email Identity" android:textColor="@color/text_primary" android:textSize="14sp"/>
+                    <TextView android:id="@+id/prof_email_val" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="user@example.com" android:textColor="@color/text_muted" android:textSize="13sp"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="16dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Developer Since" android:textColor="@color/text_primary" android:textSize="14sp"/>
+                    <TextView android:id="@+id/prof_since_val" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="May 2026" android:textColor="@color/text_muted" android:textSize="13sp"/>
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border_primary" android:layout_marginBottom="16dp"/>
+
+                <TextView
+                    android:id="@+id/btn_logout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Logout"
+                    android:textColor="@color/syntax_orange"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</ScrollView>

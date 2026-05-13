@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="prism.css">
+    <style>
+        body {
+            background-color: transparent;
+            margin: 0;
+            padding: 12dp;
+            color: #e6edf3;
+            font-family: 'monospace';
+            font-size: 13px;
+        }
+        pre {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+        }
+        code {
+            white-space: pre-wrap !important;
+            word-break: break-all !important;
+        }
+    </style>
+</head>
+<body>
+    <pre><code id="code-block" class="language-java"></code></pre>
+    <script src="prism.js"></script>
+    <script>
+        function highlightCode(code, language) {
+            const block = document.getElementById('code-block');
+            block.className = 'language-' + language;
+            block.textContent = code;
+            Prism.highlightElement(block);
+        }
+    </script>
+</body>
+</html>
