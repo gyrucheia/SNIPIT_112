@@ -21,7 +21,7 @@ let authFunctions = {};
 async function initializeFirebase() {
   try {
     console.log('🔥 Starting Firebase initialization...');
-    
+
     // Import Firebase modules
     console.log('📦 Importing Firebase modules from CDN...');
     const firebaseApp = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js');
@@ -48,35 +48,38 @@ async function initializeFirebase() {
     console.log('✅ Database connected:', !!db);
     console.log('✅ Auth initialized:', !!auth);
 
+    // Initialize Firebase API FIRST before listening for auth
+    firebaseAPI = new SnipITFirebase();
+
     // Check authentication state
     firebaseAuth.onAuthStateChanged(auth, (currentUser) => {
       user = currentUser;
       if (user) {
         console.log('✅ Firebase user authenticated:', user.uid);
-        // Update UI if functions are available
         if (typeof hideLoginPage === 'function') hideLoginPage();
-        if (typeof updateUserCard === 'function') updateUserCard();
-        if (typeof loadVault === 'function') loadVault();
+        try {
+          if (typeof updateUserCard === 'function') updateUserCard();
+        } catch(e) {
+          console.warn('updateUserCard error (non-fatal):', e.message);
+        }
+        if (typeof syncVault === 'function') syncVault();
       } else {
         console.log('ℹ️  No user logged in');
       }
     });
 
-    // Initialize Firebase API
-    firebaseAPI = new SnipITFirebase();
-    
     // Refresh UI if user is already logged in
     if (user && typeof updateUserCard === 'function') {
       updateUserCard();
     }
-    
+
     console.log('🎉 Firebase fully initialized successfully');
     return true;
   } catch (err) {
     console.error('❌ Firebase initialization error:', err);
     console.error('📍 Error message:', err.message);
     console.error('📍 Error code:', err.code);
-    
+
     // Show error but don't block UI - allow demo mode
     if (typeof showAuthError !== 'undefined') {
       showAuthError('Firebase offline - using demo mode');
@@ -112,10 +115,10 @@ async function firebaseSignUpWithEmail(name, email, password) {
 
     console.log('Attempting sign up with:', email);
     const userCredential = await authFunctions.createUserWithEmailAndPassword(auth, email, password);
-    
+
     // Update user profile with name
     await authFunctions.updateProfile(userCredential.user, { displayName: name });
-    
+
     console.log('Account created successfully:', userCredential.user.uid);
     return { success: true, user: userCredential.user };
   } catch (err) {
@@ -166,7 +169,7 @@ class SnipITFirebase {
       const { ref, get } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
       const snippetsRef = ref(db, `users/${user.uid}/snippets`);
       const snapshot = await get(snippetsRef);
-      
+
       if (snapshot.exists()) {
         return Object.values(snapshot.val());
       }
@@ -176,12 +179,32 @@ class SnipITFirebase {
       return [];
     }
   }
+  listenForSnippets(callback) {
+    import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js')
+      .then(({ ref, onValue }) => {
+        const snippetsRef = ref(db, `users/${user.uid}/snippets`);
+
+        onValue(snippetsRef, (snapshot) => {
+          if (snapshot.exists()) {
+            // Use Object.entries to preserve Firebase push keys as snippet.id
+            // Critical: without this, deleteSnippet uses wrong ID and fails
+            const snippets = Object.entries(snapshot.val()).map(([firebaseKey, value]) => ({
+              ...value,
+              id: firebaseKey
+            }));
+            callback(snippets);
+          } else {
+            callback([]);
+          }
+        });
+      });
+  }
 
   // Add new snippet
   async addSnippet(snippet) {
     try {
       const { ref, push, set } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
-      
+
       const newSnippetRef = push(ref(db, `users/${user.uid}/snippets`));
       await set(newSnippetRef, {
         ...snippet,
@@ -189,7 +212,7 @@ class SnipITFirebase {
         created: new Date().toISOString(),
         updated: new Date().toISOString()
       });
-      
+
       console.log('Snippet saved:', newSnippetRef.key);
       return newSnippetRef.key;
     } catch (err) {
@@ -202,13 +225,13 @@ class SnipITFirebase {
   async updateSnippet(id, snippet) {
     try {
       const { ref, set } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
-      
+
       await set(ref(db, `users/${user.uid}/snippets/${id}`), {
         ...snippet,
         id,
         updated: new Date().toISOString()
       });
-      
+
       console.log('Snippet updated:', id);
     } catch (err) {
       console.error('Error updating snippet:', err);
@@ -220,7 +243,7 @@ class SnipITFirebase {
   async deleteSnippet(id) {
     try {
       const { ref, remove } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
-      
+
       await remove(ref(db, `users/${user.uid}/snippets/${id}`));
       console.log('Snippet deleted:', id);
     } catch (err) {
@@ -233,14 +256,14 @@ class SnipITFirebase {
   async logBeamSession(deviceInfo) {
     try {
       const { ref, push, set } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
-      
+
       const logRef = push(ref(db, `users/${user.uid}/beamSessions`));
       await set(logRef, {
         deviceInfo,
         timestamp: new Date().toISOString(),
         snippetsSent: 0
       });
-      
+
       return logRef.key;
     } catch (err) {
       console.error('Error logging beam session:', err);
@@ -302,15 +325,15 @@ class SnipITFirebase {
       }
 
       console.log('💾 Saving chat message...', { chatId, uid: user.uid });
-      
+
       const { ref, get, set, push } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
       const chatRef = ref(db, `users/${user.uid}/aiChat/${chatId}`);
       const snapshot = await get(chatRef);
-      
+
       let chatData = snapshot.exists() ? snapshot.val() : { messages: [], title: userMsg.substring(0, 40) };
       chatData.messages.push({ user: userMsg, ai: aiMsg, timestamp: new Date().toISOString() });
       chatData.lastUpdated = new Date().toISOString();
-      
+
       await set(chatRef, chatData);
       console.log('✅ Chat message saved successfully to:', `users/${user.uid}/aiChat/${chatId}`);
       console.log('   Message count:', chatData.messages.length);
@@ -333,7 +356,7 @@ class SnipITFirebase {
       const { ref, get } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
       const historyRef = ref(db, `users/${user.uid}/aiChat`);
       const snapshot = await get(historyRef);
-      
+
       if (snapshot.exists()) {
         const history = snapshot.val();
         console.log('✅ Chat history retrieved. Total chats:', Object.keys(history).length);
@@ -450,11 +473,11 @@ class SnipITFirebase {
     try {
       const text = await file.text();
       const snippets = JSON.parse(text);
-      
+
       for (const snippet of snippets) {
         await this.addSnippet(snippet);
       }
-      
+
       console.log(`Imported ${snippets.length} snippets`);
       return snippets.length;
     } catch (err) {
@@ -469,7 +492,7 @@ class SnipITFirebase {
 function updateServerStatus(isOnline) {
   const dot = document.getElementById('beam-dot');
   const statusText = document.getElementById('beam-status-txt');
-  
+
   if (isOnline) {
     dot?.classList.remove('offline');
     dot?.classList.add('online');

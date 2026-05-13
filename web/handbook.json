@@ -1,0 +1,68 @@
+[
+  {
+    "category": "GIT",
+    "command": "git commit -m \"message\"",
+    "summary": "Record changes to the repository",
+    "documentation": "Stores the current contents of the index in a new commit along with a log message from the user describing the changes."
+  },
+  {
+    "category": "GIT",
+    "command": "git push origin <branch>",
+    "summary": "Update remote refs along with associated objects",
+    "documentation": "Uploads local repository content to a remote repository. Use -u to set upstream for the current branch."
+  },
+  {
+    "category": "GIT",
+    "command": "git pull origin <branch>",
+    "summary": "Fetch from and integrate with another repository or a local branch",
+    "documentation": "Incorporates changes from a remote repository into the current branch. In its default mode, git pull is shorthand for git fetch followed by git merge FETCH_HEAD."
+  },
+  {
+    "category": "LINUX",
+    "command": "chmod +x <file>",
+    "summary": "Make a file executable",
+    "documentation": "Changes the file mode bits of a file. +x adds the execute permission for all users."
+  },
+  {
+    "category": "LINUX",
+    "command": "grep -r \"pattern\" .",
+    "summary": "Search for a pattern recursively",
+    "documentation": "Searches for a specific string pattern in all files within the current directory and its subdirectories."
+  },
+  {
+    "category": "HTTP",
+    "command": "404 Not Found",
+    "summary": "The server cannot find the requested resource",
+    "documentation": "The server can not find the requested resource. Links that lead to a 404 page are often called broken or dead links and can be subject to link rot."
+  },
+  {
+    "category": "HTTP",
+    "command": "500 Internal Server Error",
+    "summary": "Generic error message when an unexpected condition was encountered",
+    "documentation": "The server encountered an unexpected condition that prevented it from fulfilling the request. Usually indicates a server-side crash or misconfiguration."
+  },
+  {
+    "category": "PORTS",
+    "command": "Port 80 (HTTP)",
+    "summary": "Hypertext Transfer Protocol",
+    "documentation": "Used for unencrypted web traffic. Browsers connect to this port by default for http:// URLs."
+  },
+  {
+    "category": "PORTS",
+    "command": "Port 443 (HTTPS)",
+    "summary": "HTTP over TLS/SSL",
+    "documentation": "Used for secure web traffic. Provides encryption and authentication for web communications."
+  },
+  {
+    "category": "REGEX",
+    "command": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+    "summary": "Email Validation Pattern",
+    "documentation": "Matches most common email formats. Validates that the input has an @ symbol, a domain name, and a TLD of at least 2 characters."
+  },
+  {
+    "category": "REGEX",
+    "command": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$",
+    "summary": "Strong Password Pattern",
+    "documentation": "Minimum eight characters, at least one letter and one number. Ideal for basic security requirements."
+  }
+]

@@ -20,7 +20,7 @@ function showLoginPage() {
   const loginPage = document.getElementById('login-page');
   const main = document.querySelector('.main');
   const sidebar = document.querySelector('.sidebar');
-  
+
   if (loginPage) {
     loginPage.classList.add('show');
     loginPage.style.display = 'flex';
@@ -28,7 +28,7 @@ function showLoginPage() {
   }
   if (main) main.style.display = 'none';
   if (sidebar) sidebar.style.display = 'none';
-  
+
   // Ensure initial form is shown
   const loginForm = document.getElementById('login-form');
   const signupForm = document.getElementById('signup-form');
@@ -41,7 +41,7 @@ function hideLoginPage() {
   const loginPage = document.getElementById('login-page');
   const main = document.querySelector('.main');
   const sidebar = document.querySelector('.sidebar');
-  
+
   if (loginPage) {
     loginPage.classList.remove('show');
     loginPage.style.display = 'none';
@@ -56,7 +56,7 @@ function switchAuthTab(tab) {
   const tabSignup = document.getElementById('tab-signup');
   const formLogin = document.getElementById('login-form');
   const formSignup = document.getElementById('signup-form');
-  
+
   if (tab === 'login') {
     tabLogin.classList.add('active');
     tabSignup.classList.remove('active');
@@ -99,7 +99,7 @@ function showAuthLoading() {
   if (el) {
     el.classList.add('show');
     console.log('✓ Loading indicator shown');
-    
+
     // SAFETY: Force hide loading after 8 seconds no matter what
     setTimeout(() => {
       if (el.classList.contains('show')) {
@@ -124,12 +124,12 @@ function hideAuthLoading() {
 async function handleLogin() {
   console.log('🔵 handleLogin called');
   clearErrors();
-  
+
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
-  
+
   console.log('📧 Login attempt:', email);
-  
+
   if (!email) {
     showAuthError('Email is required');
     return;
@@ -138,18 +138,18 @@ async function handleLogin() {
     showAuthError('Password is required');
     return;
   }
-  
+
   // Check demo credentials FIRST (instant, no loading)
   if (email === 'test@example.com' && password === 'password123') {
     console.log('✅ Demo credentials matched - instant login');
-    
+
     // Create mock user object
     user = {
       uid: 'demo-user-001',
       email: 'test@example.com',
       displayName: 'Demo User'
     };
-    
+
     showAuthSuccess('Demo login successful! Redirecting...');
     setTimeout(() => {
       console.log('🎯 Redirecting to dashboard...');
@@ -162,10 +162,10 @@ async function handleLogin() {
     }, 300);
     return;
   }
-  
+
   // For Firebase attempts, show loading
   showAuthLoading();
-  
+
   // Check if Firebase is initialized
   if (!auth) {
     console.log('⚠️ Firebase not initialized - using demo mode suggestion');
@@ -173,11 +173,11 @@ async function handleLogin() {
     showAuthError('Use demo: test@example.com / password123, or sign up');
     return;
   }
-  
+
   // Use Firebase authentication
   try {
     console.log('🔥 Attempting Firebase login...');
-    
+
     // Set a timeout to catch hanging requests
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => {
@@ -185,18 +185,18 @@ async function handleLogin() {
         reject(new Error('Login took too long. Check your internet connection.'));
       }, 10000);
     });
-    
+
     const result = await Promise.race([
       firebaseSignInWithEmail(email, password),
       timeoutPromise
     ]);
-    
+
     hideAuthLoading();
     console.log('✅ Firebase login result:', result.success);
-    
+
     if (result.success) {
       showAuthSuccess('Login successful! Redirecting...');
-      
+
       setTimeout(() => {
         document.getElementById('login-email').value = '';
         document.getElementById('login-password').value = '';
@@ -223,13 +223,13 @@ async function handleLogin() {
 async function handleSignup() {
   console.log('🔵 handleSignup called');
   clearErrors();
-  
+
   const name = document.getElementById('signup-name').value.trim();
   const email = document.getElementById('signup-email').value.trim();
   const password = document.getElementById('signup-password').value;
-  
+
   console.log('📧 Signup attempt:', email);
-  
+
   if (!name) {
     showAuthError('Name is required');
     return;
@@ -242,18 +242,18 @@ async function handleSignup() {
     showAuthError('Password must be at least 6 characters');
     return;
   }
-  
+
   // Check if Firebase is initialized
   if (!auth) {
     console.log('✅ Firebase not initialized - demo mode signup');
-    
+
     // Create mock user object instantly
     user = {
       uid: 'demo-user-' + Date.now(),
       email: email,
       displayName: name
     };
-    
+
     showAuthSuccess('Account created! Welcome aboard!');
     setTimeout(() => {
       console.log('🎯 Redirecting to dashboard...');
@@ -267,14 +267,14 @@ async function handleSignup() {
     }, 300);
     return;
   }
-  
+
   // For Firebase attempts, show loading
   showAuthLoading();
-  
+
   // Use Firebase authentication
   try {
     console.log('🔥 Attempting Firebase signup...');
-    
+
     // Set a timeout to catch hanging requests
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => {
@@ -282,18 +282,18 @@ async function handleSignup() {
         reject(new Error('Signup took too long. Check your internet connection.'));
       }, 10000);
     });
-    
+
     const result = await Promise.race([
       firebaseSignUpWithEmail(name, email, password),
       timeoutPromise
     ]);
-    
+
     hideAuthLoading();
     console.log('✅ Firebase signup result:', result.success);
-    
+
     if (result.success) {
       showAuthSuccess('Account created! Welcome aboard!');
-      
+
       setTimeout(() => {
         document.getElementById('signup-name').value = '';
         document.getElementById('signup-email').value = '';
@@ -334,7 +334,7 @@ function handleLogout() {
 
 function updateUserCard() {
   if (!user) return;
-  
+
   // Preference: Sync from Firebase profile
   if (firebaseAPI) {
     refreshProfile();
@@ -342,14 +342,14 @@ function updateUserCard() {
     // Fallback logic
     const name = user.displayName || user.email.split('@')[0];
     const initials = name.substring(0, 2).toUpperCase();
-    
+
     document.querySelectorAll('.user-avatar').forEach(av => av.textContent = initials);
     document.querySelectorAll('.user-name').forEach(el => el.textContent = name);
-    
+
     const handleEl = document.getElementById('sidebar-user-handle');
     if (handleEl) handleEl.textContent = user.email || 'user@snipit.dev';
   }
-  
+
   updateXPUI();
 
   // Sync dashboard
@@ -361,49 +361,49 @@ function updateUserCard() {
 // ========== SYNC USERNAME ACROSS ALL PAGES ==========
 function syncUsernameAcrossAllPages(profileData) {
   if (!profileData) return;
-  
+
   const displayName = profileData.username || profileData.displayName || 'User';
   const handle = profileData.handle || '@user';
   const avatar = (displayName || 'U').charAt(0).toUpperCase();
-  
+
   // Sidebar elements
   const sidebarName = document.getElementById('sidebar-user-name');
   const sidebarHandle = document.getElementById('sidebar-user-handle');
   const sidebarAvatar = document.getElementById('sidebar-user-avatar');
-  
+
   if (sidebarName) sidebarName.textContent = displayName;
   if (sidebarHandle) sidebarHandle.textContent = user ? user.email : handle;
   if (sidebarAvatar) sidebarAvatar.textContent = avatar;
-  
+
   // Dashboard elements
   const dashName = document.getElementById('dash-user-name');
   if (dashName) dashName.textContent = displayName;
-  
+
   const dashEmail = document.getElementById('dash-user-email');
   if (dashEmail) dashEmail.textContent = user ? user.email : '';
-  
+
   // Settings email
   const settingsEmail = document.getElementById('settings-email-display');
   if (settingsEmail) settingsEmail.textContent = user ? `Signed in as ${user.email}` : '';
-  
+
   // Profile page elements
   const profileName = document.getElementById('prof-name');
   const profileHandle = document.getElementById('prof-handle');
   const profileAvatar = document.getElementById('prof-avatar');
-  
+
   if (profileName) profileName.textContent = displayName;
   if (profileHandle) profileHandle.textContent = handle;
   if (profileAvatar) profileAvatar.textContent = avatar;
-  
+
   console.log('✅ Username synced across all pages:', displayName);
 }
 
 async function updateAiStatusDisplay() {
   const connStatus = document.getElementById('ai-conn-status');
   const serverStatus = document.getElementById('ai-server-status');
-  
+
   if (!connStatus || !serverStatus) return;
-  
+
   // Check if token is available
   if (api && api.apiKey) {
     connStatus.innerHTML = '● Online - Token Loaded';
@@ -412,7 +412,7 @@ async function updateAiStatusDisplay() {
     connStatus.innerHTML = '● Offline - Check local.properties';
     connStatus.style.color = 'var(--r)';
   }
-  
+
   // Check if server is reachable
   try {
     if (api) {
@@ -436,6 +436,7 @@ const pages = {
   vault: 'Snippet Vault',
   beam: 'Beam Station',
   ai: 'Snip-AI Agent',
+  devdex: 'Dev-Dex',
   xp: 'Dev-XP',
   profile: 'Profile',
   settings: 'Settings'
@@ -446,6 +447,7 @@ const subs = {
   vault: 'Your offline code library',
   beam: 'Real-time code transfer to PC',
   ai: 'Powered by Claude Sonnet 4.6',
+  devdex: 'Commands, Codes & Patterns',
   xp: 'Your developer journey',
   profile: 'Your account and devices',
   settings: 'App preferences'
@@ -455,13 +457,13 @@ const subs = {
 function goPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  
+
   const page = document.getElementById('page-' + pageId);
   const nav = document.getElementById('nav-' + pageId);
-  
+
   if (page) page.classList.add('active');
   if (nav) nav.classList.add('active');
-  
+
   // Breadcrumb
   const bread = document.getElementById('breadcrumb-page');
   if (bread) bread.textContent = pageId;
@@ -474,20 +476,86 @@ function goPage(pageId) {
 
   if (pageId === 'beam') generateNewQR();
   if (pageId === 'vault') syncVault();
+  if (pageId === 'devdex') loadDevDex();
   if (pageId === 'settings') {
     updateAiStatusDisplay();
-    updateAiStatusDisplay(); // Double call to ensure server check finishes
   }
   if (pageId === 'ai') {
     console.log('📖 AI page opened, initializing chat...');
     initializeAIPage();
   }
-  if (pageId === 'xp') {
-    refreshXPScreen();
+  if (pageId === 'xp') refreshXPScreen();
+  if (pageId === 'profile') refreshProfile();
+}
+
+// ========== DEV-DEX ==========
+let dexData = [];
+let dexActiveTab = 'all';
+
+async function loadDevDex() {
+  if (dexData.length > 0) { renderDexEntries(); return; } // already loaded
+  try {
+    const res = await fetch('handbook.json');
+    dexData = await res.json();
+    renderDexEntries();
+  } catch (err) {
+    document.getElementById('dex-list').innerHTML =
+      '<div style="text-align:center;padding:40px;color:var(--r);font-family:var(--mono);font-size:12px">Failed to load handbook.json</div>';
   }
-  if (pageId === 'profile') {
-    refreshProfile();
+}
+
+function switchDexTab(tab, el) {
+  dexActiveTab = tab;
+  document.querySelectorAll('.dex-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('dex-search').value = '';
+  renderDexEntries();
+}
+
+function filterDex() {
+  renderDexEntries();
+}
+
+function renderDexEntries() {
+  const q = (document.getElementById('dex-search')?.value || '').toLowerCase();
+  const list = document.getElementById('dex-list');
+  const countEl = document.getElementById('dex-count');
+
+  const catColors = {
+    'GIT': 'var(--p)',
+    'LINUX': 'var(--g)',
+    'HTTP': 'var(--r)',
+    'PORTS': 'var(--c)',
+    'REGEX': 'var(--y)'
+  };
+
+  let filtered = dexData.filter(e => {
+    const matchTab = dexActiveTab === 'all' || e.category === dexActiveTab;
+    const matchSearch = !q ||
+      e.command.toLowerCase().includes(q) ||
+      e.summary.toLowerCase().includes(q) ||
+      e.documentation.toLowerCase().includes(q) ||
+      e.category.toLowerCase().includes(q);
+    return matchTab && matchSearch;
+  });
+
+  if (countEl) countEl.textContent = filtered.length;
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t4);font-family:var(--mono);font-size:12px">No entries found.</div>';
+    return;
   }
+
+  const color = (cat) => catColors[cat] || 'var(--g)';
+
+  list.innerHTML = filtered.map(e => `
+    <div class="dex-entry" style="border-left-color:${color(e.category)}">
+      <div class="dex-cat" style="color:${color(e.category)}">${e.category}</div>
+      <div class="dex-cmd">${e.command.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="dex-summary">${e.summary}</div>
+      <div class="dex-doc">${e.documentation}</div>
+    </div>
+  `).join('');
 }
 
 // Beam Station PIN Entry
@@ -520,7 +588,7 @@ async function validatePin() {
   if (entered.length < 6) return;
 
   addLog(`Verifying PIN: ${entered}...`, 'info');
-  
+
   // PIN Expiry simulation: Valid for 5 minutes
   const pinTime = localStorage.getItem('snipit_pin_time');
   if (pinTime && (Date.now() - parseInt(pinTime) > 300000)) {
@@ -550,11 +618,11 @@ async function validatePin() {
   } else {
     // Fallback
     if (entered === '482951') {
-       simulateConnect();
-       pinDigits = [];
-       updatePinDisplay();
+      simulateConnect();
+      pinDigits = [];
+      updatePinDisplay();
     } else {
-       failPin();
+      failPin();
     }
   }
 }
@@ -583,7 +651,7 @@ function simulateConnect(code = null, title = null, lang = null) {
   const bstatus = document.getElementById('bstatus-txt');
   const bdot = document.getElementById('beam-dot');
   const btxt = document.getElementById('beam-status-txt');
-  
+
   if (bpulse) bpulse.classList.add('connected');
   if (bstatus) bstatus.innerHTML = 'Connected: <span>Mobile_Device</span> · SnipIT Remote';
   if (bdot) {
@@ -591,9 +659,9 @@ function simulateConnect(code = null, title = null, lang = null) {
     bdot.classList.add('online');
   }
   if (btxt) btxt.textContent = 'Device connected';
-  
+
   addLog('Device paired successfully.', 'ok');
-  
+
   const codeEl = document.getElementById('incoming-code');
   if (code && codeEl) {
     codeEl.textContent = code;
@@ -639,7 +707,7 @@ function addLog(msg, type) {
 function injectVSCode() {
   if (!connected) { toast('Connect a device first!'); return; }
   addLog('Initializing Beam Injector Protocol...', 'info');
-  
+
   const code = document.getElementById('incoming-code').textContent;
   if (!code || code.includes('No snippet received')) {
     addLog('Error: No source code found to inject.', 'err');
@@ -683,7 +751,7 @@ function saveToVault() {
     toast('No code to save!');
     return;
   }
-  
+
   const title = prompt('Enter title for this snippet:', 'Beamed Snippet');
   if (title) {
     LocalStorage.addSnippet({
@@ -695,10 +763,10 @@ function saveToVault() {
     addLog('Snippet saved to Vault: ' + title, 'ok');
     addXP(15);
     loadVault();
-    
+
     // Refresh dashboard last beamed
     updateLastBeamed(title, code);
-    
+
     // Clear after save
     clearBeamed();
   }
@@ -708,13 +776,13 @@ function clearBeamed() {
   const codeEl = document.getElementById('incoming-code');
   if (codeEl) codeEl.textContent = 'No snippet received.';
   disconnectBeam();
-  
+
   // Also clear from Firebase so it doesn't reappear on reload
   if (firebaseAPI && user) {
     const sessionId = user.uid.substring(0, 6).toUpperCase();
     firebaseAPI.clearBeam(sessionId);
   }
-  
+
   localStorage.removeItem('snipit_active_beam');
   addLog('Beam buffer cleared.', 'info');
   toast('Beam cleared');
@@ -724,8 +792,8 @@ function simulateConnectionDemo() {
   addLog('Simulating remote handshake...', 'info');
   setTimeout(() => {
     simulateConnect(
-      "// Optimized Firebase Query\nfirebase.database().ref('users')\n  .orderByChild('xp')\n  .limitToLast(10)\n  .once('value')", 
-      "Firebase Top 10 XP", 
+      "// Optimized Firebase Query\nfirebase.database().ref('users')\n  .orderByChild('xp')\n  .limitToLast(10)\n  .once('value')",
+      "Firebase Top 10 XP",
       "JavaScript"
     );
   }, 1000);
@@ -734,9 +802,9 @@ function simulateConnectionDemo() {
 function updateLastBeamed(title, code) {
   const container = document.getElementById('dash-last-beamed');
   if (!container) return;
-  
+
   localStorage.setItem('snipit_last_beamed', JSON.stringify({ title, code, time: new Date().toISOString() }));
-  
+
   container.innerHTML = `
     <div class="snip-card" style="margin:0; border-left:3px solid var(--c)">
       <div class="snip-header">
@@ -765,7 +833,7 @@ const aiReplies = [
 // AI Page Initialization
 async function initializeAIPage() {
   console.log('⏳ Initializing AI page...');
-  
+
   // Check authentication
   if (!user) {
     console.warn('⚠️ User not logged in');
@@ -779,7 +847,7 @@ async function initializeAIPage() {
     console.warn('⚠️ Firebase not initialized');
     const list = document.getElementById('ai-history-list');
     if (list) list.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--t4); font-size:11px">Firebase loading...</div>';
-    
+
     // Retry after a moment
     setTimeout(() => {
       if (firebaseAPI) loadAIHistory();
@@ -790,13 +858,13 @@ async function initializeAIPage() {
   // Load history
   console.log('✨ Firebase ready, loading chat history...');
   await loadAIHistory();
-  
+
   // Focus input if not in new chat mode
   if (currentChatId) {
     const input = document.getElementById('ai-in');
     if (input) input.focus();
   }
-  
+
   console.log('✅ AI page initialized successfully');
 }
 
@@ -824,14 +892,14 @@ async function sendAI() {
   const msgs = document.getElementById('ai-msgs');
   const sendBtn = document.getElementById('ai-send-btn');
   const query = input.value.trim();
-  
+
   if (!query) return;
 
   // Add user message to UI
   appendMessage('user', query);
   input.value = '';
   autoGrow(input);
-  
+
   // Disable input while thinking
   input.disabled = true;
   sendBtn.disabled = true;
@@ -856,14 +924,14 @@ async function sendAI() {
         }));
       }
     }
-    
+
     // Call AI with conversation history context
     const response = await api.getAIResponseWithContext(query, conversationContext);
     const reply = response.explanation || "I'm having trouble connecting to the cloud. Check if the server is running!";
-    
+
     // Add AI message to UI
     appendMessage('ai', reply);
-    
+
     // Save to Firebase History
     if (firebaseAPI && user) {
       console.log('💾 Saving to Firebase chat:', currentChatId);
@@ -884,13 +952,13 @@ function appendMessage(role, text) {
   const msgs = document.getElementById('ai-msgs');
   const div = document.createElement('div');
   div.className = `msg-bubble msg-${role}`;
-  
+
   if (role === 'ai') {
     div.innerHTML = `<div class="msg-ai-label">SNIP-AI · CLAUDE</div>${text.replace(/\n/g, '<br>')}`;
   } else {
     div.textContent = text;
   }
-  
+
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -898,7 +966,7 @@ function appendMessage(role, text) {
 async function loadAIHistory() {
   const list = document.getElementById('ai-history-list');
   if (!list) return console.warn('⚠️ History list element not found');
-  
+
   if (!firebaseAPI || !user) {
     console.warn('⚠️ Firebase API or user not initialized');
     list.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--t4); font-size:11px">Not logged in.</div>';
@@ -909,7 +977,7 @@ async function loadAIHistory() {
     console.log('📚 Loading chat history from Firebase...');
     const history = await firebaseAPI.getChatHistory();
     console.log('✅ History loaded. Total chats:', history ? Object.keys(history).length : 0);
-    
+
     if (!history || Object.keys(history).length === 0) {
       console.log('ℹ️ No chats found in history');
       list.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--t4); font-size:11px">No chat history found.</div>';
@@ -919,11 +987,11 @@ async function loadAIHistory() {
     // Sort history by timestamp (newest first)
     const sortedIds = Object.keys(history).sort((a, b) => b - a);
     console.log('📋 Sorted chat IDs:', sortedIds);
-    
+
     list.innerHTML = sortedIds.map(id => {
       const chat = history[id];
       const activeClass = id === currentChatId ? 'active' : '';
-      
+
       // Safe title extraction
       let title = "New Conversation";
       if (chat && chat.title) {
@@ -931,10 +999,10 @@ async function loadAIHistory() {
       } else if (chat && chat.messages && chat.messages.length > 0) {
         title = chat.messages[0].user.substring(0, 30) + '...';
       }
-      
+
       const date = new Date(parseInt(id)).toLocaleDateString();
       console.log(`  - ${id}: "${title}" (${date}, ${activeClass})`);
-      
+
       return `
         <div class="ai-history-item ${activeClass}" onclick="loadChat('${id}')">
           <div class="ai-hist-title">${title}</div>
@@ -942,7 +1010,7 @@ async function loadAIHistory() {
         </div>
       `;
     }).join('');
-    
+
     console.log('✨ History sidebar updated successfully');
   } catch (err) {
     console.error('❌ Error loading history:', err);
@@ -954,23 +1022,23 @@ async function loadChat(id) {
   currentChatId = id;
   const msgs = document.getElementById('ai-msgs');
   msgs.innerHTML = '';
-  
+
   const history = await firebaseAPI.getChatHistory();
   const chat = history[id];
-  
+
   if (chat && chat.messages) {
     chat.messages.forEach(m => {
       appendMessage('user', m.user);
       appendMessage('ai', m.ai);
     });
   }
-  
+
   loadAIHistory();
 }
 
 async function clearAIHistory() {
   if (!confirm('Are you sure you want to delete ALL chat history? This cannot be undone.')) return;
-  
+
   if (firebaseAPI && user) {
     try {
       toast('Clearing history...');
@@ -987,10 +1055,10 @@ async function clearAIHistory() {
 
 function startNewChat() {
   console.log('🆕 Starting new chat. Current chat ID was:', currentChatId);
-  
+
   // Set to null so next message creates a new ID
   currentChatId = null;
-  
+
   // Clear messages area
   document.getElementById('ai-msgs').innerHTML = `
     <div class="msg-bubble msg-ai">
@@ -1007,10 +1075,10 @@ function startNewChat() {
       <br>Feel free to paste code, ask questions, or let's discuss your project. I'll remember our conversation! 🚀
     </div>
   `;
-  
+
   // Refresh history sidebar to show archived chats
   loadAIHistory();
-  
+
   // Focus on input for next message
   setTimeout(() => {
     const input = document.getElementById('ai-in');
@@ -1050,9 +1118,9 @@ const LEVELS = [
 async function addXP(points, reason = "") {
   userStats.web_xp += points;
   localStorage.setItem('snipit_user_web_xp', userStats.web_xp);
-  
+
   if (reason) console.log(`Web XP Earned: +${points} for ${reason}`);
-  
+
   // Sync to Firebase
   if (firebaseAPI && user) {
     try {
@@ -1070,17 +1138,17 @@ async function addXP(points, reason = "") {
       console.warn('Sync failed, using local storage.');
     }
   }
-  
+
   userStats.xp = userStats.web_xp + userStats.app_xp;
-  
+
   // Dynamic Level Calculation based on total XP
   const oldLevel = userStats.level;
   userStats.level = Math.floor(Math.sqrt(userStats.xp / 10)) + 1;
-  
+
   if (userStats.level > oldLevel) {
     toast(`🎊 LEVEL UP! You reached Level ${userStats.level}!`);
     addLog(`Level up! Welcome to Level ${userStats.level}.`, 'ok');
-    
+
     // Milestones
     if (userStats.level === 5) toast('🏆 Milestone: Pro Scripter! New themes unlocked.');
     if (userStats.level === 10) toast('🔥 Milestone: Code Wizard! Master of the Vault.');
@@ -1088,7 +1156,7 @@ async function addXP(points, reason = "") {
 
   updateXPUI();
   toast(`+${points} XP Earned! ⚡ Total: ${userStats.xp} XP`);
-  
+
   if (document.getElementById('page-xp').classList.contains('active')) {
     refreshXPScreen();
   }
@@ -1108,11 +1176,11 @@ function updateXPUI() {
   // Sidebar XP Bar
   const xpFill = document.getElementById('sidebar-xp-fill');
   const xpLabel = document.querySelector('.xp-label');
-  
+
   const currentMin = LEVELS[userStats.level - 1].min;
   const nextLevel = LEVELS[userStats.level];
   const nextMin = nextLevel ? nextLevel.min : userStats.xp;
-  
+
   const progress = nextMin > currentMin ? ((userStats.xp - currentMin) / (nextMin - currentMin)) * 100 : 100;
 
   if (xpFill) xpFill.style.width = Math.min(100, progress) + '%';
@@ -1125,7 +1193,7 @@ function refreshXPScreen() {
   const nextLevel = LEVELS[userStats.level];
   const nextMin = nextLevel ? nextLevel.min : userStats.xp;
   const currentMin = LEVELS[currentLevelIdx].min;
-  
+
   const xpInLevel = userStats.xp - currentMin;
   const xpNeeded = nextMin - currentMin;
   const progressPercent = xpNeeded > 0 ? (xpInLevel / xpNeeded) * 100 : 100;
@@ -1142,7 +1210,7 @@ function refreshXPScreen() {
                         <span style="font-size:10px; color:var(--t3)">Web: ${userStats.web_xp} · App: ${userStats.app_xp}</span>`;
   }
   if (barFill) barFill.style.width = progressPercent + '%';
-  
+
   if (nextTxt) {
     if (nextLevel) {
       nextTxt.textContent = `${nextMin - userStats.xp} XP to Level ${userStats.level + 1} · ${nextLevel.name}`;
@@ -1163,9 +1231,9 @@ function refreshXPScreen() {
   if (langList) {
     const sortedLangs = Object.entries(langs).sort((a, b) => b[1] - a[1]);
     const maxCount = sortedLangs[0] ? sortedLangs[0][1] : 1;
-    
+
     const colors = ['var(--p)', 'var(--r)', 'var(--c)', 'var(--y)', 'var(--g)'];
-    
+
     langList.innerHTML = sortedLangs.map(([name, count], i) => `
       <div class="lang-bar">
         <div class="lb-row"><span class="lb-name">${name}</span><span class="lb-count">${count} snips</span></div>
@@ -1177,17 +1245,17 @@ function refreshXPScreen() {
   // Update Badges
   if (snippets.length >= 5) document.getElementById('badge-wizard')?.classList.add('earned');
   if (userStats.level >= 5) document.getElementById('badge-poly')?.classList.add('earned');
-  
+
   // Streak rendering
   const streakRow = document.getElementById('xp-streak-row');
   if (streakRow) {
     const days = streakRow.querySelectorAll('.streak-day');
     const today = new Date().getDay(); // 0 is Sunday, 1 is Monday...
     const adjustedToday = today === 0 ? 6 : today - 1; // Map to 0-6 (M-S)
-    
+
     const lastActive = localStorage.getItem('snipit_last_active_day');
     const currentStreak = parseInt(localStorage.getItem('snipit_streak') || '0');
-    
+
     days.forEach((d, i) => {
       d.classList.remove('done', 'today', 'claimable');
       if (i < adjustedToday) {
@@ -1211,15 +1279,15 @@ function updateStreak() {
   const now = new Date();
   const todayStr = now.toISOString().split('T')[0];
   const lastActive = localStorage.getItem('snipit_last_active_date');
-  
+
   if (lastActive === todayStr) return; // Already counted today
-  
+
   let streak = parseInt(localStorage.getItem('snipit_streak') || '0');
-  
+
   if (lastActive) {
     const lastDate = new Date(lastActive);
     const diff = (now - lastDate) / (1000 * 60 * 60 * 24);
-    
+
     if (diff <= 1.5) { // Consecutive day (allowing some buffer for time of day)
       streak++;
     } else {
@@ -1228,7 +1296,7 @@ function updateStreak() {
   } else {
     streak = 1;
   }
-  
+
   localStorage.setItem('snipit_streak', streak);
   localStorage.setItem('snipit_last_active_date', todayStr);
   console.log('🔥 Streak updated:', streak);
@@ -1236,19 +1304,19 @@ function updateStreak() {
 
 async function refreshProfile() {
   if (!user || !firebaseAPI) return;
-  
+
   const profile = await firebaseAPI.getProfile();
   const snippets = LocalStorage.getSnippets();
-  
+
   if (profile) {
     // Use the centralized sync function to update all pages with profile data
     syncUsernameAcrossAllPages(profile);
-    
+
     // Update profile page specific elements
     const pBio = document.getElementById('prof-bio');
     const pAvatar = document.getElementById('prof-avatar');
     const pUsername = document.getElementById('prof-username');
-    
+
     if (pBio) pBio.textContent = profile.bio || "No bio set. Click edit to customize your profile!";
     if (pAvatar) pAvatar.textContent = (profile.displayName || 'U').charAt(0).toUpperCase();
     if (pUsername) pUsername.textContent = profile.username || user.email.split('@')[0];
@@ -1260,13 +1328,13 @@ async function refreshProfile() {
       handle: '@' + user.email.split('@')[0]
     });
   }
-  
+
   // Stats & Email
   const pSnips = document.getElementById('prof-stat-snips');
   const pXP = document.getElementById('prof-stat-xp');
   const pEmail = document.getElementById('prof-email');
   const dashEmail = document.getElementById('dash-user-email');
-  
+
   if (pSnips) pSnips.textContent = snippets.length;
   if (pXP) pXP.textContent = userStats.xp;
   if (pEmail) pEmail.textContent = user.email;
@@ -1279,28 +1347,28 @@ async function saveProfile() {
   const name = document.getElementById('edit-prof-name').value;
   const handle = document.getElementById('edit-prof-handle').value;
   const bio = document.getElementById('edit-prof-bio').value;
-  
+
   if (!username || !name) {
     toast('❌ Username and Full Name are required');
     return;
   }
-  
+
   if (firebaseAPI && user) {
     toast('Saving profile...');
     try {
-      await firebaseAPI.updateProfile({ 
+      await firebaseAPI.updateProfile({
         username: username,
-        displayName: name, 
-        handle: handle.startsWith('@') ? handle : '@' + handle, 
-        bio: bio 
+        displayName: name,
+        handle: handle.startsWith('@') ? handle : '@' + handle,
+        bio: bio
       });
-      
+
       // Update local cache if needed
       if (user) user.displayName = name;
-      
+
       toast('Profile updated! +10 XP ⚡');
       addXP(10);
-      
+
       // Force UI refresh - sync across all pages
       await refreshProfile();
       closeModal();
@@ -1311,6 +1379,11 @@ async function saveProfile() {
   }
 }
 
+function getRank(level) {
+  const ranks = ['Novice', 'Syntax Learner', 'Code Scout', 'Snippet Master', 'Logic Architect', 'Syntax Wizard', 'Code Deity'];
+  return ranks[Math.min(level - 1, ranks.length - 1)] || 'Novice';
+}
+
 function updateDashboardStats(snippets, level = 1) {
   const dashCount = document.getElementById('dash-snip-count');
   const dashRank = document.getElementById('dash-rank');
@@ -1318,13 +1391,13 @@ function updateDashboardStats(snippets, level = 1) {
   if (dashCount) dashCount.textContent = snippets.length;
   const heroCount = document.getElementById('dash-hero-snip-count');
   if (heroCount) heroCount.textContent = snippets.length;
-  
+
   const statusCount = document.getElementById('status-count');
   if (statusCount) statusCount.textContent = snippets.length;
 
   const rank = getRank(level);
   if (dashRank) dashRank.textContent = rank;
-  
+
   // New Stats Integration
   const langCount = document.getElementById('dash-lang-count');
   const langList = document.getElementById('dash-lang-list');
@@ -1337,13 +1410,13 @@ function updateDashboardStats(snippets, level = 1) {
     if (langList) langList.textContent = langs.slice(0, 3).join(', ') + (langs.length > 3 ? '...' : '');
   }
 
-  if (xpEarned) xpEarned.textContent = userXP;
+  if (xpEarned) xpEarned.textContent = userStats.xp;
   if (rankInfo) rankInfo.textContent = `Level ${level} - ${rank.charAt(0) + rank.slice(1).toLowerCase()}`;
-  
+
   const currentUser = typeof user !== 'undefined' ? user : null;
   if (currentUser) {
     // Sync username across all pages - sidebar, dashboard, and profile
-    refreshProfile(); 
+    refreshProfile();
   }
 
   // Generate Activity Grid (Data Driven)
@@ -1362,10 +1435,10 @@ function updateDashboardStats(snippets, level = 1) {
       d.setDate(d.getDate() - (99 - i));
       const dateStr = d.toISOString().split('T')[0];
       const count = snippetsByDate[dateStr] || 0;
-      
+
       const opacity = count > 0 ? (0.4 + Math.min(count * 0.2, 0.6)) : 0.15;
       const color = count > 0 ? 'var(--g)' : 'var(--bg3)';
-      
+
       const cell = document.createElement('div');
       cell.style.width = '10px';
       cell.style.height = '10px';
@@ -1395,14 +1468,14 @@ function generateNewQR() {
     // Using SnipIT theme colors: #00ffaa (green) on #0d0f17 (dark bg)
     qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=snipit://beam/${sessionId}&color=00ffaa&bgcolor=0d0f17&margin=10`;
     addLog(`Beam session active: ${sessionId}`, 'info');
-    
+
     // Set PIN generation time for expiry (5m)
     localStorage.setItem('snipit_pin_time', Date.now());
-    
+
     // Update the label below QR
     const label = document.getElementById('qr-session-id');
     if (label) label.textContent = `SESSION: ${sessionId}`;
-    
+
     // Start listening for this session ID
     if (firebaseAPI) {
       firebaseAPI.listenForBeam(sessionId, (data) => {
@@ -1411,7 +1484,7 @@ function generateNewQR() {
         }
       });
     }
-    
+
     toast('Session QR Regenerated');
   }
 }
@@ -1423,7 +1496,7 @@ function checkBeamStatus() {
   if (!codeEl) return;
   const code = codeEl.textContent;
   const isDefault = code.includes('No snippet received');
-  
+
   if (statusBeam) {
     statusBeam.textContent = isDefault ? 'READY' : 'PAIRING...';
     statusBeam.style.color = isDefault ? 'var(--t3)' : 'var(--y)';
@@ -1495,7 +1568,7 @@ auth.signInAnonymously()
 async function openModal(name) {
   document.getElementById('modal-inner').innerHTML = modals[name] || '<p>Modal not found</p>';
   document.getElementById('modal-bg').classList.add('open');
-  
+
   // Pre-fill Edit Profile
   if (name === 'edit-profile') {
     const profile = await firebaseAPI.getProfile();
@@ -1518,19 +1591,19 @@ async function claimStreak() {
   const streak = parseInt(localStorage.getItem('snipit_streak') || '0');
   const lastClaim = localStorage.getItem('snipit_last_claim_date');
   const today = new Date().toISOString().split('T')[0];
-  
+
   if (lastClaim === today) {
     toast('Already claimed today! 🔥');
     return;
   }
-  
+
   // Update streak if not already updated today
   updateStreak();
-  
+
   localStorage.setItem('snipit_last_claim_date', today);
   addXP(20);
   toast('🔥 Streak Claimed! +20 XP');
-  
+
   if (document.getElementById('page-xp').classList.contains('active')) {
     refreshXPScreen();
   }
@@ -1557,17 +1630,17 @@ function saveNewSnip() {
 function saveAiSettings() {
   const token = document.getElementById('github-token')?.value?.trim();
   const statusEl = document.getElementById('token-status');
-  
+
   if (!token) {
     if (statusEl) statusEl.textContent = '❌ Token cannot be empty';
     return;
   }
-  
+
   if (!token.startsWith('ghp_')) {
     if (statusEl) statusEl.textContent = '❌ Token should start with ghp_';
     return;
   }
-  
+
   updateGitHubToken(token);
   if (statusEl) statusEl.textContent = '✓ Token saved! AI will use real responses now.';
   setTimeout(() => {
@@ -1600,7 +1673,7 @@ function openAiSettings() {
 function updateAiStatusDisplay() {
   const statusEl = document.getElementById('ai-status-text');
   if (!statusEl) return;
-  
+
   const token = localStorage.getItem('github_models_token');
   if (token) {
     // Check if it was auto-loaded from server
@@ -1641,7 +1714,7 @@ function setVaultView(viewMode, el) {
   currentVaultView = viewMode;
   document.querySelectorAll('.vault-view-btn').forEach(btn => btn.classList.remove('active'));
   if (el) el.classList.add('active');
-  
+
   const vaultList = document.getElementById('vault-list');
   if (vaultList) {
     if (viewMode === 'list') {
@@ -1664,8 +1737,8 @@ function getVaultSortBy() {
 function sortSnippets(snippets) {
   const sortType = getVaultSortBy();
   const sorted = [...snippets];
-  
-  switch(sortType) {
+
+  switch (sortType) {
     case 'oldest':
       sorted.sort((a, b) => new Date(a.created || 0) - new Date(b.created || 0));
       break;
@@ -1682,40 +1755,44 @@ function sortSnippets(snippets) {
     default:
       sorted.sort((a, b) => new Date(b.created || 0) - new Date(a.created || 0));
   }
-  
+
   return sorted;
 }
+
+let snippetListenerActive = false;
 
 async function syncVault() {
   if (!firebaseAPI || !user) {
     loadVault();
     return;
   }
-  
-  toast('Syncing Vault...');
-  try {
-    const cloudSnippets = await firebaseAPI.getSnippets();
-    if (cloudSnippets && cloudSnippets.length > 0) {
-      // Merge logic: prefer cloud data
-      LocalStorage.setSnippets(cloudSnippets);
-      console.log('✓ Vault synced with Firebase:', cloudSnippets.length, 'snippets');
-    }
+
+  // Only start one listener, not multiple
+  if (snippetListenerActive) return;
+  snippetListenerActive = true;
+
+  firebaseAPI.listenForSnippets((snippets) => {
+    LocalStorage.setSnippets(snippets);
     loadVault();
-  } catch (err) {
-    console.warn('Vault sync failed:', err);
-    loadVault();
-  }
+    updateDashboardStats(snippets);
+
+    // Update sync dot in topbar
+    const dot = document.getElementById('firebase-sync-dot');
+    const txt = document.getElementById('firebase-sync-txt');
+    if (dot) { dot.classList.remove('offline'); dot.classList.add('online'); }
+    if (txt) txt.textContent = 'Live · ' + snippets.length + ' snippets';
+  });
 }
 
 function loadVault() {
   const allSnippets = LocalStorage.getSnippets();
   let filteredSnippets = [...allSnippets];
-  
+
   const vaultList = document.getElementById('vault-list');
   const dashList = document.getElementById('dashboard-recent-list');
   const searchIn = document.getElementById('vault-search-in');
   const langSel = document.getElementById('vault-lang-sel');
-  
+
   // Apply Folder Filter
   if (currentVaultFolder === 'starred') {
     filteredSnippets = allSnippets.filter(s => s.starred);
@@ -1737,9 +1814,9 @@ function loadVault() {
       const sTags = s.tags || "";
       const sLang = s.language || "Plain";
 
-      const matchSearch = sTitle.toLowerCase().includes(q) || 
-                          sCode.toLowerCase().includes(q) || 
-                          sTags.toLowerCase().includes(q);
+      const matchSearch = sTitle.toLowerCase().includes(q) ||
+        sCode.toLowerCase().includes(q) ||
+        sTags.toLowerCase().includes(q);
       const matchLang = lang === 'all' || sLang.toLowerCase() === lang;
       return matchSearch && matchLang;
     });
@@ -1774,13 +1851,13 @@ function loadVault() {
   const statStarred = document.getElementById('stat-starred');
   const statLangs = document.getElementById('stat-langs');
   const statMatches = document.getElementById('stat-matches');
-  
+
   if (totalCount) totalCount.textContent = allSnippets.length;
   if (langHdrCount) {
     const langs = [...new Set(allSnippets.map(s => s.language))];
     langHdrCount.textContent = langs.length;
   }
-  
+
   // Update vault stats bar
   if (statTotal) statTotal.textContent = allSnippets.length;
   if (statStarred) statStarred.textContent = allSnippets.filter(s => s.starred).length;
@@ -1792,6 +1869,12 @@ function loadVault() {
 
   // Update Global Stats
   updateXPUI();
+
+  // Phase 5: Re-highlight syntax and render newly injected icons
+  setTimeout(() => {
+    if (window.Prism) Prism.highlightAll();
+    if (window.lucide) lucide.createIcons();
+  }, 10);
 }
 
 
@@ -1820,19 +1903,19 @@ function renderSnippet(s) {
   const title = s.title || "Untitled Snippet";
   const lang = s.language || s.lang || "Plain";
   const tags = s.tags || "";
-  
+
   const escapedCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const langColor = getLangColor(lang);
-  
+
   // Calculate snippet difficulty based on code length and complexity
   let difficulty = 'easy';
   const codeLength = code.length;
   if (codeLength > 500) difficulty = 'hard';
   else if (codeLength > 200) difficulty = 'medium';
-  
+
   // Get usage count
   const usageCount = vaultUsageTracker[s.id] || 0;
-  
+
   // Format date
   const created = s.created ? new Date(s.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A';
 
@@ -1847,7 +1930,9 @@ function renderSnippet(s) {
           <span class="lang-badge" style="background:${langColor}15; color:${langColor}; border:0.5px solid ${langColor}40">${lang}</span>
         </div>
       </div>
-      <div class="snip-code" style="border-color:${langColor}10; max-height:100px; overflow:hidden">${escapedCode}</div>
+      <div class="snip-code" style="border-color:${langColor}10; max-height:100px; overflow:hidden">
+        <pre style="margin:0; padding:0; background:none;"><code class="language-${lang.toLowerCase()}">${escapedCode}</code></pre>
+      </div>
       <div class="snip-meta">
         <div class="snip-meta-item">
           <span class="snip-difficulty ${difficulty}">${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</span>
@@ -1856,9 +1941,10 @@ function renderSnippet(s) {
         <div class="snip-meta-item snip-usage-count">Used ${usageCount}x</div>
       </div>
       <div class="snip-foot">
-        <div class="snip-tags">${tags || '#'+lang.toLowerCase()}</div>
+        <div class="snip-tags">${tags || '#' + lang.toLowerCase()}</div>
         <div class="snip-actions">
            <button class="ic-btn" onclick="copySnip('${s.id}', event)" title="Copy">⎘</button>
+           <button class="ic-btn" onclick="refineWithAI('${s.id}', event)" title="Refine with AI" style="color:var(--p)">✦ AI</button>
            <button class="ic-btn beam" onclick="beamSnip('${title}', event, '${escapedCode.replace(/'/g, "\\'")}')" title="Beam Station">📡</button>
            <button class="ic-btn" onclick="deleteSnippet('${s.id}', event)" title="Delete" style="color:var(--r)">🗑</button>
         </div>
@@ -1867,13 +1953,73 @@ function renderSnippet(s) {
   `;
 }
 
+// ========== AI REFINE ==========
+let _lastRefinedCode = '';
+
+async function refineWithAI(snippetId, event) {
+  if (event) event.stopPropagation();
+
+  const snippets = LocalStorage.getSnippets();
+  const snip = snippets.find(s => s.id === snippetId);
+  if (!snip) { toast('Snippet not found'); return; }
+
+  _lastRefinedCode = '';
+  toast('\u2726 Sending to AI...');
+
+  const modal = document.getElementById('modal-inner');
+  const bg = document.getElementById('modal-bg');
+  if (!modal || !bg) { toast('UI error: modal not found'); return; }
+
+  modal.innerHTML = `
+    <div class="modal-title">\u2726 AI Refining: ${snip.title}</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--p);margin-bottom:12px">Analyzing ${snip.language || 'code'} snippet...</div>
+    <div style="background:var(--bg0);border-radius:6px;padding:14px;font-family:var(--mono);font-size:11px;color:var(--t3);min-height:80px" id="refine-result">
+      \u23f3 Processing...
+    </div>
+    <button class="form-btn cancel" onclick="closeModal()" style="margin-top:12px">Close</button>
+  `;
+  bg.classList.add('open');
+
+  try {
+    const result = await api.refineSnippet(snip.code || '', snip.language || 'code');
+    const resultEl = document.getElementById('refine-result');
+    if (!resultEl) return;
+
+    const refined = result.fixed_code || '';
+    const explanation = result.explanation || 'Refinement complete.';
+    _lastRefinedCode = refined || snip.code || '';
+
+    resultEl.innerHTML = `
+      <div style="font-size:11px;color:var(--t2);margin-bottom:10px;line-height:1.6">${explanation.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>
+      ${refined ? `
+        <div style="font-family:var(--mono);font-size:9px;color:var(--t4);letter-spacing:1px;margin-bottom:6px">REFINED CODE</div>
+        <pre style="background:var(--bg0);border:0.5px solid var(--bd2);border-radius:4px;padding:10px;color:var(--c);font-size:11px;overflow-x:auto;white-space:pre-wrap">${refined.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+        <button class="form-btn" onclick="copyRefinedCode()">\u2398 Copy Refined Code</button>
+      ` : '<div style="color:var(--t4);font-size:11px;margin-top:8px">No code block returned. See explanation above.</div>'}
+    `;
+    toast('\u2726 AI refinement complete!');
+    addXP(10);
+  } catch(err) {
+    const resultEl = document.getElementById('refine-result');
+    if (resultEl) resultEl.innerHTML = `<span style="color:var(--r)">\u274c Error: ${err.message}</span>`;
+  }
+}
+
+function copyRefinedCode() {
+  if (!_lastRefinedCode) { toast('Nothing to copy'); return; }
+  navigator.clipboard.writeText(_lastRefinedCode)
+    .then(() => toast('Refined code copied!'))
+    .catch(() => toast('Copy failed — try selecting the code manually'));
+}
+
+
 function createSnipCard(snip) {
   const card = document.createElement('div');
   card.className = 'snip-card';
   card.onclick = () => openSnipDetail(snip);
-  
+
   const langColor = getLangColor(snip.language);
-  
+
   card.innerHTML = `
     <div class="snip-header">
       <span class="snip-title">${snip.title}</span>
@@ -1887,7 +2033,7 @@ function createSnipCard(snip) {
       </div>
     </div>
   `;
-  
+
   // Dynamic Tags
   const foot = card.querySelector('.snip-foot');
   const tagsDiv = document.createElement('div');
@@ -1951,7 +2097,7 @@ function getLangColor(lang) {
 function openSnipDetail(snip) {
   const langColor = getLangColor(snip.language);
   const escapedCode = snip.code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  
+
   modals['snip-detail'] = `
     <div class="snip-detail-hero">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px">
@@ -1984,7 +2130,7 @@ function openSnipDetail(snip) {
     
     <button class="form-btn cancel" style="width:100%" onclick="closeModal()">Close Detail View</button>
   `;
-  
+
   const modalInner = document.getElementById('modal-inner');
   modalInner.className = 'modal large';
   openModal('snip-detail');
@@ -1994,15 +2140,15 @@ async function beamToPhone(id) {
   const snippets = LocalStorage.getSnippets();
   const snip = snippets.find(s => s.id === id);
   if (!snip) return;
-  
+
   if (!user) {
     toast('Login to beam to phone!');
     return;
   }
-  
+
   toast(`Beaming "${snip.title}" to phone...`);
   const sessionId = user.uid.substring(0, 6).toUpperCase();
-  
+
   if (firebaseAPI) {
     try {
       await firebaseAPI.sendBeam(sessionId, {
@@ -2024,10 +2170,10 @@ function shareViaQR(id) {
   const snippets = LocalStorage.getSnippets();
   const snip = snippets.find(s => s.id === id);
   if (!snip) return;
-  
+
   const qrDiv = document.getElementById('snip-qr-share');
   const qrImg = document.getElementById('snip-qr-img');
-  
+
   if (qrDiv && qrImg) {
     const isVisible = qrDiv.style.display === 'block';
     if (isVisible) {
@@ -2058,7 +2204,7 @@ const LocalStorage = {
   async addSnippet(snippet) {
     // Set default created date if missing
     if (!snippet.created) snippet.created = new Date().toISOString();
-    
+
     // Try Firebase first
     if (firebaseAPI && firebaseAPI.isOnline && user) {
       try {
@@ -2092,7 +2238,7 @@ const LocalStorage = {
         console.warn('Firebase delete failed, using local storage:', err);
       }
     }
-    
+
     // Also remove from local storage
     let snippets = this.getSnippets();
     snippets = snippets.filter(s => s.id !== id);
@@ -2101,7 +2247,7 @@ const LocalStorage = {
 
   async exportVault() {
     let snippets;
-    
+
     // Try to get from Firebase first
     if (firebaseAPI && firebaseAPI.isOnline && user) {
       try {
@@ -2128,7 +2274,7 @@ const LocalStorage = {
     try {
       const text = await file.text();
       const snippets = JSON.parse(text);
-      
+
       for (const snippet of snippets) {
         await this.addSnippet(snippet);
       }
@@ -2150,7 +2296,7 @@ function copySnip(id, event) {
     // Track usage
     vaultUsageTracker[id] = (vaultUsageTracker[id] || 0) + 1;
     localStorage.setItem('snipit_vault_usage', JSON.stringify(vaultUsageTracker));
-    
+
     navigator.clipboard.writeText(snip.code).then(() => {
       toast('Copied to clipboard! 📋');
       loadVault(); // Refresh to show updated usage count
@@ -2255,8 +2401,8 @@ function initVaultSamples() {
         starred: false
       }
     ];
-    
-      samples.forEach(sample => LocalStorage.setSnippets([...existing, sample]));
+
+    samples.forEach(sample => LocalStorage.setSnippets([...existing, sample]));
     toast('Sample snippets loaded!');
   }
 }
@@ -2266,7 +2412,7 @@ function initVaultSamples() {
 // Initializers
 document.addEventListener('DOMContentLoaded', () => {
   initializeFirebase();
-  
+
   // Numpad Support
   document.addEventListener('keydown', (e) => {
     if (document.getElementById('page-beam').classList.contains('active')) {
@@ -2280,16 +2426,16 @@ document.addEventListener('DOMContentLoaded', () => {
 // Initialize on load
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM loaded, showing login page');
-  
+
   // Initialize vault with samples if empty
   initVaultSamples();
-  
+
   // Show login page immediately (will be hidden if auth state is detected)
   showLoginPage();
-  
+
   // Clear any stuck loading state
   hideAuthLoading();
-  
+
   // Initialize Firebase in background
   console.log('Starting Firebase initialization...');
   initializeFirebase()
@@ -2344,24 +2490,24 @@ window.addEventListener('load', () => {
   updateXPUI();
   checkBeamStatus();
   initThemeCards();
-  
+
   // Restore last beamed
   const lastB = localStorage.getItem('snipit_last_beamed');
   if (lastB) {
     const b = JSON.parse(lastB);
     updateLastBeamed(b.title, b.code);
   }
-  
+
   // Start streak check
   updateStreak();
-  
+
   setInterval(checkBeamStatus, 1000);
 });
 
 window.addEventListener('DOMContentLoaded', () => {
   const savedTheme = localStorage.getItem('snipit_theme');
   if (savedTheme === 'light') document.body.classList.add('light-mode');
-  
+
   // Keyboard Shortcuts
   document.addEventListener('keydown', (e) => {
     // Ctrl/Cmd + K: Focus search in vault
@@ -2370,13 +2516,13 @@ window.addEventListener('DOMContentLoaded', () => {
       const searchInput = document.getElementById('vault-search-in');
       if (searchInput) searchInput.focus();
     }
-    
+
     // Ctrl/Cmd + N: New snippet
     if ((e.ctrlKey || e.metaKey) && e.key === 'n' && document.getElementById('page-vault')?.classList.contains('active')) {
       e.preventDefault();
       openModal('new-snip');
     }
-    
+
     // Ctrl/Cmd + E: Export vault
     if ((e.ctrlKey || e.metaKey) && e.key === 'e' && document.getElementById('page-vault')?.classList.contains('active')) {
       e.preventDefault();
@@ -2385,3 +2531,108 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// ==========================================
+// COMMAND PALETTE (CTRL+K)
+// ==========================================
+
+// Global Shortcut Listener
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 'k') {
+    e.preventDefault(); // Prevent browser default search
+    openCmd();
+  }
+  if (e.key === 'Escape') {
+    closeCmd();
+  }
+});
+
+function openCmd() {
+  const bg = document.getElementById('cmd-bg');
+  const input = document.getElementById('cmd-input');
+  if (bg) {
+    bg.classList.add('open');
+    if (input) {
+      input.value = '';
+      setTimeout(() => input.focus(), 100);
+      filterCmd();
+    }
+  }
+}
+
+function closeCmd() {
+  const bg = document.getElementById('cmd-bg');
+  if (bg) bg.classList.remove('open');
+}
+
+function filterCmd() {
+  const input = document.getElementById('cmd-input').value.toLowerCase();
+  const resultsEl = document.getElementById('cmd-results');
+  if (!resultsEl) return;
+  
+  if (!input) {
+    resultsEl.innerHTML = `<div style="padding: 12px 16px; color:var(--t4); font-family:var(--mono); font-size:11px; text-align:center;">Type to search Snippets & Dex...</div>`;
+    return;
+  }
+  
+  const snippets = LocalStorage.getSnippets();
+  // We assume handbook is loaded and stored globally, but if not we try to fetch it or skip
+  let handbook = [];
+  try {
+     handbook = typeof devDexHandbook !== 'undefined' ? devDexHandbook : window.devDexHandbook || [];
+  } catch(e) {}
+  
+  const matchedSnips = snippets.filter(s => 
+    (s.title && s.title.toLowerCase().includes(input)) || 
+    (s.language && s.language.toLowerCase().includes(input)) ||
+    (s.tags && s.tags.toLowerCase().includes(input))
+  ).slice(0, 5);
+  
+  const matchedDex = handbook.filter(item => 
+    (item.title && item.title.toLowerCase().includes(input)) || 
+    (item.category && item.category.toLowerCase().includes(input)) ||
+    (item.description && item.description.toLowerCase().includes(input))
+  ).slice(0, 5);
+  
+  let html = '';
+  
+  if (matchedSnips.length > 0) {
+    html += `<div style="padding: 8px 12px; font-size: 10px; font-weight: 600; color: var(--p); letter-spacing: 1px;">VAULT SNIPPETS</div>`;
+    matchedSnips.forEach(s => {
+      html += `
+        <div style="padding: 10px 12px; cursor: pointer; border-radius: 6px; margin-bottom: 4px; background: var(--bg2); display:flex; align-items:center; gap: 10px;" 
+             onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'"
+             onclick="closeCmd(); goPage('vault'); setTimeout(() => openSnipDetail(LocalStorage.getSnippets().find(x=>x.id==='${s.id}')), 200)">
+          <i data-lucide="file-code" style="width: 14px; height: 14px; color: var(--t3);"></i>
+          <div>
+            <div style="font-size: 13px; color: var(--t1);">${s.title}</div>
+            <div style="font-size: 10px; color: var(--t4); font-family: var(--mono); margin-top: 2px;">${s.language}</div>
+          </div>
+        </div>
+      `;
+    });
+  }
+  
+  if (matchedDex.length > 0) {
+    html += `<div style="padding: 8px 12px; font-size: 10px; font-weight: 600; color: var(--c); letter-spacing: 1px; margin-top: 8px;">DEV-DEX</div>`;
+    matchedDex.forEach(d => {
+      html += `
+        <div style="padding: 10px 12px; cursor: pointer; border-radius: 6px; margin-bottom: 4px; background: var(--bg2); display:flex; align-items:center; gap: 10px;" 
+             onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'"
+             onclick="closeCmd(); goPage('devdex'); setTimeout(() => { document.getElementById('dex-search').value = '${d.title}'; renderDevDex(); }, 100)">
+          <i data-lucide="book-open" style="width: 14px; height: 14px; color: var(--t3);"></i>
+          <div>
+            <div style="font-size: 13px; color: var(--t1);">${d.title}</div>
+            <div style="font-size: 10px; color: var(--t4); font-family: var(--mono); margin-top: 2px;">${d.category}</div>
+          </div>
+        </div>
+      `;
+    });
+  }
+  
+  if (!html) {
+    html = `<div style="padding: 24px; text-align: center; color: var(--t4); font-size: 12px;">No results found for "${input}"</div>`;
+  }
+  
+  resultsEl.innerHTML = html;
+  if (window.lucide) lucide.createIcons();
+}

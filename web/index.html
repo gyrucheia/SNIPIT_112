@@ -1,973 +1,2748 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SnipIT — Web Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  
+  <!-- Phase 5 UI/UX Polish: Prism.js for code highlighting & Lucide for SVG Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- UI / UX Polish: Lucide Icons & Prism.js Syntax Highlighting -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  
   <style>
     :root {
-      --bg0:#07080d;--bg1:#0d0f17;--bg2:#131520;--bg3:#191c2a;--bg4:#1f2235;
-      --g:#00ffaa;--g2:#00cc88;--p:#9d7dff;--p2:#7c5de8;--c:#1de9ff;--y:#ffcc00;--r:#ff5566;--pk:#ff6eb4;
-      --t1:#eef2ff;--t2:#8892b0;--t3:#4a5270;--t4:#2a2f47;
-      --bd:#ffffff0a;--bd2:#ffffff14;--bd3:#ffffff22;--bd4:#ffffff35;
-      --mono:'JetBrains Mono',monospace;--ui:'Syne',sans-serif;
-      --sidebar:200px;
+      --bg0: #07080d;
+      --bg1: #0d0f17;
+      --bg2: #131520;
+      --bg3: #191c2a;
+      --bg4: #1f2235;
+      --g: #00ffaa;
+      --g2: #00cc88;
+      --p: #9d7dff;
+      --p2: #7c5de8;
+      --c: #1de9ff;
+      --y: #ffcc00;
+      --r: #ff5566;
+      --pk: #ff6eb4;
+      --t1: #eef2ff;
+      --t2: #8892b0;
+      --t3: #4a5270;
+      --t4: #2a2f47;
+      --bd: #ffffff0a;
+      --bd2: #ffffff14;
+      --bd3: #ffffff22;
+      --bd4: #ffffff35;
+      --mono: 'JetBrains Mono', monospace;
+      --ui: 'Syne', sans-serif;
+      --sidebar: 200px;
     }
+
     body.light-mode {
-      --bg0:#f0f2f5;--bg1:#ffffff;--bg2:#f8f9fa;--bg3:#e9ecef;--bg4:#dee2e6;
-      --t1:#131520;--t2:#4a5270;--t3:#7c85a1;--t4:#94a3b8;
-      --bd:rgba(0,0,0,0.06);--bd2:rgba(0,0,0,0.12);--bd3:rgba(0,0,0,0.2);--bd4:rgba(0,0,0,0.3);
-      --g:#007755;--g2:#005533;--p:#5d40cc;--p2:#4433aa;--c:#008899;--y:#997700;--r:#cc3344;
+      --bg0: #f0f2f5;
+      --bg1: #ffffff;
+      --bg2: #f8f9fa;
+      --bg3: #e9ecef;
+      --bg4: #dee2e6;
+      --t1: #131520;
+      --t2: #4a5270;
+      --t3: #7c85a1;
+      --t4: #94a3b8;
+      --bd: rgba(0, 0, 0, 0.06);
+      --bd2: rgba(0, 0, 0, 0.12);
+      --bd3: rgba(0, 0, 0, 0.2);
+      --bd4: rgba(0, 0, 0, 0.3);
+      --g: #007755;
+      --g2: #005533;
+      --p: #5d40cc;
+      --p2: #4433aa;
+      --c: #008899;
+      --y: #997700;
+      --r: #cc3344;
     }
+
     /* SETTINGS UI */
     .setting-row-flex {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 0; border-bottom: 0.5px solid var(--bd);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 0.5px solid var(--bd);
     }
-    .theme-chip {
-      padding: 8px 12px; border: 0.5px solid var(--bd2); border-radius: 6px;
-      font-family: var(--mono); font-size: 10px; cursor: pointer; transition: all 0.2s;
-    }
-    .theme-chip.active { background: var(--g)15; border-color: var(--g); color: var(--g); }
-    .theme-chip.locked { opacity: 0.4; cursor: not-allowed; }
-    
-    .switch { position: relative; display: inline-block; width: 36px; height: 18px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-      background-color: var(--bg3); border-radius: 34px; transition: .3s;
-    }
-    .slider:before {
-      position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px;
-      background-color: var(--t1); border-radius: 50%; transition: .3s;
-    }
-    input:checked + .slider { background-color: var(--g); }
-    input:checked + .slider:before { transform: translateX(18px); }
 
-    .modal.large { width: 90%; max-width: 800px; }
-    .snip-detail-hero { background: var(--bg2); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--bd2); }
-    .snip-detail-code { background: #0d1117; color: #e6edf3; padding: 20px; border-radius: 8px; font-family: var(--mono); font-size: 14px; line-height: 1.6; overflow-x: auto; border: 1px solid #30363d; margin-bottom: 20px; }
-    
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;overflow:hidden}
-    body{background:var(--bg0);color:var(--t1);font-family:var(--ui);font-size:13px;display:flex;position:relative}
+    .theme-chip {
+      padding: 8px 12px;
+      border: 0.5px solid var(--bd2);
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-chip.active {
+      background: var(--g)15;
+      border-color: var(--g);
+      color: var(--g);
+    }
+
+    .theme-chip.locked {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 18px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--bg3);
+      border-radius: 34px;
+      transition: .3s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 12px;
+      width: 12px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--t1);
+      border-radius: 50%;
+      transition: .3s;
+    }
+
+    input:checked+.slider {
+      background-color: var(--g);
+    }
+
+    input:checked+.slider:before {
+      transform: translateX(18px);
+    }
+
+    .modal.large {
+      width: 90%;
+      max-width: 800px;
+    }
+
+    .snip-detail-hero {
+      background: var(--bg2);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid var(--bd2);
+    }
+
+    .snip-detail-code {
+      background: #0d1117;
+      color: #e6edf3;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-x: auto;
+      border: 1px solid #30363d;
+      margin-bottom: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden
+    }
+
+    body {
+      background: var(--bg0);
+      color: var(--t1);
+      font-family: var(--ui);
+      font-size: 13px;
+      display: flex;
+      position: relative
+    }
+
     body::before {
-      content: ''; position: fixed; inset: 0; 
+      content: '';
+      position: fixed;
+      inset: 0;
       background-image: radial-gradient(var(--bd3) 0.5px, transparent 0.5px);
-      background-size: 24px 24px; pointer-events: none; z-index: 0;
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: 0;
       opacity: 0.5;
     }
-    
+
     /* SCROLLBAR */
-    ::-webkit-scrollbar{width:5px; height:5px}
-    ::-webkit-scrollbar-track{background:transparent}
-    ::-webkit-scrollbar-thumb{background:var(--bd4);border-radius:10px}
-    ::-webkit-scrollbar-thumb:hover{background:var(--t4)}
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--bd4);
+      border-radius: 10px
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--t4)
+    }
 
     /* SIDEBAR */
-    .sidebar{width:var(--sidebar);min-width:var(--sidebar);background:var(--bg1);border-right:0.5px solid var(--bd2);display:flex;flex-direction:column;height:100vh;position:relative;z-index:20}
-    .sidebar-logo{padding:24px 20px 20px;border-bottom:0.5px solid var(--bd2)}
-    .logo-text{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--g);letter-spacing:-1px}
-    .logo-text em{color:var(--t3);font-style:normal}
-    .logo-sub{font-size:10px;color:var(--t3);margin-top:3px;letter-spacing:1px}
+    .sidebar {
+      width: var(--sidebar);
+      min-width: var(--sidebar);
+      background: var(--bg1);
+      border-right: 0.5px solid var(--bd2);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: relative;
+      z-index: 20
+    }
 
-    .user-card{margin:16px 14px;background:var(--bg2);border:1px solid var(--bd2);border-radius:16px;padding:16px;cursor:pointer;transition:all .3s ease;box-shadow:0 10px 20px -10px rgba(0,0,0,0.3);position:relative;overflow:hidden}
-    .user-card:hover{border-color:var(--g);transform:translateY(-2px);background:var(--bg2);box-shadow:0 15px 30px -12px rgba(0,255,170,0.15)}
-    .user-avatar{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--p),var(--g));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#000;margin-bottom:12px;box-shadow:0 8px 16px -4px rgba(0,0,0,0.5)}
-    .user-name{font-size:14px;font-weight:700;color:var(--t1);letter-spacing:-0.3px}
-    .user-handle{font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:2px;opacity:0.7}
-    .user-xp{display:flex;align-items:center;gap:8px;margin-top:12px}
-    .xp-bar-bg{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;border:0.5px solid var(--bd)}
-    .xp-bar-fill{height:100%;background:linear-gradient(to right, var(--y), var(--g));border-radius:3px;width:0%;transition:width 1s cubic-bezier(0.4, 0, 0.2, 1)}
-    .xp-label{font-family:var(--mono);font-size:10px;color:var(--y);font-weight:700}
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 0.5px solid var(--bd2)
+    }
 
-    .nav-section{padding:8px 12px 4px;font-family:var(--mono);font-size:9px;color:var(--t4);letter-spacing:1.5px;text-transform:uppercase}
-    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:0 6px 2px;border-radius:8px;cursor:pointer;color:var(--t3);font-size:13px;font-weight:500;transition:all .18s;position:relative}
-    .nav-item:hover{background:var(--bg2);color:var(--t1)}
-    .nav-item.active{background:var(--bg2);color:var(--g)}
-    .nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--g)}
-    .nav-icon{font-size:13px;width:18px;text-align:center;opacity:0.7}
-    .nav-badge{margin-left:auto;background:var(--r)20;color:var(--r);font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:10px}
+    .logo-text {
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--g);
+      letter-spacing: -1px
+    }
 
-    .sidebar-bottom{margin-top:auto;padding:12px;border-top:0.5px solid var(--bd2)}
-    .connection-card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:10px;padding:10px 12px}
-    .conn-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-    .conn-label{font-family:var(--mono);font-size:9px;color:var(--t4);letter-spacing:1px}
-    .conn-ip{font-family:var(--mono);font-size:11px;color:var(--c)}
-    .conn-status{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t3)}
-    .conn-dot{width:6px;height:6px;border-radius:50%;animation:pulse 2s infinite}
-    .conn-dot.online{background:var(--g)}
-    .conn-dot.offline{background:var(--r);animation:none}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .logo-text em {
+      color: var(--t3);
+      font-style: normal
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      color: var(--t3);
+      margin-top: 3px;
+      letter-spacing: 1px
+    }
+
+    .user-card {
+      margin: 16px 14px;
+      background: var(--bg2);
+      border: 1px solid var(--bd2);
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all .3s ease;
+      box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden
+    }
+
+    .user-card:hover {
+      border-color: var(--g);
+      transform: translateY(-2px);
+      background: var(--bg2);
+      box-shadow: 0 15px 30px -12px rgba(0, 255, 170, 0.15)
+    }
+
+    .user-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--p), var(--g));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: #000;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.5)
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--t1);
+      letter-spacing: -0.3px
+    }
+
+    .user-handle {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--t4);
+      margin-top: 2px;
+      opacity: 0.7
+    }
+
+    .user-xp {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px
+    }
+
+    .xp-bar-bg {
+      flex: 1;
+      height: 5px;
+      background: var(--bg3);
+      border-radius: 3px;
+      overflow: hidden;
+      border: 0.5px solid var(--bd)
+    }
+
+    .xp-bar-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--y), var(--g));
+      border-radius: 3px;
+      width: 0%;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1)
+    }
+
+    .xp-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--y);
+      font-weight: 700
+    }
+
+    .nav-section {
+      padding: 8px 12px 4px;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--t4);
+      letter-spacing: 1.5px;
+      text-transform: uppercase
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      margin: 0 6px 2px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--t3);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all .18s;
+      position: relative
+    }
+
+    .nav-item:hover {
+      background: var(--bg2);
+      color: var(--t1)
+    }
+
+    .nav-item.active {
+      background: var(--bg2);
+      color: var(--g)
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--g)
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      margin-right: 12px;
+      color: var(--t2);
+      transition: color 0.2s;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--r)20;
+      color: var(--r);
+      font-family: var(--mono);
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 10px
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 12px;
+      border-top: 0.5px solid var(--bd2)
+    }
+
+    .connection-card {
+      background: var(--bg2);
+      border: 0.5px solid var(--bd);
+      border-radius: 10px;
+      padding: 10px 12px
+    }
+
+    .conn-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px
+    }
+
+    .conn-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--t4);
+      letter-spacing: 1px
+    }
+
+    .conn-ip {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--c)
+    }
+
+    .conn-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--t3)
+    }
+
+    .conn-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      animation: pulse 2s infinite
+    }
+
+    .conn-dot.online {
+      background: var(--g)
+    }
+
+    .conn-dot.offline {
+      background: var(--r);
+      animation: none
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .4
+      }
+    }
 
     /* MAIN */
-    .main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
-    .topbar{height:48px;background:var(--bg1);border-bottom:0.5px solid var(--bd2);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0}
-    .topbar-breadcrumb{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--t3)}
-    .topbar-breadcrumb span{color:var(--t2)}
-    .topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-    .topbar-btn{background:var(--bg2);border:0.5px solid var(--bd2);border-radius:8px;padding:7px 14px;font-size:12px;font-family:var(--ui);color:var(--t2);cursor:pointer;transition:all .18s}
-    .topbar-btn:hover{border-color:var(--g);color:var(--g)}
-    .topbar-btn.primary{background:var(--g)20;border-color:var(--g)50;color:var(--g);font-weight:600}
-    
-    .topbar-status{display:flex; align-items:center; gap:8px; background:var(--bg2); padding:5px 14px; border-radius:20px; border:0.5px solid var(--bd2); font-family:var(--mono); font-size:10px}
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative
+    }
 
-    .content{flex:1;overflow-y:auto;padding:16px 24px 40px} /* Add bottom padding for status bar */
+    .topbar {
+      height: 48px;
+      background: var(--bg1);
+      border-bottom: 0.5px solid var(--bd2);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+      flex-shrink: 0
+    }
+
+    .topbar-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--t3)
+    }
+
+    .topbar-breadcrumb span {
+      color: var(--t2)
+    }
+
+    .topbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .topbar-btn {
+      background: var(--bg2);
+      border: 0.5px solid var(--bd2);
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-family: var(--ui);
+      color: var(--t2);
+      cursor: pointer;
+      transition: all .18s
+    }
+
+    .topbar-btn:hover {
+      border-color: var(--g);
+      color: var(--g)
+    }
+
+    .topbar-btn.primary {
+      background: var(--g)20;
+      border-color: var(--g)50;
+      color: var(--g);
+      font-weight: 600
+    }
+
+    .topbar-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg2);
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 0.5px solid var(--bd2);
+      font-family: var(--mono);
+      font-size: 10px
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 24px 40px
+    }
+
+    /* Add bottom padding for status bar */
 
     /* STATUS BAR */
-    .status-bar{position:fixed;bottom:0;left:var(--sidebar);right:0;height:22px;background:var(--bg1);border-top:0.5px solid var(--bd2);display:flex;align-items:center;padding:0 12px;font-family:var(--mono);font-size:9px;color:var(--t4);z-index:30}
-    .status-item{display:flex;align-items:center;gap:6px;padding:0 10px;border-right:0.5px solid var(--bd2)}
-    .status-item:last-child{border-right:none}
-    .status-item span{color:var(--g); font-weight:700}
+    .status-bar {
+      position: fixed;
+      bottom: 0;
+      left: var(--sidebar);
+      right: 0;
+      height: 22px;
+      background: var(--bg1);
+      border-top: 0.5px solid var(--bd2);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--t4);
+      z-index: 30
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+      border-right: 0.5px solid var(--bd2)
+    }
+
+    .status-item:last-child {
+      border-right: none
+    }
+
+    .status-item span {
+      color: var(--g);
+      font-weight: 700
+    }
 
     /* PAGES */
-    .page{display:none}
-    .page.active{display:block}
+    .page {
+      display: none
+    }
+
+    .page.active {
+      display: block
+    }
 
     /* CARDS -> PANES */
-    .card{background:var(--bg1);border:0.5px solid var(--bd2);border-radius:4px;padding:12px 16px}
-    .card-sm{background:var(--bg1);border:0.5px solid var(--bd2);border-radius:4px;padding:8px 12px}
-    .card-title{font-family:var(--mono);font-size:9px;color:var(--t4);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-    .card-title::after{content:'';flex:1;height:1px;background:var(--bd);margin-left:4px}
+    .card {
+      background: var(--bg1);
+      border: 0.5px solid var(--bd2);
+      border-radius: 4px;
+      padding: 12px 16px
+    }
+
+    .card-sm {
+      background: var(--bg1);
+      border: 0.5px solid var(--bd2);
+      border-radius: 4px;
+      padding: 8px 12px
+    }
+
+    .card-title {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--t4);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .card-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--bd);
+      margin-left: 4px
+    }
 
     /* STAT PANES */
-    .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--bd2); border:0.5px solid var(--bd2); border-radius:4px; overflow:hidden; margin-bottom:16px}
-    .stat-card{background:var(--bg1); padding:12px; border:none; border-radius:0}
-    .stat-n{font-family:var(--mono); font-size:18px; font-weight:700; margin-bottom:2px; line-height:1; color:var(--t1)}
-    .stat-l{font-size:9px; color:var(--t3); letter-spacing:0.5px; text-transform:uppercase}
-    .stat-d{font-family:var(--mono); font-size:8px; margin-top:4px}
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--bd2);
+      border: 0.5px solid var(--bd2);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 16px
+    }
+
+    .stat-card {
+      background: var(--bg1);
+      padding: 12px;
+      border: none;
+      border-radius: 0
+    }
+
+    .stat-n {
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      line-height: 1;
+      color: var(--t1)
+    }
+
+    .stat-l {
+      font-size: 9px;
+      color: var(--t3);
+      letter-spacing: 0.5px;
+      text-transform: uppercase
+    }
+
+    .stat-d {
+      font-family: var(--mono);
+      font-size: 8px;
+      margin-top: 4px
+    }
 
     /* SNIP CARDS */
-    .snip-list{display:flex;flex-direction:column;gap:12px}
-    .snip-card{
-      background:var(--bg1);border:0.5px solid var(--bd2);border-radius:4px;padding:12px;
-      transition:all 0.2s;cursor:pointer;position:relative;overflow:hidden;
+    .snip-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px
     }
-    .snip-card:hover{
-      border-color:var(--g)50; background:var(--bg2);
+
+    .snip-card {
+      background: var(--bg1);
+      border: 0.5px solid var(--bd2);
+      border-radius: 4px;
+      padding: 12px;
+      transition: all 0.2s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
     }
-    .snip-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-    .snip-title{font-weight:700;font-size:14px;flex:1;color:var(--t1)}
-    .lang-badge{font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:8px;font-weight:700}
-    .snip-code{
-      font-family:var(--mono);font-size:11px;background:var(--bg0);border-radius:10px;padding:14px;
-      color:var(--t2);line-height:1.6;max-height:80px;overflow:hidden;border:1px solid var(--bd);
+
+    .snip-card:hover {
+      border-color: var(--g)50;
+      background: var(--bg2);
     }
-    .snip-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
-    .snip-tags{font-family:var(--mono);font-size:10px;color:var(--t4);font-weight:500}
-    .snip-actions{display:flex;gap:8px}
-    .ic-btn{background:var(--bg2);border:0.5px solid var(--bd);border-radius:7px;padding:5px 9px;font-size:11px;cursor:pointer;color:var(--t2);transition:all .18s}
-    .ic-btn:hover{border-color:var(--g);color:var(--g)}
-    .ic-btn.beam:hover{border-color:var(--c);color:var(--c)}
+
+    .snip-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px
+    }
+
+    .snip-title {
+      font-weight: 700;
+      font-size: 14px;
+      flex: 1;
+      color: var(--t1)
+    }
+
+    .lang-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-weight: 700
+    }
+
+    .snip-code {
+      font-family: var(--mono);
+      font-size: 11px;
+      background: var(--bg0);
+      border-radius: 10px;
+      padding: 14px;
+      color: var(--t2);
+      line-height: 1.6;
+      max-height: 80px;
+      overflow: hidden;
+      border: 1px solid var(--bd);
+    }
+
+    .snip-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px
+    }
+
+    .snip-tags {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--t4);
+      font-weight: 500
+    }
+
+    .snip-actions {
+      display: flex;
+      gap: 8px
+    }
+
+    .ic-btn {
+      background: var(--bg2);
+      border: 0.5px solid var(--bd);
+      border-radius: 7px;
+      padding: 5px 9px;
+      font-size: 11px;
+      cursor: pointer;
+      color: var(--t2);
+      transition: all .18s
+    }
+
+    .ic-btn:hover {
+      border-color: var(--g);
+      color: var(--g)
+    }
+
+    .ic-btn.beam:hover {
+      border-color: var(--c);
+      color: var(--c)
+    }
 
     /* BEAM STATION */
-    .beam-status-bar{display:flex;align-items:center;gap:12px;background:var(--bg2);border:0.5px solid var(--bd2);border-radius:12px;padding:12px 16px;margin-bottom:18px}
-    .beam-pulse{width:10px;height:10px;border-radius:50%;background:var(--y);animation:pulse 1.5s infinite;flex-shrink:0}
-    .beam-pulse.connected{background:var(--g)}
-    .beam-status-txt{font-family:var(--mono);font-size:12px}
-    .beam-status-txt span{color:var(--g)}
+    .beam-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg2);
+      border: 0.5px solid var(--bd2);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 18px
+    }
 
-    .qr-container{display:flex;align-items:center;justify-content:center;background:var(--bg1);border:1px solid var(--bd2);border-radius:14px;width:160px;height:160px;flex-shrink:0;overflow:hidden;cursor:pointer;transition:transform .2s}
-    .qr-container:hover{transform:scale(1.03)}
+    .beam-pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--y);
+      animation: pulse 1.5s infinite;
+      flex-shrink: 0
+    }
 
-    .code-incoming{background:var(--bg0);border:0.5px solid var(--bd2);border-radius:12px;padding:16px;flex:1;min-height:180px;position:relative}
-    .incoming-label{font-family:var(--mono);font-size:9px;color:var(--t4);letter-spacing:1.2px;margin-bottom:10px}
-    .code-area{font-family:var(--mono);font-size:11px;color:var(--g);line-height:1.65;white-space:pre}
+    .beam-pulse.connected {
+      background: var(--g)
+    }
 
-    .pin-display-row{display:flex;gap:8px;justify-content:center;margin:16px 0}
-    .pin-box{width:46px;height:58px;background:var(--bg2);border:1.5px solid var(--g)50;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:26px;font-weight:700;color:var(--g);transition:all .25s}
-    .streak-day.today{border-color:var(--y);background:var(--y)10}
-    .streak-day.claimable{cursor:pointer;border-color:var(--g);background:var(--g)10;animation:pulse-g 2s infinite}
-    .streak-day.claimable:hover{transform:scale(1.1);background:var(--g)20}
-    @keyframes pulse-g{0%{box-shadow:0 0 0 0 var(--g)40}70%{box-shadow:0 0 0 10px var(--g)00}100%{box-shadow:0 0 0 0 var(--g)00}}
-    .pin-box.active{border-color:var(--g);background:var(--g)15;animation:pinGlow .5s ease}
-    @keyframes pinGlow{0%{box-shadow:0 0 0 var(--g)}50%{box-shadow:0 0 16px var(--g)30}100%{box-shadow:0 0 0 var(--g)}}
-    .pin-box.success{border-color:var(--g);background:var(--g)20;color:var(--g)}
+    .beam-status-txt {
+      font-family: var(--mono);
+      font-size: 12px
+    }
 
-    .session-log{background:var(--bg0);border:0.5px solid var(--bd);border-radius:10px;height:200px;overflow-y:auto;padding:12px;font-family:var(--mono);font-size:11px}
-    .log-line{padding:3px 0;border-bottom:0.5px solid var(--bd);color:var(--t3);display:flex;gap:10px}
-    .log-line.ok{color:var(--g)}
-    .log-line.err{color:var(--r)}
-    .log-line.info{color:var(--c)}
-    .log-ts{color:var(--t4);flex-shrink:0}
-    
-    .numpad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;max-width:240px;margin:16px auto 0}
-    .nk{background:var(--bg2);border:0.5px solid var(--bd2);border-radius:10px;padding:13px;text-align:center;font-family:var(--mono);font-size:16px;font-weight:500;cursor:pointer;transition:all .15s;user-select:none}
-    .nk:hover{background:var(--bg3);border-color:var(--bd3)}
-    .nk:active{background:var(--g)15;border-color:var(--g)50;transform:scale(.95)}
-    .nk.del{color:var(--r)}
+    .beam-status-txt span {
+      color: var(--g)
+    }
+
+    .qr-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg1);
+      border: 1px solid var(--bd2);
+      border-radius: 14px;
+      width: 160px;
+      height: 160px;
+      flex-shrink: 0;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .2s
+    }
+
+    .qr-container:hover {
+      transform: scale(1.03)
+    }
+
+    .code-incoming {
+      background: var(--bg0);
+      border: 0.5px solid var(--bd2);
+      border-radius: 12px;
+      padding: 16px;
+      flex: 1;
+      min-height: 180px;
+      position: relative
+    }
+
+    .incoming-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--t4);
+      letter-spacing: 1.2px;
+      margin-bottom: 10px
+    }
+
+    .code-area {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--g);
+      line-height: 1.65;
+      white-space: pre
+    }
+
+    .pin-display-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: 16px 0
+    }
+
+    .pin-box {
+      width: 46px;
+      height: 58px;
+      background: var(--bg2);
+      border: 1.5px solid var(--g)50;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--g);
+      transition: all .25s
+    }
+
+    .streak-day.today {
+      border-color: var(--y);
+      background: var(--y)10
+    }
+
+    .streak-day.claimable {
+      cursor: pointer;
+      border-color: var(--g);
+      background: var(--g)10;
+      animation: pulse-g 2s infinite
+    }
+
+    .streak-day.claimable:hover {
+      transform: scale(1.1);
+      background: var(--g)20
+    }
+
+    @keyframes pulse-g {
+      0% {
+        box-shadow: 0 0 0 0 var(--g)40
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px var(--g)00
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 var(--g)00
+      }
+    }
+
+    .pin-box.active {
+      border-color: var(--g);
+      background: var(--g)15;
+      animation: pinGlow .5s ease
+    }
+
+    @keyframes pinGlow {
+      0% {
+        box-shadow: 0 0 0 var(--g)
+      }
+
+      50% {
+        box-shadow: 0 0 16px var(--g)30
+      }
+
+      100% {
+        box-shadow: 0 0 0 var(--g)
+      }
+    }
+
+    .pin-box.success {
+      border-color: var(--g);
+      background: var(--g)20;
+      color: var(--g)
+    }
+
+    .session-log {
+      background: var(--bg0);
+      border: 0.5px solid var(--bd);
+      border-radius: 10px;
+      height: 200px;
+      overflow-y: auto;
+      padding: 12px;
+      font-family: var(--mono);
+      font-size: 11px
+    }
+
+    .log-line {
+      padding: 3px 0;
+      border-bottom: 0.5px solid var(--bd);
+      color: var(--t3);
+      display: flex;
+      gap: 10px
+    }
+
+    .log-line.ok {
+      color: var(--g)
+    }
+
+    .log-line.err {
+      color: var(--r)
+    }
+
+    .log-line.info {
+      color: var(--c)
+    }
+
+    .log-ts {
+      color: var(--t4);
+      flex-shrink: 0
+    }
+
+    .numpad {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      max-width: 240px;
+      margin: 16px auto 0
+    }
+
+    .nk {
+      background: var(--bg2);
+      border: 0.5px solid var(--bd2);
+      border-radius: 10px;
+      padding: 13px;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      user-select: none
+    }
+
+    .nk:hover {
+      background: var(--bg3);
+      border-color: var(--bd3)
+    }
+
+    .nk:active {
+      background: var(--g)15;
+      border-color: var(--g)50;
+      transform: scale(.95)
+    }
+
+    .nk.del {
+      color: var(--r)
+    }
 
     /* AI PAGE LAYOUT */
-    .ai-layout{display:grid;grid-template-columns:260px 1fr;gap:0;height:calc(100vh - 48px);background:var(--bg0)}
-    .ai-sidebar{background:var(--bg1);border-right:0.5px solid var(--bd2);display:flex;flex-direction:column;height:100%}
-    .ai-sidebar-hdr{padding:16px;border-bottom:0.5px solid var(--bd2);display:flex;justify-content:space-between;align-items:center}
-    .ai-history-list{flex:1;overflow-y:auto;padding:10px}
-    .ai-main-chat{display:flex;flex-direction:column;height:100%;position:relative;background:var(--bg0)}
-    .ai-messages{flex:1;overflow-y:auto;padding:24px 20% 100px}
-    .ai-input-area{position:absolute;bottom:0;left:0;right:0;padding:24px 20%;background:linear-gradient(transparent, var(--bg0) 30%)}
-    
-    .msg-bubble{padding:14px 18px;border-radius:16px;font-size:13px;line-height:1.6;max-width:85%;margin-bottom:20px;position:relative;animation:msgSlide .3s ease}
-    @keyframes msgSlide{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-    .msg-user{background:var(--bg2);border:0.5px solid var(--bd2);margin-left:auto;border-bottom-right-radius:4px;color:var(--t1)}
-    .msg-ai{background:var(--bg1);border:0.5px solid var(--p)30;margin-right:auto;border-bottom-left-radius:4px;box-shadow:0 10px 30px -10px rgba(0,0,0,0.5)}
-    .msg-ai-label{font-family:var(--mono);font-size:9px;color:var(--p);margin-bottom:6px;letter-spacing:1px;display:flex;align-items:center;gap:6px}
-    .msg-ai-label::before{content:'';width:6px;height:6px;background:var(--p);border-radius:50%;display:inline-block;box-shadow:0 0 8px var(--p)}
-    
-    .ai-history-item{padding:12px;border-radius:10px;margin-bottom:6px;cursor:pointer;transition:all .2s;border:0.5px solid transparent}
-    .ai-history-item:hover{background:var(--bg2);border-color:var(--bd2)}
-    .ai-history-item.active{background:var(--p)15;border-color:var(--p)40}
-    .ai-hist-title{font-size:12px;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
-    .ai-hist-meta{font-family:var(--mono);font-size:9px;color:var(--t4)}
-    
-    .ai-input-wrapper{background:var(--bg2);border:1px solid var(--bd3);border-radius:16px;padding:8px 12px;display:flex;align-items:flex-end;gap:10px;box-shadow:0 20px 40px -20px rgba(0,0,0,0.8);transition:border-color .2s}
-    .ai-input-wrapper:focus-within{border-color:var(--p)}
-    .ai-textarea{flex:1;background:none;border:none;color:var(--t1);font-family:var(--ui);font-size:14px;outline:none;resize:none;padding:8px 0;max-height:150px}
-    .ai-send-btn{width:36px;height:36px;border-radius:10px;background:var(--p);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
-    .ai-send-btn:hover{transform:scale(1.05);filter:brightness(1.1)}
-    .ai-send-btn:disabled{opacity:0.3;cursor:not-allowed}
+    .ai-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 0;
+      height: calc(100vh - 48px);
+      background: var(--bg0)
+    }
 
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .ai-sidebar {
+      background: var(--bg1);
+      border-right: 0.5px solid var(--bd2);
+      display: flex;
+      flex-direction: column;
+      height: 100%
+    }
+
+    .ai-sidebar-hdr {
+      padding: 16px;
+      border-bottom: 0.5px solid var(--bd2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    .ai-history-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px
+    }
+
+    .ai-main-chat {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+      background: var(--bg0)
+    }
+
+    .ai-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 20% 100px
+    }
+
+    .ai-input-area {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px 20%;
+      background: linear-gradient(transparent, var(--bg0) 30%)
+    }
+
+    .msg-bubble {
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 85%;
+      margin-bottom: 20px;
+      position: relative;
+      animation: msgSlide .3s ease
+    }
+
+    @keyframes msgSlide {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .msg-user {
+      background: var(--bg2);
+      border: 0.5px solid var(--bd2);
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+      color: var(--t1)
+    }
+
+    .msg-ai {
+      background: var(--bg1);
+      border: 0.5px solid var(--p)30;
+      margin-right: auto;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5)
+    }
+
+    .msg-ai-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--p);
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .msg-ai-label::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--p);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px var(--p)
+    }
+
+    .ai-history-item {
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all .2s;
+      border: 0.5px solid transparent
+    }
+
+    .ai-history-item:hover {
+      background: var(--bg2);
+      border-color: var(--bd2)
+    }
+
+    .ai-history-item.active {
+      background: var(--p)15;
+      border-color: var(--p)40
+    }
+
+    .ai-hist-title {
+      font-size: 12px;
+      color: var(--t1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px
+    }
+
+    .ai-hist-meta {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--t4)
+    }
+
+    .ai-input-wrapper {
+      background: var(--bg2);
+      border: 1px solid var(--bd3);
+      border-radius: 16px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.8);
+      transition: border-color .2s
+    }
+
+    .ai-input-wrapper:focus-within {
+      border-color: var(--p)
+    }
+
+    .ai-textarea {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--t1);
+      font-family: var(--ui);
+      font-size: 14px;
+      outline: none;
+      resize: none;
+      padding: 8px 0;
+      max-height: 150px
+    }
+
+    .ai-send-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--p);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+      flex-shrink: 0
+    }
+
+    .ai-send-btn:hover {
+      transform: scale(1.05);
+      filter: brightness(1.1)
+    }
+
+    .ai-send-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
 
     /* XP PROGRESS */
-    .badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-    .badge-card{background:var(--bg1);border:0.5px solid var(--bd);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:all .2s}
-    .badge-card:hover{transform:translateY(-2px);border-color:var(--bd3)}
-    .badge-card.earned{border-color:var(--y)40;background:var(--y)06}
-    .badge-card.earned .badge-name{color:var(--y)}
-    .badge-icon{font-size:24px;margin-bottom:6px}
-    .badge-name{font-family:var(--mono);font-size:9px;color:var(--t3)}
-    
-    .lang-bar{margin-bottom:12px}
-    .lb-row{display:flex;justify-content:space-between;margin-bottom:5px;font-family:var(--mono);font-size:10px}
-    .lb-name{color:var(--t2)}
-    .lb-count{color:var(--t4)}
-    .lb-track{background:var(--bg0);height:5px;border-radius:3px;overflow:hidden}
-    .lb-fill{height:100%;border-radius:3px;transition:width 1s ease}
-    
-    .streak-row{display:flex;gap:6px;margin:12px 0 20px}
-    .streak-day{flex:1;height:36px;background:var(--bg0);border:0.5px solid var(--bd);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--t4)}
-    .streak-day.done{border-color:var(--g)40;color:var(--g);background:var(--g)10}
-    
-    .xp-action-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--bd);font-size:12px}
-    .xp-action-label{color:var(--t2)}
-    .xp-action-val{font-family:var(--mono);color:var(--y)}
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 16px
+    }
+
+    .badge-card {
+      background: var(--bg1);
+      border: 0.5px solid var(--bd);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .badge-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--bd3)
+    }
+
+    .badge-card.earned {
+      border-color: var(--y)40;
+      background: var(--y)06
+    }
+
+    .badge-card.earned .badge-name {
+      color: var(--y)
+    }
+
+    .badge-icon {
+      font-size: 24px;
+      margin-bottom: 6px
+    }
+
+    .badge-name {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--t3)
+    }
+
+    .lang-bar {
+      margin-bottom: 12px
+    }
+
+    .lb-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-family: var(--mono);
+      font-size: 10px
+    }
+
+    .lb-name {
+      color: var(--t2)
+    }
+
+    .lb-count {
+      color: var(--t4)
+    }
+
+    .lb-track {
+      background: var(--bg0);
+      height: 5px;
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    .lb-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1s ease
+    }
+
+    .streak-row {
+      display: flex;
+      gap: 6px;
+      margin: 12px 0 20px
+    }
+
+    .streak-day {
+      flex: 1;
+      height: 36px;
+      background: var(--bg0);
+      border: 0.5px solid var(--bd);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--t4)
+    }
+
+    .streak-day.done {
+      border-color: var(--g)40;
+      color: var(--g);
+      background: var(--g)10
+    }
+
+    .xp-action-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 0.5px solid var(--bd);
+      font-size: 12px
+    }
+
+    .xp-action-label {
+      color: var(--t2)
+    }
+
+    .xp-action-val {
+      font-family: var(--mono);
+      color: var(--y)
+    }
 
     /* PROFILE PAGE */
-    .profile-hero{background:var(--bg1);border:1px solid var(--bd2);border-radius:20px;padding:32px;display:flex;align-items:center;gap:32px;margin-bottom:24px;position:relative;overflow:hidden;box-shadow:0 20px 40px -20px rgba(0,0,0,0.5)}
-    .profile-hero::after{content:'';position:absolute;top:0;right:0;width:300px;height:300px;background:radial-gradient(circle at center, var(--p) 0%, transparent 70%);opacity:0.05;filter:blur(60px);pointer-events:none}
-    .profile-avatar-lg{width:110px;height:110px;border-radius:32px;background:linear-gradient(135deg,var(--p),var(--c));display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:800;color:#000;box-shadow:0 20px 40px -10px rgba(0,0,0,0.6);border:4px solid var(--bg1)}
-    .profile-info{flex:1}
-    .profile-name{font-size:32px;font-weight:800;color:var(--t1);letter-spacing:-1px;margin-bottom:4px}
-    .profile-username{font-family:var(--mono);font-size:14px;color:var(--p);margin-bottom:16px;opacity:0.8}
-    .profile-bio{font-size:14px;color:var(--t3);line-height:1.6;max-width:500px;margin-bottom:24px}
-    .profile-stats{display:flex;gap:32px}
-    .ps-n{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--t1);margin-bottom:2px}
-    .ps-l{font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:1px}
-    .edit-btn{background:var(--bg2);border:0.5px solid var(--bd2);border-radius:8px;padding:8px 16px;font-size:12px;color:var(--t2);cursor:pointer;transition:all .2s;position:absolute;top:20px;right:20px}
-    .edit-btn:hover{border-color:var(--g);color:var(--g)}
+    .profile-hero {
+      background: var(--bg1);
+      border: 1px solid var(--bd2);
+      border-radius: 20px;
+      padding: 32px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5)
+    }
 
-    .setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:0.5px solid var(--bd)}
-    .setting-label{font-size:12px;font-weight:600;color:var(--t2);margin-bottom:2px}
-    .setting-desc{font-size:11px;color:var(--t4)}
-    .setting-row-inline{display:flex;align-items:center;justify-content:space-between;width:100%}
+    .profile-hero::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle at center, var(--p) 0%, transparent 70%);
+      opacity: 0.05;
+      filter: blur(60px);
+      pointer-events: none
+    }
+
+    .profile-avatar-lg {
+      width: 110px;
+      height: 110px;
+      border-radius: 32px;
+      background: linear-gradient(135deg, var(--p), var(--c));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      font-weight: 800;
+      color: #000;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+      border: 4px solid var(--bg1)
+    }
+
+    .profile-info {
+      flex: 1
+    }
+
+    .profile-name {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--t1);
+      letter-spacing: -1px;
+      margin-bottom: 4px
+    }
+
+    .profile-username {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--p);
+      margin-bottom: 16px;
+      opacity: 0.8
+    }
+
+    .profile-bio {
+      font-size: 14px;
+      color: var(--t3);
+      line-height: 1.6;
+      max-width: 500px;
+      margin-bottom: 24px
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 32px
+    }
+
+    .ps-n {
+      font-family: var(--mono);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--t1);
+      margin-bottom: 2px
+    }
+
+    .ps-l {
+      font-size: 10px;
+      color: var(--t4);
+      text-transform: uppercase;
+      letter-spacing: 1px
+    }
+
+    .edit-btn {
+      background: var(--bg2);
+      border: 0.5px solid var(--bd2);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 12px;
+      color: var(--t2);
+      cursor: pointer;
+      transition: all .2s;
+      position: absolute;
+      top: 20px;
+      right: 20px
+    }
+
+    .edit-btn:hover {
+      border-color: var(--g);
+      color: var(--g)
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 0.5px solid var(--bd)
+    }
+
+    .setting-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--t2);
+      margin-bottom: 2px
+    }
+
+    .setting-desc {
+      font-size: 11px;
+      color: var(--t4)
+    }
+
+    .setting-row-inline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%
+    }
 
     /* LOGIN PAGE OVERLAY */
-    .login-page{position:fixed;inset:0;background:var(--bg0);display:none;align-items:center;justify-content:center;z-index:9999}
-    .login-page.show{display:flex}
-    .login-container{background:var(--bg1);border:0.5px solid var(--bd2);border-radius:4px;padding:32px;width:380px;max-width:90vw}
-    .login-tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--bg2);padding:4px;border-radius:4px}
-    .login-tab{flex:1;padding:8px;text-align:center;border-radius:2px;cursor:pointer;font-size:11px;font-weight:600;color:var(--t4)}
-    .login-tab.active{background:var(--bg3);color:var(--g)}
-    .login-input{width:100%;background:var(--bg0);border:0.5px solid var(--bd2);border-radius:2px;padding:11px;color:var(--t1);font-family:var(--ui);font-size:13px;margin-bottom:10px;outline:none}
-    .login-input:focus{border-color:var(--g)}
-    .login-btn{width:100%;background:var(--g);color:#000;font-weight:700;padding:12px;border:none;border-radius:2px;font-size:13px;cursor:pointer;transition:opacity .2s;margin-top:8px}
-    .login-btn:hover{opacity:.85}
-    .login-error{color:var(--r);font-size:11px;margin-top:10px;text-align:center;display:none}
-    .login-error.show{display:block}
-    .login-success{color:var(--g);font-size:11px;margin-top:10px;text-align:center;display:none}
-    .login-success.show{display:block}
-    .login-loading{color:var(--t3);font-size:12px;margin-top:10px;text-align:center;display:none}
-    .login-loading.show{display:block}
+    .login-page {
+      position: fixed;
+      inset: 0;
+      background: var(--bg0);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      background-image: radial-gradient(var(--bd2) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .login-page.show {
+      display: flex
+    }
+
+    .login-container {
+      background: var(--bg0);
+      border: 1px solid var(--g)40;
+      box-shadow: 0 0 40px rgba(0, 255, 170, 0.05), inset 0 0 20px rgba(0, 255, 170, 0.02);
+      border-radius: 4px;
+      padding: 32px;
+      width: 400px;
+      max-width: 90vw;
+      position: relative;
+    }
+    
+    .login-container::before {
+      content: 'TERMINAL // SECURE_AUTH';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      background: var(--bg0);
+      padding: 0 10px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--g);
+      letter-spacing: 2px;
+    }
+
+    .login-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+      background: var(--bg2);
+      padding: 4px;
+      border-radius: 4px
+    }
+
+    .login-tab {
+      flex: 1;
+      padding: 8px;
+      text-align: center;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--t4)
+    }
+
+    .login-tab.active {
+      background: var(--bg3);
+      color: var(--g)
+    }
+
+    .login-input {
+      width: 100%;
+      background: var(--bg0);
+      border: 0.5px solid var(--bd2);
+      border-radius: 2px;
+      padding: 11px;
+      color: var(--t1);
+      font-family: var(--ui);
+      font-size: 13px;
+      margin-bottom: 10px;
+      outline: none
+    }
+
+    .login-input:focus {
+      border-color: var(--g)
+    }
+
+    .login-btn {
+      width: 100%;
+      background: var(--g);
+      color: #000;
+      font-weight: 700;
+      padding: 12px;
+      border: none;
+      border-radius: 2px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: opacity .2s;
+      margin-top: 8px
+    }
+
+    .login-btn:hover {
+      opacity: .85
+    }
+
+    .login-error {
+      color: var(--r);
+      font-size: 11px;
+      margin-top: 10px;
+      text-align: center;
+      display: none
+    }
+
+    .login-error.show {
+      display: block
+    }
+
+    .login-success {
+      color: var(--g);
+      font-size: 11px;
+      margin-top: 10px;
+      text-align: center;
+      display: none
+    }
+
+    .login-success.show {
+      display: block
+    }
+
+    .login-loading {
+      color: var(--t3);
+      font-size: 12px;
+      margin-top: 10px;
+      text-align: center;
+      display: none
+    }
+
+    .login-loading.show {
+      display: block
+    }
 
     /* MODAL */
-    .modal-bg{position:fixed;inset:0;background:#000b;z-index:100;display:none;align-items:center;justify-content:center}
-    .modal-bg.open{display:flex}
-    .modal{background:var(--bg1);border:0.5px solid var(--bd3);border-radius:4px;padding:20px;width:440px;max-width:90vw;max-height:80vh;overflow-y:auto}
-    .modal-title{font-family:var(--mono);font-size:12px;color:var(--g);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
-    .form-row{margin-bottom:10px}
-    .form-label{font-family:var(--mono);font-size:9px;color:var(--t4);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;display:block}
-    .form-input{width:100%;background:var(--bg0);border:0.5px solid var(--bd2);border-radius:2px;padding:8px 10px;color:var(--t1);font-family:var(--ui);font-size:12px;outline:none}
-    .form-textarea{width:100%;background:var(--bg0);border:0.5px solid var(--bd2);border-radius:2px;padding:8px 10px;color:var(--c);font-family:var(--mono);font-size:11px;outline:none;resize:none;min-height:80px;line-height:1.5}
-    .form-btn{width:100%;background:var(--g);color:#000;font-weight:700;border:none;border-radius:2px;padding:10px;font-family:var(--ui);font-size:12px;cursor:pointer;transition:opacity .18s;margin-top:4px}
-    .form-btn.cancel{background:var(--bg2);color:var(--t1);border:0.5px solid var(--bd2);margin-top:4px}
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: #000b;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center
+    }
+
+    .modal-bg.open {
+      display: flex
+    }
+
+    .modal {
+      background: var(--bg1);
+      border: 0.5px solid var(--bd3);
+      border-radius: 4px;
+      padding: 20px;
+      width: 440px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto
+    }
+
+    .modal-title {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--g);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px
+    }
+
+    .form-row {
+      margin-bottom: 10px
+    }
+
+    .form-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--t4);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: block
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--bg0);
+      border: 0.5px solid var(--bd2);
+      border-radius: 2px;
+      padding: 8px 10px;
+      color: var(--t1);
+      font-family: var(--ui);
+      font-size: 12px;
+      outline: none
+    }
+
+    .form-textarea {
+      width: 100%;
+      background: var(--bg0);
+      border: 0.5px solid var(--bd2);
+      border-radius: 2px;
+      padding: 8px 10px;
+      color: var(--c);
+      font-family: var(--mono);
+      font-size: 11px;
+      outline: none;
+      resize: none;
+      min-height: 80px;
+      line-height: 1.5
+    }
+
+    .form-btn {
+      width: 100%;
+      background: var(--g);
+      color: #000;
+      font-weight: 700;
+      border: none;
+      border-radius: 2px;
+      padding: 10px;
+      font-family: var(--ui);
+      font-size: 12px;
+      cursor: pointer;
+      transition: opacity .18s;
+      margin-top: 4px
+    }
+
+    .form-btn.cancel {
+      background: var(--bg2);
+      color: var(--t1);
+      border: 0.5px solid var(--bd2);
+      margin-top: 4px
+    }
 
     /* TOAST */
-    .toast{position:fixed;bottom:24px;right:24px;background:var(--bg2);border:0.5px solid var(--g)40;color:var(--g);font-family:var(--mono);font-size:12px;padding:10px 18px;border-radius:20px;opacity:0;transition:all .25s;z-index:200;pointer-events:none}
-    .toast.show{opacity:1}
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg2);
+      border: 0.5px solid var(--g)40;
+      color: var(--g);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 10px 18px;
+      border-radius: 20px;
+      opacity: 0;
+      transition: all .25s;
+      z-index: 200;
+      pointer-events: none
+    }
+
+    .toast.show {
+      opacity: 1
+    }
 
     /* GRID LAYOUTS */
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .grid-beam{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
+    .grid-beam {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
     /* VAULT ENHANCEMENTS */
-    .vault-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;padding-bottom:12px;border-bottom:0.5px solid var(--bd2)}
-    .vault-view-toggle{display:flex;gap:4px}
-    .vault-view-btn{background:var(--bg2);border:0.5px solid var(--bd2);padding:5px 10px;border-radius:4px;cursor:pointer;font-size:11px;color:var(--t3);transition:all .18s}
-    .vault-view-btn.active{border-color:var(--g);color:var(--g);background:var(--g)10}
-    .vault-sort-sel{background:var(--bg0);border:0.5px solid var(--bd2);padding:6px 10px;border-radius:4px;color:var(--t2);font-family:var(--mono);font-size:10px;outline:none;cursor:pointer}
-    .vault-stats-bar{display:flex;gap:16px;margin-bottom:16px;padding:12px;background:var(--bg2);border:0.5px solid var(--bd3);border-radius:8px;font-size:11px}
-    .vault-stat-item{display:flex;align-items:center;gap:6px}
-    .vault-stat-label{color:var(--t3);font-family:var(--mono)}
-    .vault-stat-value{color:var(--g);font-weight:700}
-    .chip{display:inline-block;background:var(--bg2);border:0.5px solid var(--bd2);border-radius:20px;padding:4px 12px;font-size:10px;color:var(--t3);cursor:pointer;transition:all .18s;font-family:var(--mono)}
-    .chip:hover{border-color:var(--g);color:var(--g)}
-    .chip.active{background:var(--g)15;border-color:var(--g)40;color:var(--g)}
-    .snip-card-selected{border-color:var(--g);background:var(--g)05;box-shadow:0 0 12px var(--g)15}
-    .snip-difficulty{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:6px;font-weight:700}
-    .snip-difficulty.easy{background:var(--g)15;color:var(--g)}
-    .snip-difficulty.medium{background:var(--y)15;color:var(--y)}
-    .snip-difficulty.hard{background:var(--r)15;color:var(--r)}
-    .snip-meta{display:flex;gap:8px;font-size:9px;color:var(--t4);align-items:center;margin-top:8px}
-    .snip-meta-item{display:flex;align-items:center;gap:3px}
-    .snip-usage-count{background:var(--bg2);padding:2px 6px;border-radius:4px;font-family:var(--mono)}
-    
-    @media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}.grid-beam{grid-template-columns:1fr}}
+    .vault-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 0.5px solid var(--bd2)
+    }
+
+    .vault-view-toggle {
+      display: flex;
+      gap: 4px
+    }
+
+    .vault-view-btn {
+      background: var(--bg2);
+      border: 0.5px solid var(--bd2);
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--t3);
+      transition: all .18s
+    }
+
+    .vault-view-btn.active {
+      border-color: var(--g);
+      color: var(--g);
+      background: var(--g)10
+    }
+
+    .vault-sort-sel {
+      background: var(--bg0);
+      border: 0.5px solid var(--bd2);
+      padding: 6px 10px;
+      border-radius: 4px;
+      color: var(--t2);
+      font-family: var(--mono);
+      font-size: 10px;
+      outline: none;
+      cursor: pointer
+    }
+
+    .vault-stats-bar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: var(--bg2);
+      border: 0.5px solid var(--bd3);
+      border-radius: 8px;
+      font-size: 11px
+    }
+
+    .vault-stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .vault-stat-label {
+      color: var(--t3);
+      font-family: var(--mono)
+    }
+
+    .vault-stat-value {
+      color: var(--g);
+      font-weight: 700
+    }
+
+    .chip {
+      display: inline-block;
+      background: var(--bg2);
+      border: 0.5px solid var(--bd2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 10px;
+      color: var(--t3);
+      cursor: pointer;
+      transition: all .18s;
+      font-family: var(--mono)
+    }
+
+    .chip:hover {
+      border-color: var(--g);
+      color: var(--g)
+    }
+
+    .chip.active {
+      background: var(--g)15;
+      border-color: var(--g)40;
+      color: var(--g)
+    }
+
+    .snip-card-selected {
+      border-color: var(--g);
+      background: var(--g)05;
+      box-shadow: 0 0 12px var(--g)15
+    }
+
+    .snip-difficulty {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 9px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 700
+    }
+
+    .snip-difficulty.easy {
+      background: var(--g)15;
+      color: var(--g)
+    }
+
+    .snip-difficulty.medium {
+      background: var(--y)15;
+      color: var(--y)
+    }
+
+    .snip-difficulty.hard {
+      background: var(--r)15;
+      color: var(--r)
+    }
+
+    .snip-meta {
+      display: flex;
+      gap: 8px;
+      font-size: 9px;
+      color: var(--t4);
+      align-items: center;
+      margin-top: 8px
+    }
+
+    .snip-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 3px
+    }
+
+    .snip-usage-count {
+      background: var(--bg2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--mono)
+    }
+
+    @media(max-width:1100px) {
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr
+      }
+
+      .grid-beam {
+        grid-template-columns: 1fr
+      }
+    }
+    /* DEV-DEX */
+    .dex-tab {
+      flex: 1;
+      padding: 7px;
+      text-align: center;
+      border-radius: 6px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--t4);
+      transition: all .18s;
+    }
+    .dex-tab:hover { color: var(--t1); background: var(--bg3); }
+    .dex-tab.active { background: var(--bg3); color: var(--g); border-bottom: 2px solid var(--g); }
+
+    .dex-entry {
+      background: var(--bg1);
+      border: 0.5px solid var(--bd2);
+      border-left: 3px solid var(--g);
+      border-radius: 6px;
+      padding: 14px 16px;
+      transition: all .2s;
+      cursor: default;
+    }
+    .dex-entry:hover { background: var(--bg2); border-color: var(--g)50; }
+    .dex-cat { font-family: var(--mono); font-size: 9px; color: var(--t4); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+    .dex-cmd { font-family: var(--mono); font-size: 13px; color: var(--c); font-weight: 700; margin-bottom: 4px; word-break: break-all; }
+    .dex-summary { font-size: 12px; color: var(--t2); margin-bottom: 6px; }
+    .dex-doc { font-size: 11px; color: var(--t3); line-height: 1.5; }
+
   </style>
 </head>
+
 <body>
 
-<!-- LOGIN PAGE -->
-<div class="login-page" id="login-page">
-  <div class="login-container">
-    <div class="logo-text" style="text-align:center; margin-bottom:24px; font-size:28px">Snip<em>IT</em></div>
-    <div class="login-tabs">
-      <div class="login-tab active" id="tab-login" onclick="switchAuthTab('login')">Login</div>
-      <div class="login-tab" id="tab-signup" onclick="switchAuthTab('signup')">Register</div>
-    </div>
-    <div id="login-form">
-      <input type="email" class="login-input" id="login-email" placeholder="Email Address">
-      <input type="password" class="login-input" id="login-password" placeholder="Password">
-      <button class="login-btn" onclick="handleLogin()">Sign In to Portal</button>
-    </div>
-    <div id="signup-form" style="display:none">
-      <input type="text" class="login-input" id="signup-name" placeholder="Full Name">
-      <input type="email" class="login-input" id="signup-email" placeholder="Email Address">
-      <input type="password" class="login-input" id="signup-password" placeholder="Password (min 6 chars)">
-      <button class="login-btn" onclick="handleSignup()">Create New Account</button>
-    </div>
-    <div class="login-error" id="login-error"></div>
-    <div class="login-success" id="login-success"></div>
-    <div class="login-loading" id="login-loading">Authenticating...</div>
-  </div>
-</div>
-
-<!-- SIDEBAR -->
-<nav class="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-text">Snip<em>IT</em></div>
-    <div class="logo-sub">Web Portal v2.0</div>
-  </div>
-
-  <div class="user-card" onclick="goPage('profile')">
-    <div class="user-avatar" id="sidebar-user-avatar">U</div>
-    <div class="user-name" id="sidebar-user-name">User</div>
-    <div class="user-handle" id="sidebar-user-handle">@user.dev</div>
-    <div class="user-xp">
-      <div class="xp-bar-bg"><div class="xp-bar-fill" id="sidebar-xp-fill"></div></div>
-      <span class="xp-label">340 XP</span>
+  <!-- LOGIN PAGE -->
+  <div class="login-page" id="login-page">
+    <div class="login-container">
+      <div style="font-family:var(--mono); color:var(--g); font-size:12px; margin-bottom: 24px; text-align:center; opacity:0.9;">
+<pre style="margin:0; line-height:1.2;">
+   _____       _       ________ 
+  / ___/____  (_)___  /  _/_  / 
+  \\__ \\/ __ \\/ / __ \\ / /  / /  
+ ___/ / / / / / /_/ // /  / /   
+/____/_/ /_/_/ .___/___/ /_/    
+            /_/                 
+</pre>
+        <div style="margin-top:10px; letter-spacing:4px; font-size:10px; color:var(--t2);">WEB PORTAL V2.0</div>
+      </div>
+      <div class="login-tabs">
+        <div class="login-tab active" id="tab-login" onclick="switchAuthTab('login')">LOGIN</div>
+        <div class="login-tab" id="tab-signup" onclick="switchAuthTab('signup')">REGISTER</div>
+      </div>
+      <div id="login-form">
+        <input type="email" class="login-input" id="login-email" placeholder="> USER_EMAIL" style="font-family:var(--mono); font-size:12px;">
+        <input type="password" class="login-input" id="login-password" placeholder="> PASSWORD" style="font-family:var(--mono); font-size:12px;">
+        <button class="login-btn" onclick="handleLogin()" style="font-family:var(--mono); letter-spacing:1px; margin-top:16px;">[ INIT_SESSION ]</button>
+      </div>
+      <div id="signup-form" style="display:none">
+        <input type="text" class="login-input" id="signup-name" placeholder="> DEV_NAME" style="font-family:var(--mono); font-size:12px;">
+        <input type="email" class="login-input" id="signup-email" placeholder="> USER_EMAIL" style="font-family:var(--mono); font-size:12px;">
+        <input type="password" class="login-input" id="signup-password" placeholder="> PASSWORD_STRING (MIN 6)" style="font-family:var(--mono); font-size:12px;">
+        <button class="login-btn" onclick="handleSignup()" style="font-family:var(--mono); letter-spacing:1px; margin-top:16px;">[ CREATE_NODE ]</button>
+      </div>
+      <div class="login-error" id="login-error"></div>
+      <div class="login-success" id="login-success"></div>
+      <div class="login-loading" id="login-loading" style="font-family:var(--mono);">[ AUTHENTICATING... ]</div>
     </div>
   </div>
 
-  <div class="nav-section">MAIN</div>
-  <div class="nav-item active" id="nav-dashboard" onclick="goPage('dashboard')">
-    <span class="nav-icon">▤</span> Dashboard
-  </div>
-  <div class="nav-item" id="nav-vault" onclick="goPage('vault')">
-    <span class="nav-icon">📁</span> Vault
-    <span class="nav-badge" id="vault-badge-count">0</span>
-  </div>
-
-  <div class="nav-section">TOOLS</div>
-  <div class="nav-item" id="nav-beam" onclick="goPage('beam')">
-    <span class="nav-icon">📡</span> Beam Station
-  </div>
-  <div class="nav-item" id="nav-ai" onclick="goPage('ai')">
-    <span class="nav-icon">◈</span> Snip-AI
-  </div>
-
-  <div class="nav-section">ACCOUNT</div>
-  <div class="nav-item" id="nav-xp" onclick="goPage('xp')">
-    <span class="nav-icon">⚡</span> Dev XP
-  </div>
-  <div class="nav-item" id="nav-profile" onclick="goPage('profile')">
-    <span class="nav-icon">👤</span> Profile
-  </div>
-  <div class="nav-item" id="nav-settings" onclick="goPage('settings')">
-    <span class="nav-icon">⚙</span> Settings
-  </div>
-
-  <div class="sidebar-bottom">
-    <div class="connection-card" style="margin-bottom:10px">
-      <div class="conn-row">
-        <span class="conn-label">Local IP</span>
-        <span class="conn-ip">192.168.1.42</span>
-      </div>
-      <div class="conn-status">
-        <div class="conn-dot online"></div>
-        <span>Portal online · synced</span>
-      </div>
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">Snip<em>IT</em></div>
+      <div class="logo-sub">Web Portal v2.0</div>
     </div>
-    <button class="ic-btn" style="width:100%; justify-content:center; border-color:var(--r); color:var(--r)" onclick="handleLogout()">🚪 Logout</button>
-  </div>
-</nav>
 
-<!-- MAIN -->
-<div class="main">
-  <div class="topbar" id="topbar">
-    <div class="topbar-breadcrumb">
-      <span>snipit</span> / <span id="breadcrumb-page">dashboard</span>
-    </div>
-    <div class="topbar-right">
-      <div class="topbar-status">
-        <div class="conn-dot offline" id="beam-dot"></div>
-        <span id="beam-status-txt" style="color:var(--t3)">No device paired</span>
-      </div>
-      <button class="topbar-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Light/Dark Mode">🌓</button>
-      <button class="topbar-btn" onclick="openModal('new-snip')">+ New Snip</button>
-      <button class="topbar-btn primary" onclick="goPage('beam')">📡 Beam Station</button>
-    </div>
-  </div>
-
-  <div class="content">
-    <!-- DASHBOARD -->
-    <div class="page active" id="page-dashboard">
-      <div class="card" style="background:var(--bg1); border-left:2px solid var(--g); margin-bottom:20px; padding:16px; display:flex; justify-content:space-between; align-items:center">
-        <div>
-          <h1 style="font-size:18px; font-weight:700; margin-bottom:2px">Welcome back, <span id="dash-user-name" style="color:var(--g)">User</span>!</h1>
-          <p id="dash-user-email" style="font-size:10px; color:var(--t4); font-family:var(--mono); margin-bottom:6px">user@example.com</p>
-          <p style="color:var(--t3); font-size:11px">Vault: <span id="dash-hero-snip-count">0</span> snippets synced</p>
+    <div class="user-card" onclick="goPage('profile')">
+      <div class="user-avatar" id="sidebar-user-avatar">U</div>
+      <div class="user-name" id="sidebar-user-name">User</div>
+      <div class="user-handle" id="sidebar-user-handle">@user.dev</div>
+      <div class="user-xp">
+        <div class="xp-bar-bg">
+          <div class="xp-bar-fill" id="sidebar-xp-fill"></div>
         </div>
-        <div style="text-align:right">
-          <div style="font-size:10px; color:var(--y); font-weight:700" id="dash-rank">NOVICE CODER</div>
-        </div>
-      </div>
-
-      <!-- STATS -->
-      <div class="stat-grid" style="margin-bottom:24px">
-        <div class="stat-card">
-          <div class="stat-n" style="color:var(--g)" id="dash-snip-count">0</div>
-          <div class="stat-l">Snippets in Vault</div>
-          <div class="stat-d" style="color:var(--g); opacity:0.8">+0 this week</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-n" style="color:var(--p)" id="dash-lang-count">0</div>
-          <div class="stat-l">Languages</div>
-          <div class="stat-d" style="color:var(--p); opacity:0.8" id="dash-lang-list">None</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-n" style="color:var(--y)" id="dash-xp-earned">340</div>
-          <div class="stat-l">XP Earned</div>
-          <div class="stat-d" style="color:var(--y); opacity:0.8" id="dash-rank-info">Level 1 - Novice</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-n" style="color:var(--c)">0</div>
-          <div class="stat-l">Beams this week</div>
-          <div class="stat-d" style="color:var(--c); opacity:0.8">Last: None</div>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="card" style="background:var(--bg2); border-left:4px solid var(--g)">
-          <div class="card-title" style="color:var(--g)">Quick Start</div>
-          <div style="display:flex; flex-direction:column; gap:10px">
-            <button class="topbar-btn" style="width:100%; text-align:left; padding:12px" onclick="openModal('new-snip')">📄 Create New Snippet</button>
-            <button class="topbar-btn" style="width:100%; text-align:left; padding:12px" onclick="goPage('beam')">📡 Go to Beam Station</button>
-            <button class="topbar-btn" style="width:100%; text-align:left; padding:12px" onclick="goPage('vault')">🗄️ Explore Your Vault</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Last Beamed Snippet</div>
-          <div id="dash-last-beamed" style="min-height:120px; display:flex; align-items:center; justify-content:center">
-            <div style="text-align:center; padding:20px; color:var(--t4); font-size:11px">No snippets beamed yet.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:20px">
-        <div class="card-title">Activity Timeline</div>
-        <div style="display:flex; gap:12px; align-items: flex-end; padding:8px 0">
-          <div style="display:flex; flex-direction:column; gap:4px; font-family:var(--mono); font-size:9px; color:var(--t4); padding-bottom:4px">
-            <span>M</span><span>W</span><span>F</span><span>S</span>
-          </div>
-          <div id="activity-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(10px, 1fr)); gap:4px; flex:1"></div>
-        </div>
-        <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:9px; color:var(--t4); font-family:var(--mono)">
-          <span>Less activity</span>
-          <div style="display:flex; gap:3px">
-            <div style="width:8px; height:8px; background:var(--bg3); border-radius:1px; opacity:0.15"></div>
-            <div style="width:8px; height:8px; background:var(--g); border-radius:1px; opacity:0.3"></div>
-            <div style="width:8px; height:8px; background:var(--g); border-radius:1px; opacity:0.6"></div>
-            <div style="width:8px; height:8px; background:var(--g); border-radius:1px; opacity:1"></div>
-          </div>
-          <span>More activity</span>
-        </div>
+        <span class="xp-label">340 XP</span>
       </div>
     </div>
 
-    <!-- VAULT -->
-    <div class="page" id="page-vault">
-      <div style="display:grid; grid-template-columns: 220px 1fr; height: calc(100vh - 72px); border-top: 1px solid var(--bd2)">
-        <!-- VAULT SIDEBAR (EXPLORER) -->
-        <div style="background:var(--bg1); border-right: 1px solid var(--bd2); overflow-y:auto; padding:14px; display:flex; flex-direction:column">
-          <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px">
-            <div style="display:flex; align-items:center; gap:8px; background:var(--bg0); border:0.5px solid var(--bd2); border-radius:6px; padding:7px 10px">
-              <span style="color:var(--t3); font-size:12px">⌕</span>
-              <input id="vault-search-in" oninput="loadVault()" placeholder="Search snippets..." style="background:none; border:none; outline:none; color:var(--t1); font-family:var(--ui); font-size:11px; flex:1" />
-            </div>
-            <select id="vault-lang-sel" onchange="loadVault()" style="background:var(--bg0); border:0.5px solid var(--bd2); border-radius:6px; padding:7px 10px; color:var(--t2); font-family:var(--mono); font-size:10px; outline:none; width:100%">
-              <option value="all">All Languages</option>
-              <option value="java">Java</option>
-              <option value="kotlin">Kotlin</option>
-              <option value="python">Python</option>
-              <option value="javascript">JavaScript</option>
-              <option value="swift">Swift</option>
-              <option value="sql">SQL</option>
-            </select>
-          </div>
+    <div class="nav-section">MAIN</div>
+    <div class="nav-item active" id="nav-dashboard" onclick="goPage('dashboard')">
+      <i data-lucide="layout-dashboard" class="nav-icon"></i> Dashboard
+    </div>
+    <div class="nav-item" id="nav-vault" onclick="goPage('vault')">
+      <i data-lucide="folder-code" class="nav-icon"></i> Vault
+      <span class="nav-badge" id="vault-badge-count">0</span>
+    </div>
 
-          <div style="margin-bottom:16px">
-            <div class="card-title" style="font-size:9px; color:var(--t4); margin-bottom:8px">FOLDERS</div>
-            <div style="display:flex; flex-direction:column; gap:0" id="vault-folders">
-              <div class="nav-item active" onclick="setVaultFolder('all', this)" style="font-size:11px; padding:8px 10px; margin:0; border-radius:4px; cursor:pointer">
-                <span style="color:var(--p); font-size:12px; margin-right:8px">📁</span> All Snippets
-              </div>
-              <div class="nav-item" onclick="setVaultFolder('starred', this)" style="font-size:11px; padding:8px 10px; margin:0; border-radius:4px; cursor:pointer">
-                <span style="color:var(--y); font-size:12px; margin-right:8px">⭐</span> Starred
-              </div>
-              <div class="nav-item" onclick="setVaultFolder('recent', this)" style="font-size:11px; padding:8px 10px; margin:0; border-radius:4px; cursor:pointer">
-                <span style="color:var(--c); font-size:12px; margin-right:8px">🕐</span> Recent
-              </div>
-            </div>
-          </div>
+    <div class="nav-section">TOOLS</div>
+    <div class="nav-item" id="nav-beam" onclick="goPage('beam')">
+      <i data-lucide="satellite-dish" class="nav-icon"></i> Beam Station
+    </div>
+    <div class="nav-item" id="nav-ai" onclick="goPage('ai')">
+      <i data-lucide="sparkles" class="nav-icon"></i> Snip-AI
+    </div>
+    <div class="nav-item" id="nav-devdex" onclick="goPage('devdex')">
+      <i data-lucide="book-open-check" class="nav-icon"></i> Dev-Dex
+    </div>
 
-          <div style="margin-top:auto; padding-top:12px; border-top:0.5px solid var(--bd2)">
-            <button class="ic-btn" style="width:100%; margin-bottom:6px; font-size:11px" onclick="LocalStorage.exportVault()">📥 Export</button>
-            <button class="topbar-btn primary" style="width:100%; font-size:11px" onclick="openModal('new-snip')">+ New</button>
-          </div>
+    <div class="nav-section">ACCOUNT</div>
+    <div class="nav-item" id="nav-xp" onclick="goPage('xp')">
+      <i data-lucide="zap" class="nav-icon"></i> Dev XP
+    </div>
+    <div class="nav-item" id="nav-profile" onclick="goPage('profile')">
+      <i data-lucide="user-circle" class="nav-icon"></i> Profile
+    </div>
+    <div class="nav-item" id="nav-settings" onclick="goPage('settings')">
+      <i data-lucide="settings" class="nav-icon"></i> Settings
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="connection-card" style="margin-bottom:10px">
+        <div class="conn-row">
+          <span class="conn-label">Local IP</span>
+          <span class="conn-ip">192.168.1.42</span>
         </div>
-
-        <!-- VAULT MAIN AREA -->
-        <div style="background:var(--bg0); overflow-y:auto; padding:20px; display:flex; flex-direction:column">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
-            <div>
-              <h2 style="font-size:20px; color:var(--g); font-weight:700; margin-bottom:4px">Code Vault</h2>
-              <div style="font-size:11px; color:var(--t3); font-family:var(--mono)">
-                <span id="vault-total-count">0</span> snippets · <span id="vault-lang-count">0</span> languages
-              </div>
-            </div>
-            <button class="topbar-btn primary" onclick="openModal('new-snip')">+ New Snippet</button>
-          </div>
-
-          <!-- VAULT TOOLBAR -->
-          <div class="vault-toolbar">
-            <select id="vault-sort-sel" class="vault-sort-sel" onchange="loadVault()">
-              <option value="recent">Recently Added</option>
-              <option value="oldest">Oldest First</option>
-              <option value="alphabetical">Alphabetical</option>
-              <option value="mostUsed">Most Used</option>
-              <option value="starred">Starred First</option>
-            </select>
-            <div style="margin-left:auto; display:flex; gap:8px">
-              <div class="vault-view-toggle">
-                <button class="vault-view-btn active" onclick="setVaultView('grid', this)" title="Grid view">⊞</button>
-                <button class="vault-view-btn" onclick="setVaultView('list', this)" title="List view">☰</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- VAULT STATS -->
-          <div class="vault-stats-bar" id="vault-stats">
-            <div class="vault-stat-item">
-              <span class="vault-stat-label">Total:</span>
-              <span class="vault-stat-value" id="stat-total">0</span>
-            </div>
-            <div class="vault-stat-item">
-              <span class="vault-stat-label">Starred:</span>
-              <span class="vault-stat-value" id="stat-starred">0</span>
-            </div>
-            <div class="vault-stat-item">
-              <span class="vault-stat-label">Languages:</span>
-              <span class="vault-stat-value" id="stat-langs">0</span>
-            </div>
-            <div class="vault-stat-item" style="margin-left:auto">
-              <span class="vault-stat-label">Search matches:</span>
-              <span class="vault-stat-value" id="stat-matches">0</span>
-            </div>
-          </div>
-
-          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; padding-bottom:12px; border-bottom:0.5px solid var(--bd2)" id="vault-chips">
-            <span class="chip active" onclick="filterByTag('all')">#All</span>
-            <span class="chip" onclick="filterByTag('Java')">#Java</span>
-            <span class="chip" onclick="filterByTag('Kotlin')">#Kotlin</span>
-            <span class="chip" onclick="filterByTag('Firebase')">#Firebase</span>
-            <span class="chip" onclick="filterByTag('Python')">#Python</span>
-            <span class="chip" onclick="filterByTag('Backend')">#Backend</span>
-          </div>
-
-          <div id="vault-list" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:14px; flex:1; align-content: flex-start">
-            <!-- Snippets will be rendered here -->
-          </div>
+        <div class="conn-status">
+          <div class="conn-dot online"></div>
+          <span>Portal online · synced</span>
         </div>
+      </div>
+      <button class="ic-btn" style="width:100%; justify-content:center; border-color:var(--r); color:var(--r)"
+        onclick="handleLogout()">🚪 Logout</button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar" id="topbar">
+      <div class="topbar-breadcrumb">
+        <span>snipit</span> / <span id="breadcrumb-page">dashboard</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-status" style="margin-right:4px">
+          <div class="conn-dot offline" id="firebase-sync-dot"></div>
+          <span id="firebase-sync-txt" style="color:var(--t3); font-size:10px">Connecting...</span>
+        </div>
+        <div class="topbar-status">
+          <div class="conn-dot offline" id="beam-dot"></div>
+          <span id="beam-status-txt" style="color:var(--t3)">No device paired</span>
+        </div>
+        <button class="topbar-btn" id="theme-toggle-btn" onclick="toggleTheme()"
+          title="Toggle Light/Dark Mode">🌓</button>
+        <button class="topbar-btn" onclick="openModal('new-snip')">+ New Snip</button>
+        <button class="topbar-btn primary" onclick="goPage('beam')">📡 Beam Station</button>
       </div>
     </div>
 
-    <!-- BEAM STATION -->
-    <div class="page" id="page-beam">
-      <div class="beam-status-bar">
-        <div class="beam-pulse" id="bpulse"></div>
-        <div class="beam-status-txt" id="bstatus-txt">Waiting for phone...</div>
-        <div style="margin-left:auto;display:flex;gap:8px">
-          <button class="topbar-btn" onclick="generateNewQR()">↻ Regenerate QR</button>
-          <button class="topbar-btn primary" onclick="simulateConnect()">Simulate Connect</button>
-        </div>
-      </div>
-      <div class="grid-beam">
-        <div class="card">
-          <div class="card-title">Connection Hub</div>
-          <div style="display:flex;gap:20px;align-items:flex-start;margin-bottom:16px">
-            <div>
-              <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-bottom:8px">SCAN QR OR ENTER PIN</div>
-              <div class="qr-container" id="qr-wrap"><img id="qr-img" style="width:100%"/></div>
-              <div id="qr-session-id" style="font-family:var(--mono);font-size:10px;color:var(--g);text-align:center;margin-top:8px;letter-spacing:1px">SESSION: GUEST</div>
-            </div>
-            <div class="code-incoming">
-              <div class="incoming-label">INCOMING SNIPPET</div>
-              <div class="code-area" id="incoming-code">No snippet received.</div>
-            </div>
+    <div class="content">
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="card"
+          style="background:var(--bg1); border-left:2px solid var(--g); margin-bottom:20px; padding:16px; display:flex; justify-content:space-between; align-items:center">
+          <div>
+            <h1 style="font-size:18px; font-weight:700; margin-bottom:2px">Welcome back, <span id="dash-user-name"
+                style="color:var(--g)">User</span>!</h1>
+            <p id="dash-user-email" style="font-size:10px; color:var(--t4); font-family:var(--mono); margin-bottom:6px">
+              user@example.com</p>
+            <p style="color:var(--t3); font-size:11px">Vault: <span id="dash-hero-snip-count">0</span> snippets synced
+            </p>
           </div>
-          <div style="display:flex;gap:10px">
-            <button class="topbar-btn primary" id="btn-inject" style="flex:1" onclick="injectVSCode()">📥 Inject</button>
-            <button class="topbar-btn" id="btn-copy" style="flex:1" onclick="copyReceived()">⎘ Copy</button>
-            <button class="topbar-btn" id="btn-save" style="flex:1" onclick="saveToVault()">⊟ Save</button>
+          <div style="text-align:right">
+            <div style="font-size:10px; color:var(--y); font-weight:700" id="dash-rank">NOVICE CODER</div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-title">PIN Entry</div>
-          <div class="pin-display-row">
-            <div class="pin-box" id="pe0">_</div>
-            <div class="pin-box" id="pe1">_</div>
-            <div class="pin-box" id="pe2">_</div>
-            <div class="pin-box" id="pe3">_</div>
-            <div class="pin-box" id="pe4">_</div>
-            <div class="pin-box" id="pe5">_</div>
-          </div>
-          <div class="numpad">
-            <div class="nk" onclick="pressPin('1')">1</div>
-            <div class="nk" onclick="pressPin('2')">2</div>
-            <div class="nk" onclick="pressPin('3')">3</div>
-            <div class="nk" onclick="pressPin('4')">4</div>
-            <div class="nk" onclick="pressPin('5')">5</div>
-            <div class="nk" onclick="pressPin('6')">6</div>
-            <div class="nk" onclick="pressPin('7')">7</div>
-            <div class="nk" onclick="pressPin('8')">8</div>
-            <div class="nk" onclick="pressPin('9')">9</div>
-            <div class="nk del" onclick="pressPin('clr')">CLR</div>
-            <div class="nk" onclick="pressPin('0')">0</div>
-            <div class="nk del" onclick="pressPin('del')">⌫</div>
-          </div>
-          <div style="font-size:10px; color:var(--t4); text-align:center; margin-top:12px; font-family:var(--mono)">PIN shown on your mobile device</div>
-          <div class="session-log" id="session-log" style="margin-top:20px"></div>
-        </div>
-      </div>
-    </div>
 
-    <!-- AI AGENT -->
-    <div class="page" id="page-ai">
-      <div class="ai-layout">
-        <!-- AI SIDEBAR (HISTORY) -->
-        <div class="ai-sidebar">
-          <div class="ai-sidebar-hdr">
-            <span class="card-title" style="margin:0">History</span>
-            <button class="ic-btn" onclick="startNewChat()" title="New Chat">+</button>
+        <!-- STATS -->
+        <div class="stat-grid" style="margin-bottom:24px">
+          <div class="stat-card">
+            <div class="stat-n" style="color:var(--g)" id="dash-snip-count">0</div>
+            <div class="stat-l">Snippets in Vault</div>
+            <div class="stat-d" style="color:var(--g); opacity:0.8">+0 this week</div>
           </div>
-          <div class="ai-history-list" id="ai-history-list">
-            <!-- Loaded from Firebase -->
-            <div style="text-align:center; padding:40px 20px; color:var(--t4); font-size:11px">
-              No chat history found.
+          <div class="stat-card">
+            <div class="stat-n" style="color:var(--p)" id="dash-lang-count">0</div>
+            <div class="stat-l">Languages</div>
+            <div class="stat-d" style="color:var(--p); opacity:0.8" id="dash-lang-list">None</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-n" style="color:var(--y)" id="dash-xp-earned">340</div>
+            <div class="stat-l">XP Earned</div>
+            <div class="stat-d" style="color:var(--y); opacity:0.8" id="dash-rank-info">Level 1 - Novice</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-n" style="color:var(--c)">0</div>
+            <div class="stat-l">Beams this week</div>
+            <div class="stat-d" style="color:var(--c); opacity:0.8">Last: None</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card" style="background:var(--bg2); border-left:4px solid var(--g)">
+            <div class="card-title" style="color:var(--g)">Quick Start</div>
+            <div style="display:flex; flex-direction:column; gap:10px">
+              <button class="topbar-btn" style="width:100%; text-align:left; padding:12px"
+                onclick="openModal('new-snip')">📄 Create New Snippet</button>
+              <button class="topbar-btn" style="width:100%; text-align:left; padding:12px" onclick="goPage('beam')">📡
+                Go to Beam Station</button>
+              <button class="topbar-btn" style="width:100%; text-align:left; padding:12px" onclick="goPage('vault')">🗄️
+                Explore Your Vault</button>
             </div>
           </div>
-          <div style="padding:12px; border-top:0.5px solid var(--bd2)">
-            <button class="ic-btn" style="width:100%; color:var(--r)" onclick="clearAIHistory()">Clear History</button>
-          </div>
-        </div>
 
-        <!-- AI MAIN CHAT -->
-        <div class="ai-main-chat">
-          <div class="ai-messages" id="ai-msgs">
-            <div class="msg-bubble msg-ai">
-              <div class="msg-ai-label">SNIP-AI · CLAUDE</div>
-              Hello! I'm Snip-AI. I'm here to help you manage your Vault, optimize your snippets, or use Beam IT. How can I help you today?
-            </div>
-          </div>
-          
-          <div class="ai-input-area">
-            <div class="ai-chips" style="margin-bottom:16px; justify-content:center">
-              <span class="chip" onclick="fillAI('Explain this in Tagalog: ')">Explain in Tagalog</span>
-              <span class="chip" onclick="fillAI('Convert this Java to Kotlin: ')">To Kotlin</span>
-              <span class="chip" onclick="fillAI('Find the bug in: ')">Find Bug</span>
-            </div>
-            <div class="ai-input-wrapper">
-              <textarea class="ai-textarea" id="ai-in" rows="1" placeholder="Type a message..." oninput="autoGrow(this)"></textarea>
-              <button class="ai-send-btn" id="ai-send-btn" onclick="sendAI()">➤</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- DEV XP -->
-    <div class="page" id="page-xp">
-      <div class="grid-2" style="margin-bottom:18px">
-        <div class="card">
-          <div class="card-title">XP Progress</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <span style="font-size:14px;font-weight:600" id="xp-level-txt">Level 0 — Loading...</span>
-            <span style="font-family:var(--mono);font-size:11px;color:var(--y)" id="xp-points-txt">0 / 500 XP</span>
-          </div>
-          <div style="background:var(--bg0);border-radius:6px;height:8px;overflow:hidden;margin-bottom:10px">
-            <div id="xp-bar-fill" style="width:0%;height:100%;background:var(--y);border-radius:6px;transition:width 0.5s"></div>
-          </div>
-          <div style="font-size:11px;color:var(--t3);margin-bottom:16px" id="xp-next-txt">Loading next level...</div>
-          
-          <div class="card-title">Language Breakdown</div>
-          <div id="xp-lang-list">
-            <!-- Dynamic -->
-            <div class="lang-bar"><div class="lb-row"><span class="lb-name">No data</span></div><div class="lb-track"></div></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">7-Day Streak</div>
-          <div class="streak-row" id="xp-streak-row">
-            <div class="streak-day">M</div><div class="streak-day">T</div>
-            <div class="streak-day">W</div><div class="streak-day">T</div>
-            <div class="streak-day">F</div><div class="streak-day">S</div><div class="streak-day">S</div>
-          </div>
-          
-          <div class="card-title">XP Actions</div>
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <div class="xp-action-row"><span class="xp-action-label">Save a snippet</span><span class="xp-action-val">+15 XP</span></div>
-            <div class="xp-action-row"><span class="xp-action-label">AI Analysis</span><span class="xp-action-val">+10 XP</span></div>
-            <div class="xp-action-row"><span class="xp-action-label">Beam IT transfer</span><span class="xp-action-val">+10 XP</span></div>
-            <div class="xp-action-row" style="border:none"><span class="xp-action-label">Copy to clipboard</span><span class="xp-action-val">+2 XP</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Badges — click to see details</div>
-        <div class="badge-grid" id="xp-badge-grid">
-          <div class="badge-card" id="badge-wizard" onclick="toast('Syntax Wizard: Save 5 snippets to unlock')"><div class="badge-icon">🧙</div><div class="badge-name">Syntax Wizard</div></div>
-          <div class="badge-card" id="badge-beam" onclick="toast('Beam Operator: Complete 3 Beam sessions')"><div class="badge-icon">📡</div><div class="badge-name">Beam Operator</div></div>
-          <div class="badge-card" id="badge-poly" onclick="toast('Polyglot: Use 3 different languages')"><div class="badge-icon">🗣️</div><div class="badge-name">Polyglot</div></div>
-          <div class="badge-card" id="badge-streak" onclick="toast('Fire: Maintain a 3-day streak')"><div class="badge-icon">🔥</div><div class="badge-name">Consistent</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PROFILE -->
-    <div class="page" id="page-profile">
-      <div class="profile-hero">
-        <div class="profile-avatar-lg" id="prof-avatar">U</div>
-        <div class="profile-info">
-          <div class="profile-name" id="prof-name">Developer</div>
-          <div class="profile-username" id="prof-handle">@dev.snipit</div>
-          <div class="profile-bio" id="prof-bio">Developer, Architect, & Code Enthusiast. Building a smarter Vault.</div>
-          <div class="profile-stats">
-            <div class="ps"><div class="ps-n" id="prof-stat-snips">0</div><div class="ps-l">Snippets</div></div>
-            <div class="ps"><div class="ps-n" id="prof-stat-xp" style="color:var(--y)">0</div><div class="ps-l">Total XP</div></div>
-            <div class="ps"><div class="ps-n" id="prof-stat-beams" style="color:var(--c)">0</div><div class="ps-l">Beams</div></div>
-          </div>
-        </div>
-        <button class="topbar-btn primary" onclick="openModal('edit-profile')">Edit Profile</button>
-      </div>
-
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-title">Account Info</div>
-          <div style="display:flex;flex-direction:column">
-            <div class="setting-row"><div><div class="setting-label">Username</div><div class="setting-desc" id="prof-username">@user</div></div></div>
-            <div class="setting-row"><div><div class="setting-label">Email</div><div class="setting-desc" id="prof-email">user@snipit.dev</div></div></div>
-            <div class="setting-row"><div><div class="setting-label">Member Since</div><div class="setting-desc" id="prof-since">May 2026</div></div></div>
-            <div class="setting-row" style="border:none"><div><div class="setting-label">Vault Sync</div><div class="setting-desc" id="prof-sync">Last synced: Just now</div></div><span style="font-family:var(--mono);font-size:10px;color:var(--g)">● Live Sync</span></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">Connected Devices</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg2);border-radius:10px;border:0.5px solid var(--bd2)">
-              <span style="font-size:20px">💻</span>
-              <div style="flex:1">
-                <div style="font-size:13px;font-weight:600">This Browser</div>
-                <div style="font-family:var(--mono);font-size:10px;color:var(--t4)">Current Session</div>
-              </div>
-              <span style="font-family:var(--mono);font-size:10px;color:var(--g)">● Online</span>
-            </div>
-            <button class="topbar-btn primary" style="width:100%;justify-content:center;padding:10px;margin-top:4px" onclick="goPage('beam')">📡 Pair Mobile Device</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SETTINGS -->
-    <div class="page" id="page-settings">
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px">
-        <!-- LEFT COLUMN -->
-        <div style="display:flex; flex-direction:column; gap:20px">
           <div class="card">
-            <div class="card-title">APPEARANCE</div>
+            <div class="card-title">Last Beamed Snippet</div>
+            <div id="dash-last-beamed"
+              style="min-height:120px; display:flex; align-items:center; justify-content:center">
+              <div style="text-align:center; padding:20px; color:var(--t4); font-size:11px">No snippets beamed yet.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:20px">
+          <div class="card-title">Activity Timeline</div>
+          <div style="display:flex; gap:12px; align-items: flex-end; padding:8px 0">
+            <div
+              style="display:flex; flex-direction:column; gap:4px; font-family:var(--mono); font-size:9px; color:var(--t4); padding-bottom:4px">
+              <span>M</span><span>W</span><span>F</span><span>S</span>
+            </div>
+            <div id="activity-grid"
+              style="display:grid; grid-template-columns:repeat(auto-fill, minmax(10px, 1fr)); gap:4px; flex:1"></div>
+          </div>
+          <div
+            style="display:flex; justify-content:space-between; margin-top:12px; font-size:9px; color:var(--t4); font-family:var(--mono)">
+            <span>Less activity</span>
+            <div style="display:flex; gap:3px">
+              <div style="width:8px; height:8px; background:var(--bg3); border-radius:1px; opacity:0.15"></div>
+              <div style="width:8px; height:8px; background:var(--g); border-radius:1px; opacity:0.3"></div>
+              <div style="width:8px; height:8px; background:var(--g); border-radius:1px; opacity:0.6"></div>
+              <div style="width:8px; height:8px; background:var(--g); border-radius:1px; opacity:1"></div>
+            </div>
+            <span>More activity</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VAULT -->
+      <div class="page" id="page-vault">
+        <div
+          style="display:grid; grid-template-columns: 220px 1fr; height: calc(100vh - 72px); border-top: 1px solid var(--bd2)">
+          <!-- VAULT SIDEBAR (EXPLORER) -->
+          <div
+            style="background:var(--bg1); border-right: 1px solid var(--bd2); overflow-y:auto; padding:14px; display:flex; flex-direction:column">
+            <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px">
+              <div
+                style="display:flex; align-items:center; gap:8px; background:var(--bg0); border:0.5px solid var(--bd2); border-radius:6px; padding:7px 10px">
+                <span style="color:var(--t3); font-size:12px">⌕</span>
+                <input id="vault-search-in" oninput="loadVault()" placeholder="Search snippets..."
+                  style="background:none; border:none; outline:none; color:var(--t1); font-family:var(--ui); font-size:11px; flex:1" />
+              </div>
+              <select id="vault-lang-sel" onchange="loadVault()"
+                style="background:var(--bg0); border:0.5px solid var(--bd2); border-radius:6px; padding:7px 10px; color:var(--t2); font-family:var(--mono); font-size:10px; outline:none; width:100%">
+                <option value="all">All Languages</option>
+                <option value="java">Java</option>
+                <option value="kotlin">Kotlin</option>
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="swift">Swift</option>
+                <option value="sql">SQL</option>
+              </select>
+            </div>
+
             <div style="margin-bottom:16px">
-              <div style="font-size:11px; color:var(--t3); margin-bottom:10px">Terminal Theme</div>
-              <div style="display:flex; gap:12px">
-                <div class="theme-chip active" style="border-color:var(--g)">Dark Kernel</div>
-                <div class="theme-chip locked">Matrix 🔒</div>
-                <div class="theme-chip locked">Cyberpunk 🔒</div>
-                <div class="theme-chip locked">80s Hacker 🔒</div>
-                <div class="theme-chip locked">Arctic 🔒</div>
+              <div class="card-title" style="font-size:9px; color:var(--t4); margin-bottom:8px">FOLDERS</div>
+              <div style="display:flex; flex-direction:column; gap:0" id="vault-folders">
+                <div class="nav-item active" onclick="setVaultFolder('all', this)"
+                  style="font-size:11px; padding:8px 10px; margin:0; border-radius:4px; cursor:pointer">
+                  <span style="color:var(--p); font-size:12px; margin-right:8px">📁</span> All Snippets
+                </div>
+                <div class="nav-item" onclick="setVaultFolder('starred', this)"
+                  style="font-size:11px; padding:8px 10px; margin:0; border-radius:4px; cursor:pointer">
+                  <span style="color:var(--y); font-size:12px; margin-right:8px">⭐</span> Starred
+                </div>
+                <div class="nav-item" onclick="setVaultFolder('recent', this)"
+                  style="font-size:11px; padding:8px 10px; margin:0; border-radius:4px; cursor:pointer">
+                  <span style="color:var(--c); font-size:12px; margin-right:8px">🕐</span> Recent
+                </div>
               </div>
             </div>
-            <div style="display:flex; justify-content:space-between; align-items:center">
-              <div style="font-size:11px; color:var(--t3)">Font size (code blocks)</div>
-              <select class="vault-sort-sel" style="width:140px; padding:6px">
-                <option>Small (10px)</option>
-                <option selected>Medium (12px)</option>
-                <option>Large (14px)</option>
+
+            <div style="margin-top:auto; padding-top:12px; border-top:0.5px solid var(--bd2)">
+              <button class="ic-btn" style="width:100%; margin-bottom:6px; font-size:11px"
+                onclick="LocalStorage.exportVault()">📥 Export</button>
+              <button class="topbar-btn primary" style="width:100%; font-size:11px" onclick="openModal('new-snip')">+
+                New</button>
+            </div>
+          </div>
+
+          <!-- VAULT MAIN AREA -->
+          <div style="background:var(--bg0); overflow-y:auto; padding:20px; display:flex; flex-direction:column">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+              <div>
+                <h2 style="font-size:20px; color:var(--g); font-weight:700; margin-bottom:4px">Code Vault</h2>
+                <div style="font-size:11px; color:var(--t3); font-family:var(--mono)">
+                  <span id="vault-total-count">0</span> snippets · <span id="vault-lang-count">0</span> languages
+                </div>
+              </div>
+              <button class="topbar-btn primary" onclick="openModal('new-snip')">+ New Snippet</button>
+            </div>
+
+            <!-- VAULT TOOLBAR -->
+            <div class="vault-toolbar">
+              <select id="vault-sort-sel" class="vault-sort-sel" onchange="loadVault()">
+                <option value="recent">Recently Added</option>
+                <option value="oldest">Oldest First</option>
+                <option value="alphabetical">Alphabetical</option>
+                <option value="mostUsed">Most Used</option>
+                <option value="starred">Starred First</option>
               </select>
+              <div style="margin-left:auto; display:flex; gap:8px">
+                <div class="vault-view-toggle">
+                  <button class="vault-view-btn active" onclick="setVaultView('grid', this)"
+                    title="Grid view">⊞</button>
+                  <button class="vault-view-btn" onclick="setVaultView('list', this)" title="List view">☰</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- VAULT STATS -->
+            <div class="vault-stats-bar" id="vault-stats">
+              <div class="vault-stat-item">
+                <span class="vault-stat-label">Total:</span>
+                <span class="vault-stat-value" id="stat-total">0</span>
+              </div>
+              <div class="vault-stat-item">
+                <span class="vault-stat-label">Starred:</span>
+                <span class="vault-stat-value" id="stat-starred">0</span>
+              </div>
+              <div class="vault-stat-item">
+                <span class="vault-stat-label">Languages:</span>
+                <span class="vault-stat-value" id="stat-langs">0</span>
+              </div>
+              <div class="vault-stat-item" style="margin-left:auto">
+                <span class="vault-stat-label">Search matches:</span>
+                <span class="vault-stat-value" id="stat-matches">0</span>
+              </div>
+            </div>
+
+            <div
+              style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; padding-bottom:12px; border-bottom:0.5px solid var(--bd2)"
+              id="vault-chips">
+              <span class="chip active" onclick="filterByTag('all')">#All</span>
+              <span class="chip" onclick="filterByTag('Java')">#Java</span>
+              <span class="chip" onclick="filterByTag('Kotlin')">#Kotlin</span>
+              <span class="chip" onclick="filterByTag('Firebase')">#Firebase</span>
+              <span class="chip" onclick="filterByTag('Python')">#Python</span>
+              <span class="chip" onclick="filterByTag('Backend')">#Backend</span>
+            </div>
+
+            <div id="vault-list"
+              style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:14px; flex:1; align-content: flex-start">
+              <!-- Snippets will be rendered here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BEAM STATION -->
+      <div class="page" id="page-beam">
+        <div class="beam-status-bar">
+          <div class="beam-pulse" id="bpulse"></div>
+          <div class="beam-status-txt" id="bstatus-txt">Waiting for phone...</div>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <button class="topbar-btn" onclick="generateNewQR()">↻ Regenerate QR</button>
+            <button class="topbar-btn primary" onclick="simulateConnect()">Simulate Connect</button>
+          </div>
+        </div>
+        <div class="grid-beam">
+          <div class="card">
+            <div class="card-title">Connection Hub</div>
+            <div style="display:flex;gap:20px;align-items:flex-start;margin-bottom:16px">
+              <div>
+                <div style="font-family:var(--mono);font-size:10px;color:var(--t4);margin-bottom:8px">SCAN QR OR ENTER
+                  PIN</div>
+                <div class="qr-container" id="qr-wrap"><img id="qr-img" style="width:100%" /></div>
+                <div id="qr-session-id"
+                  style="font-family:var(--mono);font-size:10px;color:var(--g);text-align:center;margin-top:8px;letter-spacing:1px">
+                  SESSION: GUEST</div>
+              </div>
+              <div class="code-incoming">
+                <div class="incoming-label">INCOMING SNIPPET</div>
+                <div class="code-area" id="incoming-code">No snippet received.</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="topbar-btn primary" id="btn-inject" style="flex:1" onclick="injectVSCode()">📥
+                Inject</button>
+              <button class="topbar-btn" id="btn-copy" style="flex:1" onclick="copyReceived()">⎘ Copy</button>
+              <button class="topbar-btn" id="btn-save" style="flex:1" onclick="saveToVault()">⊟ Save</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">PIN Entry</div>
+            <div class="pin-display-row">
+              <div class="pin-box" id="pe0">_</div>
+              <div class="pin-box" id="pe1">_</div>
+              <div class="pin-box" id="pe2">_</div>
+              <div class="pin-box" id="pe3">_</div>
+              <div class="pin-box" id="pe4">_</div>
+              <div class="pin-box" id="pe5">_</div>
+            </div>
+            <div class="numpad">
+              <div class="nk" onclick="pressPin('1')">1</div>
+              <div class="nk" onclick="pressPin('2')">2</div>
+              <div class="nk" onclick="pressPin('3')">3</div>
+              <div class="nk" onclick="pressPin('4')">4</div>
+              <div class="nk" onclick="pressPin('5')">5</div>
+              <div class="nk" onclick="pressPin('6')">6</div>
+              <div class="nk" onclick="pressPin('7')">7</div>
+              <div class="nk" onclick="pressPin('8')">8</div>
+              <div class="nk" onclick="pressPin('9')">9</div>
+              <div class="nk del" onclick="pressPin('clr')">CLR</div>
+              <div class="nk" onclick="pressPin('0')">0</div>
+              <div class="nk del" onclick="pressPin('del')">⌫</div>
+            </div>
+            <div style="font-size:10px; color:var(--t4); text-align:center; margin-top:12px; font-family:var(--mono)">
+              PIN shown on your mobile device</div>
+            <div class="session-log" id="session-log" style="margin-top:20px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI AGENT -->
+      <div class="page" id="page-ai">
+        <div class="ai-layout">
+          <!-- AI SIDEBAR (HISTORY) -->
+          <div class="ai-sidebar">
+            <div class="ai-sidebar-hdr">
+              <span class="card-title" style="margin:0">History</span>
+              <button class="ic-btn" onclick="startNewChat()" title="New Chat">+</button>
+            </div>
+            <div class="ai-history-list" id="ai-history-list">
+              <!-- Loaded from Firebase -->
+              <div style="text-align:center; padding:40px 20px; color:var(--t4); font-size:11px">
+                No chat history found.
+              </div>
+            </div>
+            <div style="padding:12px; border-top:0.5px solid var(--bd2)">
+              <button class="ic-btn" style="width:100%; color:var(--r)" onclick="clearAIHistory()">Clear
+                History</button>
+            </div>
+          </div>
+
+          <!-- AI MAIN CHAT -->
+          <div class="ai-main-chat">
+            <div class="ai-messages" id="ai-msgs">
+              <div class="msg-bubble msg-ai">
+                <div class="msg-ai-label">SNIP-AI · CLAUDE</div>
+                Hello! I'm Snip-AI. I'm here to help you manage your Vault, optimize your snippets, or use Beam IT. How
+                can I help you today?
+              </div>
+            </div>
+
+            <div class="ai-input-area">
+              <div class="ai-chips" style="margin-bottom:16px; justify-content:center">
+                <span class="chip" onclick="fillAI('Explain this in Tagalog: ')">Explain in Tagalog</span>
+                <span class="chip" onclick="fillAI('Convert this Java to Kotlin: ')">To Kotlin</span>
+                <span class="chip" onclick="fillAI('Find the bug in: ')">Find Bug</span>
+              </div>
+              <div class="ai-input-wrapper">
+                <textarea class="ai-textarea" id="ai-in" rows="1" placeholder="Type a message..."
+                  oninput="autoGrow(this)"></textarea>
+                <button class="ai-send-btn" id="ai-send-btn" onclick="sendAI()">➤</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- DEV-DEX -->
+      <div class="page" id="page-devdex">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+          <div>
+            <h2 style="font-size:20px; color:var(--g); font-weight:700; margin-bottom:4px">Dev-Dex</h2>
+            <div style="font-size:11px; color:var(--t3); font-family:var(--mono)">IT Intelligence Hub — Commands, Codes & Patterns</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; background:var(--bg2); border:0.5px solid var(--bd2); border-radius:8px; padding:7px 12px">
+            <span style="color:var(--t3); font-size:12px">⌕</span>
+            <input id="dex-search" oninput="filterDex()" placeholder="Search commands, codes..." style="background:none; border:none; outline:none; color:var(--t1); font-family:var(--mono); font-size:12px; width:220px" />
+          </div>
+        </div>
+
+        <!-- TABS -->
+        <div style="display:flex; gap:4px; margin-bottom:16px; background:var(--bg2); padding:4px; border-radius:8px; border:0.5px solid var(--bd2)">
+          <button class="dex-tab active" id="dex-tab-all" onclick="switchDexTab('all', this)">All</button>
+          <button class="dex-tab" id="dex-tab-git" onclick="switchDexTab('GIT', this)">Git</button>
+          <button class="dex-tab" id="dex-tab-linux" onclick="switchDexTab('LINUX', this)">Linux</button>
+          <button class="dex-tab" id="dex-tab-http" onclick="switchDexTab('HTTP', this)">HTTP</button>
+          <button class="dex-tab" id="dex-tab-ports" onclick="switchDexTab('PORTS', this)">Ports</button>
+          <button class="dex-tab" id="dex-tab-regex" onclick="switchDexTab('REGEX', this)">Regex</button>
+        </div>
+
+        <!-- RESULTS COUNT -->
+        <div style="font-family:var(--mono); font-size:10px; color:var(--t4); margin-bottom:12px">
+          Showing <span id="dex-count" style="color:var(--g)">0</span> entries
+        </div>
+
+        <!-- ENTRIES GRID -->
+        <div id="dex-list" style="display:flex; flex-direction:column; gap:8px">
+          <div style="text-align:center; padding:40px; color:var(--t4); font-family:var(--mono); font-size:12px">Loading handbook...</div>
+        </div>
+      </div>
+
+      <!-- DEV XP -->
+      <div class="page" id="page-xp">
+        <div class="grid-2" style="margin-bottom:18px">
+          <div class="card">
+            <div class="card-title">XP Progress</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <span style="font-size:14px;font-weight:600" id="xp-level-txt">Level 0 — Loading...</span>
+              <span style="font-family:var(--mono);font-size:11px;color:var(--y)" id="xp-points-txt">0 / 500 XP</span>
+            </div>
+            <div style="background:var(--bg0);border-radius:6px;height:8px;overflow:hidden;margin-bottom:10px">
+              <div id="xp-bar-fill"
+                style="width:0%;height:100%;background:var(--y);border-radius:6px;transition:width 0.5s"></div>
+            </div>
+            <div style="font-size:11px;color:var(--t3);margin-bottom:16px" id="xp-next-txt">Loading next level...</div>
+
+            <div class="card-title">Language Breakdown</div>
+            <div id="xp-lang-list">
+              <!-- Dynamic -->
+              <div class="lang-bar">
+                <div class="lb-row"><span class="lb-name">No data</span></div>
+                <div class="lb-track"></div>
+              </div>
             </div>
           </div>
 
           <div class="card">
-            <div class="card-title">BEAM IT SETTINGS</div>
-            <div class="setting-row-flex">
-              <div>
-                <div style="font-size:12px; font-weight:600">Auto-copy on receive</div>
-                <div style="font-size:10px; color:var(--t4)">Automatically copy beamed code to clipboard</div>
-              </div>
-              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            <div class="card-title">7-Day Streak</div>
+            <div class="streak-row" id="xp-streak-row">
+              <div class="streak-day">M</div>
+              <div class="streak-day">T</div>
+              <div class="streak-day">W</div>
+              <div class="streak-day">T</div>
+              <div class="streak-day">F</div>
+              <div class="streak-day">S</div>
+              <div class="streak-day">S</div>
             </div>
-            <div class="setting-row-flex">
-              <div style="font-size:12px; font-weight:600">PIN expiry</div>
-              <select class="vault-sort-sel" style="width:80px; padding:6px">
-                <option>1 min</option>
-                <option selected>5 min</option>
-                <option>15 min</option>
-              </select>
-            </div>
-            <div class="setting-row-flex" style="border:none">
-              <div>
-                <div style="font-size:12px; font-weight:600">Show transfer animation</div>
-                <div style="font-size:10px; color:var(--t4)">Visual effect when code is beamed</div>
-              </div>
-              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+
+            <div class="card-title">XP Actions</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div class="xp-action-row"><span class="xp-action-label">Save a snippet</span><span
+                  class="xp-action-val">+15 XP</span></div>
+              <div class="xp-action-row"><span class="xp-action-label">AI Analysis</span><span class="xp-action-val">+10
+                  XP</span></div>
+              <div class="xp-action-row"><span class="xp-action-label">Beam IT transfer</span><span
+                  class="xp-action-val">+10 XP</span></div>
+              <div class="xp-action-row" style="border:none"><span class="xp-action-label">Copy to clipboard</span><span
+                  class="xp-action-val">+2 XP</span></div>
             </div>
           </div>
         </div>
 
-        <!-- RIGHT COLUMN -->
-        <div style="display:flex; flex-direction:column; gap:20px">
-          <div class="card">
-            <div class="card-title">NOTIFICATIONS</div>
-            <div class="setting-row-flex">
-              <div>
-                <div style="font-size:12px; font-weight:600">Beam received</div>
-                <div style="font-size:10px; color:var(--t4)">Alert when a snippet arrives via Beam IT</div>
-              </div>
-              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+        <div class="card">
+          <div class="card-title">Badges — click to see details</div>
+          <div class="badge-grid" id="xp-badge-grid">
+            <div class="badge-card" id="badge-wizard" onclick="toast('Syntax Wizard: Save 5 snippets to unlock')">
+              <div class="badge-icon">🧙</div>
+              <div class="badge-name">Syntax Wizard</div>
             </div>
-            <div class="setting-row-flex">
-              <div>
-                <div style="font-size:12px; font-weight:600">XP milestones</div>
-                <div style="font-size:10px; color:var(--t4)">Notify when you level up</div>
-              </div>
-              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            <div class="badge-card" id="badge-beam" onclick="toast('Beam Operator: Complete 3 Beam sessions')">
+              <div class="badge-icon">📡</div>
+              <div class="badge-name">Beam Operator</div>
             </div>
-            <div class="setting-row-flex" style="border:none">
-              <div>
-                <div style="font-size:12px; font-weight:600">Weekly summary</div>
-                <div style="font-size:10px; color:var(--t4)">Sunday report of your activity</div>
-              </div>
-              <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+            <div class="badge-card" id="badge-poly" onclick="toast('Polyglot: Use 3 different languages')">
+              <div class="badge-icon">🗣️</div>
+              <div class="badge-name">Polyglot</div>
+            </div>
+            <div class="badge-card" id="badge-streak" onclick="toast('Fire: Maintain a 3-day streak')">
+              <div class="badge-icon">🔥</div>
+              <div class="badge-name">Consistent</div>
             </div>
           </div>
+        </div>
+      </div>
 
+      <!-- PROFILE -->
+      <div class="page" id="page-profile">
+        <div class="profile-hero">
+          <div class="profile-avatar-lg" id="prof-avatar">U</div>
+          <div class="profile-info">
+            <div class="profile-name" id="prof-name">Developer</div>
+            <div class="profile-username" id="prof-handle">@dev.snipit</div>
+            <div class="profile-bio" id="prof-bio">Developer, Architect, & Code Enthusiast. Building a smarter Vault.
+            </div>
+            <div class="profile-stats">
+              <div class="ps">
+                <div class="ps-n" id="prof-stat-snips">0</div>
+                <div class="ps-l">Snippets</div>
+              </div>
+              <div class="ps">
+                <div class="ps-n" id="prof-stat-xp" style="color:var(--y)">0</div>
+                <div class="ps-l">Total XP</div>
+              </div>
+              <div class="ps">
+                <div class="ps-n" id="prof-stat-beams" style="color:var(--c)">0</div>
+                <div class="ps-l">Beams</div>
+              </div>
+            </div>
+          </div>
+          <button class="topbar-btn primary" onclick="openModal('edit-profile')">Edit Profile</button>
+        </div>
+
+        <div class="grid-2">
           <div class="card">
-            <div class="card-title">AI CONNECTIVITY</div>
-            <div id="ai-status-card" style="display:flex; flex-direction:column; gap:12px">
+            <div class="card-title">Account Info</div>
+            <div style="display:flex;flex-direction:column">
+              <div class="setting-row">
+                <div>
+                  <div class="setting-label">Username</div>
+                  <div class="setting-desc" id="prof-username">@user</div>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div>
+                  <div class="setting-label">Email</div>
+                  <div class="setting-desc" id="prof-email">user@snipit.dev</div>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div>
+                  <div class="setting-label">Member Since</div>
+                  <div class="setting-desc" id="prof-since">May 2026</div>
+                </div>
+              </div>
+              <div class="setting-row" style="border:none">
+                <div>
+                  <div class="setting-label">Vault Sync</div>
+                  <div class="setting-desc" id="prof-sync">Last synced: Just now</div>
+                </div><span style="font-family:var(--mono);font-size:10px;color:var(--g)">● Live Sync</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Connected Devices</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div
+                style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg2);border-radius:10px;border:0.5px solid var(--bd2)">
+                <span style="font-size:20px">💻</span>
+                <div style="flex:1">
+                  <div style="font-size:13px;font-weight:600">This Browser</div>
+                  <div style="font-family:var(--mono);font-size:10px;color:var(--t4)">Current Session</div>
+                </div>
+                <span style="font-family:var(--mono);font-size:10px;color:var(--g)">● Online</span>
+              </div>
+              <button class="topbar-btn primary" style="width:100%;justify-content:center;padding:10px;margin-top:4px"
+                onclick="goPage('beam')">📡 Pair Mobile Device</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px">
+          <!-- LEFT COLUMN -->
+          <div style="display:flex; flex-direction:column; gap:20px">
+            <div class="card">
+              <div class="card-title">APPEARANCE</div>
+              <div style="margin-bottom:16px">
+                <div style="font-size:11px; color:var(--t3); margin-bottom:10px">Terminal Theme</div>
+                <div style="display:flex; gap:12px">
+                  <div class="theme-chip active" style="border-color:var(--g)">Dark Kernel</div>
+                  <div class="theme-chip locked">Matrix 🔒</div>
+                  <div class="theme-chip locked">Cyberpunk 🔒</div>
+                  <div class="theme-chip locked">80s Hacker 🔒</div>
+                  <div class="theme-chip locked">Arctic 🔒</div>
+                </div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center">
+                <div style="font-size:11px; color:var(--t3)">Font size (code blocks)</div>
+                <select class="vault-sort-sel" style="width:140px; padding:6px">
+                  <option>Small (10px)</option>
+                  <option selected>Medium (12px)</option>
+                  <option>Large (14px)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">BEAM IT SETTINGS</div>
               <div class="setting-row-flex">
                 <div>
-                  <div style="font-size:12px; font-weight:600">Service Status</div>
-                  <div id="ai-conn-status" style="font-size:10px; color:var(--r)">● Offline - Check local.properties</div>
+                  <div style="font-size:12px; font-weight:600">Auto-copy on receive</div>
+                  <div style="font-size:10px; color:var(--t4)">Automatically copy beamed code to clipboard</div>
                 </div>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+              </div>
+              <div class="setting-row-flex">
+                <div style="font-size:12px; font-weight:600">PIN expiry</div>
+                <select class="vault-sort-sel" style="width:80px; padding:6px">
+                  <option>1 min</option>
+                  <option selected>5 min</option>
+                  <option>15 min</option>
+                </select>
               </div>
               <div class="setting-row-flex" style="border:none">
                 <div>
-                  <div style="font-size:12px; font-weight:600">Backend Server</div>
-                  <div id="ai-server-status" style="font-size:10px; color:var(--t4)">Connecting to localhost:8000...</div>
+                  <div style="font-size:12px; font-weight:600">Show transfer animation</div>
+                  <div style="font-size:10px; color:var(--t4)">Visual effect when code is beamed</div>
                 </div>
-                <button class="topbar-btn" onclick="api.loadTokenFromServer(); updateAiStatusDisplay()" style="padding:4px 8px; font-size:10px">Retry</button>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
               </div>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">DATA & PRIVACY</div>
-            <div class="setting-row-flex">
-              <div>
-                <div style="font-size:12px; font-weight:600">Export Vault</div>
-                <div style="font-size:10px; color:var(--t4)">Download all snippets as JSON</div>
+          <!-- RIGHT COLUMN -->
+          <div style="display:flex; flex-direction:column; gap:20px">
+            <div class="card">
+              <div class="card-title">NOTIFICATIONS</div>
+              <div class="setting-row-flex">
+                <div>
+                  <div style="font-size:12px; font-weight:600">Beam received</div>
+                  <div style="font-size:10px; color:var(--t4)">Alert when a snippet arrives via Beam IT</div>
+                </div>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
               </div>
-              <button class="topbar-btn" onclick="LocalStorage.exportVault()">Export</button>
+              <div class="setting-row-flex">
+                <div>
+                  <div style="font-size:12px; font-weight:600">XP milestones</div>
+                  <div style="font-size:10px; color:var(--t4)">Notify when you level up</div>
+                </div>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+              </div>
+              <div class="setting-row-flex" style="border:none">
+                <div>
+                  <div style="font-size:12px; font-weight:600">Weekly summary</div>
+                  <div style="font-size:10px; color:var(--t4)">Sunday report of your activity</div>
+                </div>
+                <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+              </div>
             </div>
-            <div class="setting-row-flex">
-              <div>
-                <div style="font-size:12px; font-weight:600">Clear AI history</div>
-                <div style="font-size:10px; color:var(--t4)">Delete all chat conversations</div>
+
+            <div class="card">
+              <div class="card-title">AI CONNECTIVITY</div>
+              <div id="ai-status-card" style="display:flex; flex-direction:column; gap:12px">
+                <div class="setting-row-flex">
+                  <div>
+                    <div style="font-size:12px; font-weight:600">Service Status</div>
+                    <div id="ai-conn-status" style="font-size:10px; color:var(--r)">● Offline - Check local.properties
+                    </div>
+                  </div>
+                </div>
+                <div class="setting-row-flex" style="border:none">
+                  <div>
+                    <div style="font-size:12px; font-weight:600">Backend Server</div>
+                    <div id="ai-server-status" style="font-size:10px; color:var(--t4)">Connecting to localhost:8000...
+                    </div>
+                  </div>
+                  <button class="topbar-btn" onclick="api.loadTokenFromServer(); updateAiStatusDisplay()"
+                    style="padding:4px 8px; font-size:10px">Retry</button>
+                </div>
               </div>
-              <button class="topbar-btn" style="color:var(--r)" onclick="clearAIHistory()">Clear</button>
             </div>
-            <div class="setting-row-flex" style="border:none">
-              <div>
-                <div style="font-size:12px; font-weight:600">Account</div>
-                <div style="font-size:10px; color:var(--t4)" id="settings-email-display">Signed in as user@snipit.dev</div>
+
+            <div class="card">
+              <div class="card-title">DATA & PRIVACY</div>
+              <div class="setting-row-flex">
+                <div>
+                  <div style="font-size:12px; font-weight:600">Export Vault</div>
+                  <div style="font-size:10px; color:var(--t4)">Download all snippets as JSON</div>
+                </div>
+                <button class="topbar-btn" onclick="LocalStorage.exportVault()">Export</button>
               </div>
-              <button class="topbar-btn" style="color:var(--r)" onclick="handleLogout()">Sign out</button>
+              <div class="setting-row-flex">
+                <div>
+                  <div style="font-size:12px; font-weight:600">Clear AI history</div>
+                  <div style="font-size:10px; color:var(--t4)">Delete all chat conversations</div>
+                </div>
+                <button class="topbar-btn" style="color:var(--r)" onclick="clearAIHistory()">Clear</button>
+              </div>
+              <div class="setting-row-flex" style="border:none">
+                <div>
+                  <div style="font-size:12px; font-weight:600">Account</div>
+                  <div style="font-size:10px; color:var(--t4)" id="settings-email-display">Signed in as user@snipit.dev
+                  </div>
+                </div>
+                <button class="topbar-btn" style="color:var(--r)" onclick="handleLogout()">Sign out</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <div class="status-bar">
+      <div class="status-item"><span>main</span></div>
+      <div class="status-item">Local IP: <span id="status-ip">127.0.0.1</span></div>
+      <div class="status-item">Snippets: <span id="status-count">0</span></div>
+      <div class="status-item" style="margin-left:auto">Pairing: <span id="status-beam">OFFLINE</span></div>
+      <div class="status-item">UTF-8</div>
+    </div>
   </div>
-  <div class="status-bar">
-    <div class="status-item"><span>main</span></div>
-    <div class="status-item">Local IP: <span id="status-ip">127.0.0.1</span></div>
-    <div class="status-item">Snippets: <span id="status-count">0</span></div>
-    <div class="status-item" style="margin-left:auto">Pairing: <span id="status-beam">OFFLINE</span></div>
-    <div class="status-item">UTF-8</div>
+
+  <!-- MODALS -->
+  <div class="modal-bg" id="modal-bg" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()" id="modal-inner"></div>
   </div>
-</div>
 
-<!-- MODALS -->
-<div class="modal-bg" id="modal-bg" onclick="closeModal()">
-  <div class="modal" onclick="event.stopPropagation()" id="modal-inner"></div>
-</div>
+  <div class="toast" id="toast-el"></div>
 
-<div class="toast" id="toast-el"></div>
+  <!-- COMMAND PALETTE (Ctrl+K) -->
+  <div class="modal-bg" id="cmd-bg" onclick="closeCmd()">
+    <div class="modal" style="width: 500px; padding: 0; background: var(--bg1); border: 1px solid var(--bd4); border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);" onclick="event.stopPropagation()">
+      <div style="display:flex; align-items:center; padding: 12px 16px; border-bottom: 1px solid var(--bd2)">
+        <i data-lucide="search" style="color:var(--t3); width:18px; height:18px; margin-right:12px;"></i>
+        <input type="text" id="cmd-input" placeholder="Search Snippets & Dev-Dex... (Ctrl+K)" oninput="filterCmd()" style="width:100%; background:none; border:none; outline:none; color:var(--t1); font-family:var(--ui); font-size:15px; padding:4px 0" autocomplete="off">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--t4); border: 1px solid var(--bd3); padding: 2px 6px; border-radius: 4px; cursor:pointer;" onclick="closeCmd()">ESC</div>
+      </div>
+      <div id="cmd-results" style="max-height: 300px; overflow-y: auto; padding: 8px;">
+        <div style="padding: 12px 16px; color:var(--t4); font-family:var(--mono); font-size:11px; text-align:center;">Type to search...</div>
+      </div>
+    </div>
+  </div>
 
-<script src="js/firebase-config.js"></script>
-<script src="js/api-client.js"></script>
-<script src="js/app.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/api-client.js"></script>
+  <script src="js/app.js"></script>
+  
+  <!-- Prism.js Language Plugins -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-kotlin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+  
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+  </script>
 </body>
+
 </html>
