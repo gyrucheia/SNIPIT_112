@@ -40,7 +40,7 @@ public final class XpManager {
     }
 
     public static int getTotalXp(Context context) {
-        return getAppXp(context) + getWebXp(context);
+        return (getAppXp(context) + getWebXp(context)) / 2;
     }
 
     public static void addXp(Context context, int delta) {

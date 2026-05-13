@@ -235,84 +235,85 @@
 
     .sidebar-logo {
       padding: 24px 20px 20px;
-      border-bottom: 0.5px solid var(--bd2)
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .logo-text {
-      font-family: var(--mono);
+      font-family: var(--ui);
       font-size: 20px;
-      font-weight: 700;
-      color: var(--g);
-      letter-spacing: -1px
+      font-weight: 800;
+      color: var(--t1);
+      letter-spacing: -0.5px;
+      line-height: 1;
     }
 
     .logo-text em {
-      color: var(--t3);
-      font-style: normal
+      color: var(--g);
+      font-style: normal;
     }
 
     .logo-sub {
-      font-size: 10px;
-      color: var(--t3);
-      margin-top: 3px;
-      letter-spacing: 1px
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--t4);
+      margin-top: 4px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
     }
 
     .user-card {
-      margin: 16px 14px;
+      margin: 0 16px 20px;
       background: var(--bg2);
       border: 1px solid var(--bd2);
-      border-radius: 16px;
+      border-radius: 12px;
       padding: 16px;
       cursor: pointer;
-      transition: all .3s ease;
-      box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.3);
-      position: relative;
-      overflow: hidden
+      transition: all .2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .user-card:hover {
       border-color: var(--g);
+      background: var(--bg3);
       transform: translateY(-2px);
-      background: var(--bg2);
-      box-shadow: 0 15px 30px -12px rgba(0, 255, 170, 0.15)
+      box-shadow: 0 8px 16px rgba(0, 255, 170, 0.1);
     }
 
     .user-avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--p), var(--g));
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--bg3);
+      border: 1px solid var(--bd2);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
-      font-size: 16px;
-      color: #000;
-      margin-bottom: 12px;
-      box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.5)
+      color: var(--t2);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
     }
 
     .user-name {
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 600;
       color: var(--t1);
-      letter-spacing: -0.3px
+      margin-bottom: 2px;
+      letter-spacing: -0.3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
     }
 
     .user-handle {
       font-family: var(--mono);
       font-size: 10px;
       color: var(--t4);
-      margin-top: 2px;
-      opacity: 0.7
     }
 
     .user-xp {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 12px
+      margin-top: 16px;
     }
 
     .xp-bar-bg {
@@ -1477,8 +1478,6 @@
       align-items: center;
       justify-content: center;
       z-index: 9999;
-      background-image: radial-gradient(var(--bd2) 1px, transparent 1px);
-      background-size: 20px 20px;
     }
 
     .login-page.show {
@@ -1486,69 +1485,63 @@
     }
 
     .login-container {
-      background: var(--bg0);
-      border: 1px solid var(--g)40;
-      box-shadow: 0 0 40px rgba(0, 255, 170, 0.05), inset 0 0 20px rgba(0, 255, 170, 0.02);
-      border-radius: 4px;
-      padding: 32px;
-      width: 400px;
+      background: var(--bg1);
+      border: 1px solid var(--bd2);
+      border-radius: 16px;
+      padding: 40px;
+      width: 440px;
       max-width: 90vw;
-      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     
-    .login-container::before {
-      content: 'TERMINAL // SECURE_AUTH';
-      position: absolute;
-      top: -10px;
-      left: 20px;
-      background: var(--bg0);
-      padding: 0 10px;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--g);
-      letter-spacing: 2px;
-    }
-
-    .login-tabs {
+    .login-logo {
       display: flex;
-      gap: 4px;
-      margin-bottom: 20px;
-      background: var(--bg2);
-      padding: 4px;
-      border-radius: 4px
+      justify-content: center;
+      margin-bottom: 24px;
     }
 
-    .login-tab {
-      flex: 1;
-      padding: 8px;
+    .login-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--t1);
       text-align: center;
-      border-radius: 2px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--t4)
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
     }
 
-    .login-tab.active {
-      background: var(--bg3);
-      color: var(--g)
+    .login-subtitle {
+      font-size: 13px;
+      color: var(--t3);
+      text-align: center;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .login-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--t4);
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      display: block;
     }
 
     .login-input {
       width: 100%;
-      background: var(--bg0);
-      border: 0.5px solid var(--bd2);
-      border-radius: 2px;
-      padding: 11px;
+      background: var(--bg2);
+      border: 1px solid var(--bd2);
+      border-radius: 8px;
+      padding: 14px 16px;
       color: var(--t1);
       font-family: var(--ui);
-      font-size: 13px;
-      margin-bottom: 10px;
-      outline: none
+      font-size: 15px;
+      margin-bottom: 20px;
+      outline: none;
+      transition: border-color 0.2s;
     }
 
     .login-input:focus {
-      border-color: var(--g)
+      border-color: var(--g);
     }
 
     .login-btn {
@@ -1556,53 +1549,73 @@
       background: var(--g);
       color: #000;
       font-weight: 700;
-      padding: 12px;
+      padding: 14px;
       border: none;
-      border-radius: 2px;
-      font-size: 13px;
+      border-radius: 8px;
+      font-size: 15px;
       cursor: pointer;
       transition: opacity .2s;
-      margin-top: 8px
+      margin-top: 12px;
+      margin-bottom: 24px;
     }
 
     .login-btn:hover {
-      opacity: .85
+      opacity: .85;
     }
 
-    .login-error {
-      color: var(--r);
-      font-size: 11px;
-      margin-top: 10px;
+    .login-social-container {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      margin-bottom: 32px;
+    }
+
+    .login-social-btn {
+      flex: 1;
+      background: transparent;
+      border: 1px solid var(--bd2);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--t2);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .login-social-btn:hover {
+      background: var(--bg2);
+    }
+
+    .login-footer {
       text-align: center;
-      display: none
-    }
-
-    .login-error.show {
-      display: block
-    }
-
-    .login-success {
-      color: var(--g);
-      font-size: 11px;
-      margin-top: 10px;
-      text-align: center;
-      display: none
-    }
-
-    .login-success.show {
-      display: block
-    }
-
-    .login-loading {
+      font-size: 13px;
       color: var(--t3);
-      font-size: 12px;
-      margin-top: 10px;
-      text-align: center;
-      display: none
     }
 
-    .login-loading.show {
-      display: block
+    .login-footer-link {
+      color: var(--g);
+      font-weight: 700;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+
+    .login-error, .login-success, .login-loading {
+      font-size: 12px;
+      margin-top: 12px;
+      text-align: center;
+      display: none;
+    }
+    .login-error { color: var(--r); }
+    .login-success { color: var(--g); }
+    .login-loading { color: var(--t3); }
+
+    .login-error.show, .login-success.show, .login-loading.show {
+      display: block;
     }
 
     /* MODAL */
@@ -1939,54 +1952,91 @@
   <!-- LOGIN PAGE -->
   <div class="login-page" id="login-page">
     <div class="login-container">
-      <div style="font-family:var(--mono); color:var(--g); font-size:12px; margin-bottom: 24px; text-align:center; opacity:0.9;">
-<pre style="margin:0; line-height:1.2;">
-   _____       _       ________ 
-  / ___/____  (_)___  /  _/_  / 
-  \\__ \\/ __ \\/ / __ \\ / /  / /  
- ___/ / / / / / /_/ // /  / /   
-/____/_/ /_/_/ .___/___/ /_/    
-            /_/                 
-</pre>
-        <div style="margin-top:10px; letter-spacing:4px; font-size:10px; color:var(--t2);">WEB PORTAL V2.0</div>
+      <div class="login-logo">
+        <i data-lucide="shield-check" style="width:64px;height:64px;color:var(--g)"></i>
       </div>
-      <div class="login-tabs">
-        <div class="login-tab active" id="tab-login" onclick="switchAuthTab('login')">LOGIN</div>
-        <div class="login-tab" id="tab-signup" onclick="switchAuthTab('signup')">REGISTER</div>
-      </div>
+      <div class="login-title">Welcome Back</div>
+      <div class="login-subtitle">Sign in to your SnipIT account to continue building your secure repository.</div>
+      
+      <div id="tab-login" style="display:none"></div>
+      <div id="tab-signup" style="display:none"></div>
+
       <div id="login-form">
-        <input type="email" class="login-input" id="login-email" placeholder="> USER_EMAIL" style="font-family:var(--mono); font-size:12px;">
-        <input type="password" class="login-input" id="login-password" placeholder="> PASSWORD" style="font-family:var(--mono); font-size:12px;">
-        <button class="login-btn" onclick="handleLogin()" style="font-family:var(--mono); letter-spacing:1px; margin-top:16px;">[ INIT_SESSION ]</button>
+        <label class="login-label">EMAIL ADDRESS</label>
+        <input type="email" class="login-input" id="login-email" placeholder="name@company.com">
+        
+        <label class="login-label" style="display:flex; justify-content:space-between">
+          <span>PASSWORD</span>
+          <span style="color:var(--g); font-weight:400; cursor:pointer; text-transform:none">Forgot password?</span>
+        </label>
+        <input type="password" class="login-input" id="login-password" placeholder="••••••••">
+        
+        <button class="login-btn" onclick="handleLogin()">Sign In</button>
       </div>
+
       <div id="signup-form" style="display:none">
-        <input type="text" class="login-input" id="signup-name" placeholder="> DEV_NAME" style="font-family:var(--mono); font-size:12px;">
-        <input type="email" class="login-input" id="signup-email" placeholder="> USER_EMAIL" style="font-family:var(--mono); font-size:12px;">
-        <input type="password" class="login-input" id="signup-password" placeholder="> PASSWORD_STRING (MIN 6)" style="font-family:var(--mono); font-size:12px;">
-        <button class="login-btn" onclick="handleSignup()" style="font-family:var(--mono); letter-spacing:1px; margin-top:16px;">[ CREATE_NODE ]</button>
+        <label class="login-label">FULL NAME</label>
+        <input type="text" class="login-input" id="signup-name" placeholder="John Doe">
+        
+        <label class="login-label">EMAIL ADDRESS</label>
+        <input type="email" class="login-input" id="signup-email" placeholder="name@company.com">
+        
+        <label class="login-label">PASSWORD</label>
+        <input type="password" class="login-input" id="signup-password" placeholder="Min 6 characters">
+        
+        <button class="login-btn" onclick="handleSignup()">Create Account</button>
       </div>
+
+      <div class="login-social-container">
+        <button class="login-social-btn">
+          <i data-lucide="chrome" style="width:16px;height:16px"></i> Google
+        </button>
+        <button class="login-social-btn">
+          <i data-lucide="github" style="width:16px;height:16px"></i> GitHub
+        </button>
+      </div>
+
+      <div class="login-footer" id="footer-to-signup">
+        Don't have an account?<span class="login-footer-link" onclick="switchAuthTab('signup'); document.getElementById('footer-to-signup').style.display='none'; document.getElementById('footer-to-login').style.display='block'; document.querySelector('.login-title').innerText='Create Account'; document.querySelector('.login-subtitle').innerText='Join SnipIT to sync and secure your code snippets everywhere.';">Create one</span>
+      </div>
+      <div class="login-footer" id="footer-to-login" style="display:none">
+        Already have an account?<span class="login-footer-link" onclick="switchAuthTab('login'); document.getElementById('footer-to-login').style.display='none'; document.getElementById('footer-to-signup').style.display='block'; document.querySelector('.login-title').innerText='Welcome Back'; document.querySelector('.login-subtitle').innerText='Sign in to your SnipIT account to continue building your secure repository.';">Sign in</span>
+      </div>
+
       <div class="login-error" id="login-error"></div>
       <div class="login-success" id="login-success"></div>
-      <div class="login-loading" id="login-loading" style="font-family:var(--mono);">[ AUTHENTICATING... ]</div>
+      <div class="login-loading" id="login-loading">Authenticating...</div>
     </div>
   </div>
 
   <!-- SIDEBAR -->
   <nav class="sidebar">
     <div class="sidebar-logo">
-      <div class="logo-text">Snip<em>IT</em></div>
-      <div class="logo-sub">Web Portal v2.0</div>
+      <i data-lucide="shield-check" style="width:32px; height:32px; color:var(--g)"></i>
+      <div>
+        <div class="logo-text">Snip<em>IT</em></div>
+        <div class="logo-sub">Web Portal</div>
+      </div>
     </div>
 
     <div class="user-card" onclick="goPage('profile')">
-      <div class="user-avatar" id="sidebar-user-avatar">U</div>
-      <div class="user-name" id="sidebar-user-name">User</div>
-      <div class="user-handle" id="sidebar-user-handle">@user.dev</div>
-      <div class="user-xp">
-        <div class="xp-bar-bg">
-          <div class="xp-bar-fill" id="sidebar-xp-fill"></div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="user-avatar" id="sidebar-user-avatar">
+          <i data-lucide="user" style="width:20px; height:20px; color:var(--t2)"></i>
         </div>
-        <span class="xp-label">340 XP</span>
+        <div style="min-width: 0; flex: 1;">
+          <div class="user-name" id="sidebar-user-name">Developer</div>
+          <div class="user-handle" id="sidebar-user-handle" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@dev.local</div>
+        </div>
+      </div>
+      <div class="user-xp">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center">
+          <span style="font-size:10px; color:var(--t4); font-weight:600; text-transform:uppercase; letter-spacing:0.5px">Level 12</span>
+          <span class="xp-label" style="font-size:10px; color:var(--g); font-family:var(--mono); font-weight:700;">340 XP</span>
+        </div>
+        <div class="xp-bar-bg">
+          <div class="xp-bar-fill" id="sidebar-xp-fill" style="width: 34%"></div>
+        </div>
       </div>
     </div>
 
@@ -2024,8 +2074,8 @@
     <div class="sidebar-bottom">
       <div class="connection-card" style="margin-bottom:10px">
         <div class="conn-row">
-          <span class="conn-label">Local IP</span>
-          <span class="conn-ip">192.168.1.42</span>
+          <span class="conn-label">Environment</span>
+          <span class="conn-ip" style="color:var(--g)">Cloud Engine</span>
         </div>
         <div class="conn-status">
           <div class="conn-dot online"></div>
@@ -2033,7 +2083,7 @@
         </div>
       </div>
       <button class="ic-btn" style="width:100%; justify-content:center; border-color:var(--r); color:var(--r)"
-        onclick="handleLogout()">🚪 Logout</button>
+        onclick="handleLogout()">[ Logout ]</button>
     </div>
   </nav>
 
@@ -2042,6 +2092,11 @@
     <div class="topbar" id="topbar">
       <div class="topbar-breadcrumb">
         <span>snipit</span> / <span id="breadcrumb-page">dashboard</span>
+        <div style="margin-left:12px; display:flex; align-items:center; background:var(--bg2); border:0.5px solid var(--bd2); border-radius:6px; padding:4px 8px; gap:8px; cursor:pointer;" onclick="openCmd()">
+          <i data-lucide="search" style="width:12px; height:12px; color:var(--t3)"></i>
+          <span style="font-size:10px; color:var(--t4); font-family:var(--mono)">Search...</span>
+          <kbd style="background:var(--bg3); color:var(--t3); border:0.5px solid var(--bd2); border-radius:3px; padding:1px 4px; font-size:8px; font-weight:700">CTRL K</kbd>
+        </div>
       </div>
       <div class="topbar-right">
         <div class="topbar-status" style="margin-right:4px">
@@ -2053,73 +2108,97 @@
           <span id="beam-status-txt" style="color:var(--t3)">No device paired</span>
         </div>
         <button class="topbar-btn" id="theme-toggle-btn" onclick="toggleTheme()"
-          title="Toggle Light/Dark Mode">🌓</button>
+          title="Toggle Light/Dark Mode" style="display:flex; align-items:center; gap:6px;">
+          <i data-lucide="moon" style="width:14px; height:14px"></i>
+          <span style="font-size:10px">Theme</span>
+        </button>
         <button class="topbar-btn" onclick="openModal('new-snip')">+ New Snip</button>
-        <button class="topbar-btn primary" onclick="goPage('beam')">📡 Beam Station</button>
+        <button class="topbar-btn primary" onclick="goPage('beam')">[ Beam Station ]</button>
       </div>
     </div>
 
     <div class="content">
       <!-- DASHBOARD -->
       <div class="page active" id="page-dashboard">
-        <div class="card"
-          style="background:var(--bg1); border-left:2px solid var(--g); margin-bottom:20px; padding:16px; display:flex; justify-content:space-between; align-items:center">
+        
+        <!-- Dashboard Hero -->
+        <div style="background: linear-gradient(135deg, rgba(0,255,170,0.1), rgba(0,0,0,0)); border: 1px solid var(--bd2); border-left: 4px solid var(--g); border-radius: 12px; margin-bottom: 24px; padding: 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
           <div>
-            <h1 style="font-size:18px; font-weight:700; margin-bottom:2px">Welcome back, <span id="dash-user-name"
-                style="color:var(--g)">User</span>!</h1>
-            <p id="dash-user-email" style="font-size:10px; color:var(--t4); font-family:var(--mono); margin-bottom:6px">
-              user@example.com</p>
-            <p style="color:var(--t3); font-size:11px">Vault: <span id="dash-hero-snip-count">0</span> snippets synced
-            </p>
+            <h1 style="font-size:24px; font-weight:800; margin-bottom:4px; letter-spacing:-0.5px">Welcome back, <span id="dash-user-name" style="color:var(--g)">Developer</span>!</h1>
+            <p id="dash-user-email" style="font-size:12px; color:var(--t3); margin-bottom:12px">dev@local</p>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="background:var(--bg2); border:1px solid var(--bd2); padding:4px 10px; border-radius:12px; font-size:10px; font-weight:600; color:var(--g); display:flex; align-items:center; gap:4px;"><i data-lucide="cloud-lightning" style="width:12px;height:12px"></i> AI Engine Ready</span>
+              <span style="background:var(--bg2); border:1px solid var(--bd2); padding:4px 10px; border-radius:12px; font-size:10px; font-weight:600; color:var(--t2); display:flex; align-items:center; gap:4px;"><i data-lucide="folder-sync" style="width:12px;height:12px"></i> <span id="dash-hero-snip-count">0</span> Synced</span>
+            </div>
           </div>
           <div style="text-align:right">
-            <div style="font-size:10px; color:var(--y); font-weight:700" id="dash-rank">NOVICE CODER</div>
+            <div style="font-size:10px; color:var(--t4); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px">Current Rank</div>
+            <div style="font-size:16px; color:var(--y); font-weight:800; display:flex; align-items:center; gap:6px; justify-content:flex-end;"><i data-lucide="award" style="width:18px;height:18px"></i> <span id="dash-rank">NOVICE CODER</span></div>
           </div>
         </div>
 
         <!-- STATS -->
-        <div class="stat-grid" style="margin-bottom:24px">
-          <div class="stat-card">
-            <div class="stat-n" style="color:var(--g)" id="dash-snip-count">0</div>
-            <div class="stat-l">Snippets in Vault</div>
-            <div class="stat-d" style="color:var(--g); opacity:0.8">+0 this week</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px">
+          <div class="card" style="border-radius:12px; padding:20px; transition:all 0.2s; box-shadow:0 4px 12px rgba(0,0,0,0.1)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+              <div style="font-size:11px; color:var(--t3); font-weight:600; text-transform:uppercase">Snippets in Vault</div>
+              <i data-lucide="folder-code" style="color:var(--g); width:16px; height:16px"></i>
+            </div>
+            <div class="stat-n" style="color:var(--t1); font-size:28px; margin-bottom:4px" id="dash-snip-count">0</div>
+            <div class="stat-d" style="color:var(--g); font-size:11px; display:flex; align-items:center; gap:4px"><i data-lucide="trending-up" style="width:12px;height:12px"></i> +0 this week</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-n" style="color:var(--p)" id="dash-lang-count">0</div>
-            <div class="stat-l">Languages</div>
-            <div class="stat-d" style="color:var(--p); opacity:0.8" id="dash-lang-list">None</div>
+          <div class="card" style="border-radius:12px; padding:20px; transition:all 0.2s; box-shadow:0 4px 12px rgba(0,0,0,0.1)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+              <div style="font-size:11px; color:var(--t3); font-weight:600; text-transform:uppercase">Languages</div>
+              <i data-lucide="code-2" style="color:var(--p); width:16px; height:16px"></i>
+            </div>
+            <div class="stat-n" style="color:var(--t1); font-size:28px; margin-bottom:4px" id="dash-lang-count">0</div>
+            <div class="stat-d" style="color:var(--p); font-size:11px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap" id="dash-lang-list">None</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-n" style="color:var(--y)" id="dash-xp-earned">340</div>
-            <div class="stat-l">XP Earned</div>
-            <div class="stat-d" style="color:var(--y); opacity:0.8" id="dash-rank-info">Level 1 - Novice</div>
+          <div class="card" style="border-radius:12px; padding:20px; transition:all 0.2s; box-shadow:0 4px 12px rgba(0,0,0,0.1)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+              <div style="font-size:11px; color:var(--t3); font-weight:600; text-transform:uppercase">XP Earned</div>
+              <i data-lucide="zap" style="color:var(--y); width:16px; height:16px"></i>
+            </div>
+            <div class="stat-n" style="color:var(--t1); font-size:28px; margin-bottom:4px" id="dash-xp-earned">340</div>
+            <div class="stat-d" style="color:var(--y); font-size:11px" id="dash-rank-info">Level 1 - Novice</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-n" style="color:var(--c)">0</div>
-            <div class="stat-l">Beams this week</div>
-            <div class="stat-d" style="color:var(--c); opacity:0.8">Last: None</div>
+          <div class="card" style="border-radius:12px; padding:20px; transition:all 0.2s; box-shadow:0 4px 12px rgba(0,0,0,0.1)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+              <div style="font-size:11px; color:var(--t3); font-weight:600; text-transform:uppercase">Beams this week</div>
+              <i data-lucide="satellite-dish" style="color:var(--c); width:16px; height:16px"></i>
+            </div>
+            <div class="stat-n" style="color:var(--t1); font-size:28px; margin-bottom:4px">0</div>
+            <div class="stat-d" style="color:var(--c); font-size:11px">Last: None</div>
           </div>
         </div>
 
-        <div class="grid-2">
-          <div class="card" style="background:var(--bg2); border-left:4px solid var(--g)">
-            <div class="card-title" style="color:var(--g)">Quick Start</div>
-            <div style="display:flex; flex-direction:column; gap:10px">
-              <button class="topbar-btn" style="width:100%; text-align:left; padding:12px"
-                onclick="openModal('new-snip')">📄 Create New Snippet</button>
-              <button class="topbar-btn" style="width:100%; text-align:left; padding:12px" onclick="goPage('beam')">📡
-                Go to Beam Station</button>
-              <button class="topbar-btn" style="width:100%; text-align:left; padding:12px" onclick="goPage('vault')">🗄️
-                Explore Your Vault</button>
+        <div class="grid-2" style="gap:16px; margin-bottom:24px">
+          <div class="card" style="border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); padding:20px">
+            <div class="card-title" style="margin-bottom:16px; font-weight:700; border:none">Quick Actions</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+              <button class="topbar-btn" style="height:auto; padding:16px; display:flex; flex-direction:column; align-items:center; gap:8px; border-radius:10px" onclick="openModal('new-snip')">
+                <div style="background:var(--bg3); padding:8px; border-radius:8px; color:var(--g)"><i data-lucide="plus-square" style="width:20px;height:20px"></i></div>
+                <span style="font-weight:600">New Snippet</span>
+              </button>
+              <button class="topbar-btn" style="height:auto; padding:16px; display:flex; flex-direction:column; align-items:center; gap:8px; border-radius:10px" onclick="goPage('beam')">
+                <div style="background:var(--bg3); padding:8px; border-radius:8px; color:var(--c)"><i data-lucide="satellite-dish" style="width:20px;height:20px"></i></div>
+                <span style="font-weight:600">Beam Station</span>
+              </button>
+              <button class="topbar-btn" style="height:auto; padding:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; border-radius:10px; grid-column:span 2" onclick="goPage('vault')">
+                <div style="display:flex; align-items:center; gap:12px">
+                  <div style="background:var(--bg3); padding:8px; border-radius:8px; color:var(--p)"><i data-lucide="database" style="width:20px;height:20px"></i></div>
+                  <span style="font-weight:600">Explore Vault Database</span>
+                </div>
+              </button>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">Last Beamed Snippet</div>
-            <div id="dash-last-beamed"
-              style="min-height:120px; display:flex; align-items:center; justify-content:center">
-              <div style="text-align:center; padding:20px; color:var(--t4); font-size:11px">No snippets beamed yet.
-              </div>
+          <div class="card" style="border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); display:flex; flex-direction:column; padding:20px">
+            <div class="card-title" style="margin-bottom:16px; font-weight:700; border:none">Recent Interceptions</div>
+            <div id="dash-last-beamed" style="flex:1; background:var(--bg0); border-radius:8px; border:1px dashed var(--bd2); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px; min-height:140px">
+              <i data-lucide="ghost" style="width:32px; height:32px; color:var(--t4); opacity:0.5"></i>
+              <div style="text-align:center; color:var(--t4); font-size:12px">No snippets beamed yet.<br>Wait for mobile transmission.</div>
             </div>
           </div>
         </div>
@@ -2150,122 +2229,91 @@
 
       <!-- VAULT -->
       <div class="page" id="page-vault">
-        <div
-          style="display:grid; grid-template-columns: 220px 1fr; height: calc(100vh - 72px); border-top: 1px solid var(--bd2)">
-          <!-- VAULT SIDEBAR (EXPLORER) -->
-          <div
-            style="background:var(--bg1); border-right: 1px solid var(--bd2); overflow-y:auto; padding:14px; display:flex; flex-direction:column">
-            <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px">
-              <div
-                style="display:flex; align-items:center; gap:8px; background:var(--bg0); border:0.5px solid var(--bd2); border-radius:6px; padding:7px 10px">
-                <span style="color:var(--t3); font-size:12px">⌕</span>
-                <input id="vault-search-in" oninput="loadVault()" placeholder="Search snippets..."
-                  style="background:none; border:none; outline:none; color:var(--t1); font-family:var(--ui); font-size:11px; flex:1" />
+        <div style="display:flex; height: calc(100vh - 72px); border-top: 1px solid var(--bd2)">
+          
+          <!-- LEFT PANE: EXPLORER & SNIPPET LIST -->
+          <div style="width: 320px; min-width: 320px; background:var(--bg1); border-right: 1px solid var(--bd2); display:flex; flex-direction:column">
+            
+            <!-- Explorer Top -->
+            <div style="padding:14px; border-bottom:1px solid var(--bd2)">
+              <div style="display:flex; align-items:center; gap:8px; background:var(--bg0); border:1px solid var(--bd2); border-radius:6px; padding:8px 12px; margin-bottom:12px">
+                <i data-lucide="search" style="width:14px; height:14px; color:var(--t3)"></i>
+                <input id="vault-search-in" oninput="loadVault()" placeholder="Search snippets..." style="background:none; border:none; outline:none; color:var(--t1); font-family:var(--ui); font-size:12px; flex:1" />
               </div>
-              <select id="vault-lang-sel" onchange="loadVault()"
-                style="background:var(--bg0); border:0.5px solid var(--bd2); border-radius:6px; padding:7px 10px; color:var(--t2); font-family:var(--mono); font-size:10px; outline:none; width:100%">
-                <option value="all">All Languages</option>
-                <option value="java">Java</option>
-                <option value="kotlin">Kotlin</option>
-                <option value="python">Python</option>
-                <option value="javascript">JavaScript</option>
-                <option value="swift">Swift</option>
-                <option value="sql">SQL</option>
-              </select>
-            </div>
-
-            <div style="margin-bottom:16px">
-              <div class="card-title" style="font-size:9px; color:var(--t4); margin-bottom:8px">FOLDERS</div>
-              <div style="display:flex; flex-direction:column; gap:0" id="vault-folders">
-                <div class="nav-item active" onclick="setVaultFolder('all', this)"
-                  style="font-size:11px; padding:8px 10px; margin:0; border-radius:4px; cursor:pointer">
-                  <span style="color:var(--p); font-size:12px; margin-right:8px">📁</span> All Snippets
-                </div>
-                <div class="nav-item" onclick="setVaultFolder('starred', this)"
-                  style="font-size:11px; padding:8px 10px; margin:0; border-radius:4px; cursor:pointer">
-                  <span style="color:var(--y); font-size:12px; margin-right:8px">⭐</span> Starred
-                </div>
-                <div class="nav-item" onclick="setVaultFolder('recent', this)"
-                  style="font-size:11px; padding:8px 10px; margin:0; border-radius:4px; cursor:pointer">
-                  <span style="color:var(--c); font-size:12px; margin-right:8px">🕐</span> Recent
-                </div>
+              <div style="display:flex; gap:8px">
+                <select id="vault-lang-sel" onchange="loadVault()" style="background:var(--bg2); border:1px solid var(--bd2); border-radius:6px; padding:6px 8px; color:var(--t2); font-size:11px; outline:none; flex:1">
+                  <option value="all">All Languages</option>
+                  <option value="java">Java</option>
+                  <option value="kotlin">Kotlin</option>
+                  <option value="python">Python</option>
+                  <option value="javascript">JavaScript</option>
+                </select>
+                <button class="topbar-btn primary" onclick="openModal('new-snip')" style="padding:6px 12px; height:28px"><i data-lucide="plus" style="width:14px;height:14px"></i></button>
               </div>
             </div>
 
-            <div style="margin-top:auto; padding-top:12px; border-top:0.5px solid var(--bd2)">
-              <button class="ic-btn" style="width:100%; margin-bottom:6px; font-size:11px"
-                onclick="LocalStorage.exportVault()">📥 Export</button>
-              <button class="topbar-btn primary" style="width:100%; font-size:11px" onclick="openModal('new-snip')">+
-                New</button>
+            <!-- Folders -->
+            <div style="padding:14px; border-bottom:1px solid var(--bd2); display:flex; flex-direction:column; gap:4px" id="vault-folders">
+              <div class="nav-item active" onclick="setVaultFolder('all', this)" style="font-size:12px; padding:6px 10px; margin:0; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:8px">
+                <i data-lucide="folder" style="width:14px; height:14px; color:var(--p)"></i> All Snippets
+              </div>
+              <div class="nav-item" onclick="setVaultFolder('starred', this)" style="font-size:12px; padding:6px 10px; margin:0; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:8px">
+                <i data-lucide="star" style="width:14px; height:14px; color:var(--y)"></i> Starred
+              </div>
+              <div class="nav-item" onclick="setVaultFolder('recent', this)" style="font-size:12px; padding:6px 10px; margin:0; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:8px">
+                <i data-lucide="clock" style="width:14px; height:14px; color:var(--c)"></i> Recent
+              </div>
             </div>
+
+            <!-- Snippet List (The actual items to click) -->
+            <div style="flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:8px" id="vault-list">
+              <!-- Re-used vault-list id so app.js can populate it -->
+            </div>
+            
           </div>
 
-          <!-- VAULT MAIN AREA -->
-          <div style="background:var(--bg0); overflow-y:auto; padding:20px; display:flex; flex-direction:column">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
-              <div>
-                <h2 style="font-size:20px; color:var(--g); font-weight:700; margin-bottom:4px">Code Vault</h2>
-                <div style="font-size:11px; color:var(--t3); font-family:var(--mono)">
-                  <span id="vault-total-count">0</span> snippets · <span id="vault-lang-count">0</span> languages
-                </div>
-              </div>
-              <button class="topbar-btn primary" onclick="openModal('new-snip')">+ New Snippet</button>
-            </div>
-
-            <!-- VAULT TOOLBAR -->
-            <div class="vault-toolbar">
-              <select id="vault-sort-sel" class="vault-sort-sel" onchange="loadVault()">
-                <option value="recent">Recently Added</option>
-                <option value="oldest">Oldest First</option>
-                <option value="alphabetical">Alphabetical</option>
-                <option value="mostUsed">Most Used</option>
-                <option value="starred">Starred First</option>
-              </select>
-              <div style="margin-left:auto; display:flex; gap:8px">
-                <div class="vault-view-toggle">
-                  <button class="vault-view-btn active" onclick="setVaultView('grid', this)"
-                    title="Grid view">⊞</button>
-                  <button class="vault-view-btn" onclick="setVaultView('list', this)" title="List view">☰</button>
-                </div>
+          <!-- RIGHT PANE: TABBED EDITOR -->
+          <div style="flex:1; background:var(--bg0); display:flex; flex-direction:column; overflow:hidden" id="vault-editor-pane">
+            
+            <!-- Editor Tabs -->
+            <div style="display:flex; background:var(--bg1); border-bottom:1px solid var(--bd2); overflow-x:auto" id="editor-tabs">
+              <!-- Default Empty Tab -->
+              <div class="editor-tab active" style="padding:12px 20px; border-right:1px solid var(--bd2); border-bottom:2px solid var(--g); background:var(--bg0); font-size:12px; font-weight:600; color:var(--g); display:flex; align-items:center; gap:8px; cursor:pointer">
+                <i data-lucide="file-code" style="width:14px;height:14px"></i> <span id="tab-title">Welcome.md</span>
               </div>
             </div>
 
-            <!-- VAULT STATS -->
-            <div class="vault-stats-bar" id="vault-stats">
-              <div class="vault-stat-item">
-                <span class="vault-stat-label">Total:</span>
-                <span class="vault-stat-value" id="stat-total">0</span>
+            <!-- Editor Toolbar -->
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 16px; background:var(--bg2); border-bottom:1px solid var(--bd2)">
+              <div style="display:flex; align-items:center; gap:12px">
+                <span id="editor-title" style="font-size:14px; font-weight:700; color:var(--t1)">Welcome to Vault</span>
+                <span id="editor-lang" style="background:var(--bg3); padding:2px 8px; border-radius:12px; font-size:10px; font-family:var(--mono); color:var(--t3)">Markdown</span>
               </div>
-              <div class="vault-stat-item">
-                <span class="vault-stat-label">Starred:</span>
-                <span class="vault-stat-value" id="stat-starred">0</span>
-              </div>
-              <div class="vault-stat-item">
-                <span class="vault-stat-label">Languages:</span>
-                <span class="vault-stat-value" id="stat-langs">0</span>
-              </div>
-              <div class="vault-stat-item" style="margin-left:auto">
-                <span class="vault-stat-label">Search matches:</span>
-                <span class="vault-stat-value" id="stat-matches">0</span>
+              <div style="display:flex; align-items:center; gap:8px">
+                <button class="topbar-btn" onclick="copilotRefine()"><i data-lucide="sparkles" style="width:14px;height:14px;color:var(--p)"></i> AI Refine</button>
+                <button class="topbar-btn" onclick="copyEditorCode()"><i data-lucide="copy" style="width:14px;height:14px"></i> Copy</button>
+                <button class="topbar-btn primary" onclick="beamCurrentEditor()"><i data-lucide="satellite-dish" style="width:14px;height:14px"></i> Beam IT</button>
+                <button class="topbar-btn" onclick="deleteEditorSnip()" style="color:var(--r); border-color:var(--r)30"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
               </div>
             </div>
 
-            <div
-              style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; padding-bottom:12px; border-bottom:0.5px solid var(--bd2)"
-              id="vault-chips">
-              <span class="chip active" onclick="filterByTag('all')">#All</span>
-              <span class="chip" onclick="filterByTag('Java')">#Java</span>
-              <span class="chip" onclick="filterByTag('Kotlin')">#Kotlin</span>
-              <span class="chip" onclick="filterByTag('Firebase')">#Firebase</span>
-              <span class="chip" onclick="filterByTag('Python')">#Python</span>
-              <span class="chip" onclick="filterByTag('Backend')">#Backend</span>
+            <!-- Editor Code Area -->
+            <div style="flex:1; overflow:auto; position:relative; background:#0d1117; display:flex; flex-direction:column">
+              <pre class="line-numbers" style="margin:0; border-radius:0; flex:1; background:transparent"><code id="editor-code" class="language-markdown"># SnipIT Vault Editor
+
+Select a snippet from the left panel to open it in this workspace.
+Highlight any code and click "AI Refine" to activate your Copilot.
+
+// Power User Features:
+- Tabbed interface
+- Line numbers & syntax highlighting
+- Instant Cloud-Relay via Beam IT
+- Context-aware AI fixes
+</code></pre>
             </div>
 
-            <div id="vault-list"
-              style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:14px; flex:1; align-content: flex-start">
-              <!-- Snippets will be rendered here -->
-            </div>
           </div>
+
         </div>
       </div>
 
@@ -2297,9 +2345,9 @@
               </div>
             </div>
             <div style="display:flex;gap:10px">
-              <button class="topbar-btn primary" id="btn-inject" style="flex:1" onclick="injectVSCode()">📥
+              <button class="topbar-btn primary" id="btn-inject" style="flex:1" onclick="injectVSCode()">
                 Inject</button>
-              <button class="topbar-btn" id="btn-copy" style="flex:1" onclick="copyReceived()">⎘ Copy</button>
+              <button class="topbar-btn" id="btn-copy" style="flex:1" onclick="copyReceived()"> Copy</button>
               <button class="topbar-btn" id="btn-save" style="flex:1" onclick="saveToVault()">⊟ Save</button>
             </div>
           </div>
@@ -2475,7 +2523,7 @@
               <div class="badge-name">Syntax Wizard</div>
             </div>
             <div class="badge-card" id="badge-beam" onclick="toast('Beam Operator: Complete 3 Beam sessions')">
-              <div class="badge-icon">📡</div>
+              <div class="badge-icon"></div>
               <div class="badge-name">Beam Operator</div>
             </div>
             <div class="badge-card" id="badge-poly" onclick="toast('Polyglot: Use 3 different languages')">
@@ -2483,7 +2531,7 @@
               <div class="badge-name">Polyglot</div>
             </div>
             <div class="badge-card" id="badge-streak" onclick="toast('Fire: Maintain a 3-day streak')">
-              <div class="badge-icon">🔥</div>
+              <div class="badge-icon"></div>
               <div class="badge-name">Consistent</div>
             </div>
           </div>
@@ -2543,7 +2591,7 @@
                 <div>
                   <div class="setting-label">Vault Sync</div>
                   <div class="setting-desc" id="prof-sync">Last synced: Just now</div>
-                </div><span style="font-family:var(--mono);font-size:10px;color:var(--g)">● Live Sync</span>
+                </div><span style="font-family:var(--mono);font-size:10px;color:var(--g)"> Live Sync</span>
               </div>
             </div>
           </div>
@@ -2557,10 +2605,10 @@
                   <div style="font-size:13px;font-weight:600">This Browser</div>
                   <div style="font-family:var(--mono);font-size:10px;color:var(--t4)">Current Session</div>
                 </div>
-                <span style="font-family:var(--mono);font-size:10px;color:var(--g)">● Online</span>
+                <span style="font-family:var(--mono);font-size:10px;color:var(--g)"> Online</span>
               </div>
               <button class="topbar-btn primary" style="width:100%;justify-content:center;padding:10px;margin-top:4px"
-                onclick="goPage('beam')">📡 Pair Mobile Device</button>
+                onclick="goPage('beam')"> Pair Mobile Device</button>
             </div>
           </div>
         </div>
@@ -2577,10 +2625,10 @@
                 <div style="font-size:11px; color:var(--t3); margin-bottom:10px">Terminal Theme</div>
                 <div style="display:flex; gap:12px">
                   <div class="theme-chip active" style="border-color:var(--g)">Dark Kernel</div>
-                  <div class="theme-chip locked">Matrix 🔒</div>
-                  <div class="theme-chip locked">Cyberpunk 🔒</div>
-                  <div class="theme-chip locked">80s Hacker 🔒</div>
-                  <div class="theme-chip locked">Arctic 🔒</div>
+                  <div class="theme-chip locked">Matrix </div>
+                  <div class="theme-chip locked">Cyberpunk </div>
+                  <div class="theme-chip locked">80s Hacker </div>
+                  <div class="theme-chip locked">Arctic </div>
                 </div>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center">
@@ -2653,14 +2701,14 @@
                 <div class="setting-row-flex">
                   <div>
                     <div style="font-size:12px; font-weight:600">Service Status</div>
-                    <div id="ai-conn-status" style="font-size:10px; color:var(--r)">● Offline - Check local.properties
+                    <div id="ai-conn-status" style="font-size:10px; color:var(--r)"> Offline - Check local.properties
                     </div>
                   </div>
                 </div>
                 <div class="setting-row-flex" style="border:none">
                   <div>
-                    <div style="font-size:12px; font-weight:600">Backend Server</div>
-                    <div id="ai-server-status" style="font-size:10px; color:var(--t4)">Connecting to localhost:8000...
+                    <div style="font-size:12px; font-weight:600">AI Logic Engine</div>
+                    <div id="ai-server-status" style="font-size:10px; color:var(--t4)">Connecting to Gemini AI Engine...
                     </div>
                   </div>
                   <button class="topbar-btn" onclick="api.loadTokenFromServer(); updateAiStatusDisplay()"
@@ -2700,10 +2748,12 @@
     </div>
     <div class="status-bar">
       <div class="status-item"><span>main</span></div>
-      <div class="status-item">Local IP: <span id="status-ip">127.0.0.1</span></div>
+      <div class="status-item"><i data-lucide="cloud-lightning" style="width:12px;height:12px;margin-right:4px"></i> <span style="color:var(--g)">Cloud Engine Active</span></div>
       <div class="status-item">Snippets: <span id="status-count">0</span></div>
+      <div class="status-item" style="display:none"><span id="status-ip"></span></div>
       <div class="status-item" style="margin-left:auto">Pairing: <span id="status-beam">OFFLINE</span></div>
       <div class="status-item">UTF-8</div>
+      <div class="status-item" id="status-lang-mode">Markdown</div>
     </div>
   </div>
 

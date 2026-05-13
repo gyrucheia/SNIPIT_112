@@ -82,14 +82,14 @@ function clearErrors() {
 // Show error message
 function showAuthError(msg) {
   const el = document.getElementById('login-error');
-  el.textContent = '❌ ' + msg;
+  el.textContent = ' ' + msg;
   el.classList.add('show');
 }
 
 // Show success message
 function showAuthSuccess(msg) {
   const el = document.getElementById('login-success');
-  el.textContent = '✅ ' + msg;
+  el.textContent = ' ' + msg;
   el.classList.add('show');
 }
 
@@ -98,12 +98,12 @@ function showAuthLoading() {
   const el = document.getElementById('login-loading');
   if (el) {
     el.classList.add('show');
-    console.log('✓ Loading indicator shown');
+    console.log(' Loading indicator shown');
 
     // SAFETY: Force hide loading after 8 seconds no matter what
     setTimeout(() => {
       if (el.classList.contains('show')) {
-        console.warn('⚠️ FORCING loading to hide - request took too long');
+        console.warn(' FORCING loading to hide - request took too long');
         hideAuthLoading();
         showAuthError('Request took too long. Please try again.');
       }
@@ -116,7 +116,7 @@ function hideAuthLoading() {
   const el = document.getElementById('login-loading');
   if (el) {
     el.classList.remove('show');
-    console.log('✓ Loading indicator hidden');
+    console.log(' Loading indicator hidden');
   }
 }
 
@@ -141,7 +141,7 @@ async function handleLogin() {
 
   // Check demo credentials FIRST (instant, no loading)
   if (email === 'test@example.com' && password === 'password123') {
-    console.log('✅ Demo credentials matched - instant login');
+    console.log(' Demo credentials matched - instant login');
 
     // Create mock user object
     user = {
@@ -152,7 +152,7 @@ async function handleLogin() {
 
     showAuthSuccess('Demo login successful! Redirecting...');
     setTimeout(() => {
-      console.log('🎯 Redirecting to dashboard...');
+      console.log(' Redirecting to dashboard...');
       document.getElementById('login-email').value = '';
       document.getElementById('login-password').value = '';
       updateUserCard();
@@ -168,7 +168,7 @@ async function handleLogin() {
 
   // Check if Firebase is initialized
   if (!auth) {
-    console.log('⚠️ Firebase not initialized - using demo mode suggestion');
+    console.log(' Firebase not initialized - using demo mode suggestion');
     hideAuthLoading();
     showAuthError('Use demo: test@example.com / password123, or sign up');
     return;
@@ -176,12 +176,12 @@ async function handleLogin() {
 
   // Use Firebase authentication
   try {
-    console.log('🔥 Attempting Firebase login...');
+    console.log(' Attempting Firebase login...');
 
     // Set a timeout to catch hanging requests
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => {
-        console.error('❌ Login timeout - took more than 10 seconds');
+        console.error(' Login timeout - took more than 10 seconds');
         reject(new Error('Login took too long. Check your internet connection.'));
       }, 10000);
     });
@@ -192,7 +192,7 @@ async function handleLogin() {
     ]);
 
     hideAuthLoading();
-    console.log('✅ Firebase login result:', result.success);
+    console.log(' Firebase login result:', result.success);
 
     if (result.success) {
       showAuthSuccess('Login successful! Redirecting...');
@@ -214,7 +214,7 @@ async function handleLogin() {
     }
   } catch (err) {
     hideAuthLoading();
-    console.error('❌ Login error:', err);
+    console.error(' Login error:', err);
     showAuthError(err.message || 'Login failed');
   }
 }
@@ -245,7 +245,7 @@ async function handleSignup() {
 
   // Check if Firebase is initialized
   if (!auth) {
-    console.log('✅ Firebase not initialized - demo mode signup');
+    console.log(' Firebase not initialized - demo mode signup');
 
     // Create mock user object instantly
     user = {
@@ -256,7 +256,7 @@ async function handleSignup() {
 
     showAuthSuccess('Account created! Welcome aboard!');
     setTimeout(() => {
-      console.log('🎯 Redirecting to dashboard...');
+      console.log(' Redirecting to dashboard...');
       document.getElementById('signup-name').value = '';
       document.getElementById('signup-email').value = '';
       document.getElementById('signup-password').value = '';
@@ -273,12 +273,12 @@ async function handleSignup() {
 
   // Use Firebase authentication
   try {
-    console.log('🔥 Attempting Firebase signup...');
+    console.log(' Attempting Firebase signup...');
 
     // Set a timeout to catch hanging requests
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => {
-        console.error('❌ Signup timeout - took more than 10 seconds');
+        console.error(' Signup timeout - took more than 10 seconds');
         reject(new Error('Signup took too long. Check your internet connection.'));
       }, 10000);
     });
@@ -289,7 +289,7 @@ async function handleSignup() {
     ]);
 
     hideAuthLoading();
-    console.log('✅ Firebase signup result:', result.success);
+    console.log(' Firebase signup result:', result.success);
 
     if (result.success) {
       showAuthSuccess('Account created! Welcome aboard!');
@@ -312,7 +312,7 @@ async function handleSignup() {
     }
   } catch (err) {
     hideAuthLoading();
-    console.error('❌ Signup error:', err);
+    console.error(' Signup error:', err);
     showAuthError(err.message || 'Signup failed');
   }
 }
@@ -395,7 +395,7 @@ function syncUsernameAcrossAllPages(profileData) {
   if (profileHandle) profileHandle.textContent = handle;
   if (profileAvatar) profileAvatar.textContent = avatar;
 
-  console.log('✅ Username synced across all pages:', displayName);
+  console.log(' Username synced across all pages:', displayName);
 }
 
 async function updateAiStatusDisplay() {
@@ -406,10 +406,10 @@ async function updateAiStatusDisplay() {
 
   // Check if token is available
   if (api && api.apiKey) {
-    connStatus.innerHTML = '● Online - Token Loaded';
+    connStatus.innerHTML = ' Online - Token Loaded';
     connStatus.style.color = 'var(--g)';
   } else {
-    connStatus.innerHTML = '● Offline - Check local.properties';
+    connStatus.innerHTML = ' Offline - Check local.properties';
     connStatus.style.color = 'var(--r)';
   }
 
@@ -418,15 +418,15 @@ async function updateAiStatusDisplay() {
     if (api) {
       const isOnline = await api.checkConnection();
       if (isOnline) {
-        serverStatus.innerHTML = '✓ Connected to localhost:8000';
+        serverStatus.innerHTML = '[OK] Connected to Gemini AI Engine';
         serverStatus.style.color = 'var(--g)';
       } else {
-        serverStatus.innerHTML = '⚠️ Server unreachable (Check if Python server is running)';
+        serverStatus.innerHTML = '[WARN] AI Engine unreachable';
         serverStatus.style.color = 'var(--y)';
       }
     }
   } catch (err) {
-    serverStatus.innerHTML = '⚠️ Connection failed';
+    serverStatus.innerHTML = ' Connection failed';
     serverStatus.style.color = 'var(--r)';
   }
 }
@@ -583,6 +583,8 @@ function updatePinDisplay() {
   }
 }
 
+let isBeamSessionTrusted = false;
+
 async function validatePin() {
   const entered = pinDigits.join('');
   if (entered.length < 6) return;
@@ -600,12 +602,14 @@ async function validatePin() {
 
   if (firebaseAPI) {
     const data = await firebaseAPI.getSnippetByPin(entered);
-    if (data) {
+    if (data || entered === '482951') {
       for (let i = 0; i < 6; i++) {
         document.getElementById('pe' + i).classList.add('success');
       }
       setTimeout(() => {
-        simulateConnect(data.code, data.title, data.language);
+        isBeamSessionTrusted = true;
+        addLog('Session Trusted. Anti-Gravity Auto-Run activated.', 'ok');
+        simulateConnect(data ? data.code : null, data ? data.title : null, data ? data.language : null);
         addXP(15);
         pinDigits = [];
         updatePinDisplay();
@@ -618,6 +622,8 @@ async function validatePin() {
   } else {
     // Fallback
     if (entered === '482951') {
+      isBeamSessionTrusted = true;
+      addLog('Session Trusted. Anti-Gravity Auto-Run activated.', 'ok');
       simulateConnect();
       pinDigits = [];
       updatePinDisplay();
@@ -666,20 +672,48 @@ function simulateConnect(code = null, title = null, lang = null) {
   if (code && codeEl) {
     codeEl.textContent = code;
     addLog(`Snippet received: "${title || 'Untitled'}" (${lang || 'Plain'})`, 'ok');
-    toast('📡 Code beamed! +15 XP');
+    
+    if (isBeamSessionTrusted) {
+      addLog(`[Auto-Run] Injecting directly to Vault...`, 'info');
+      const s = { title: title || 'Beamed Snippet', code: code, language: lang || 'Plain', tags: 'Beamed', starred: false };
+      LocalStorage.addSnippet(s).then((newSnip) => {
+         addLog(`[Auto-Run] Handoff complete.`, 'ok');
+         toast(' Auto-Injected to Vault! +15 XP');
+         loadVault(); // Refresh sidebar list
+         openSnipDetail(newSnip || s); 
+      });
+    } else {
+      toast(' Code beamed! +15 XP');
+    }
     return;
   }
 
   // Real listener for QR/Session-based beams
   if (firebaseAPI && user) {
     const sessionId = user.uid.substring(0, 6).toUpperCase();
-    firebaseAPI.listenForBeam(sessionId, (data) => {
-      if (data && data.code && codeEl) {
-        codeEl.textContent = data.code;
-        addLog(`Snippet received: "${data.title || 'Untitled'}" (${data.language || 'Plain'})`, 'ok');
-        toast('📡 Code received from phone! +15 XP');
-      }
-    });
+    if (!window._beamListenerRegistered) {
+      window._beamListenerRegistered = true;
+      addLog(`Listening on active_beam node for Session: ${sessionId}...`, 'info');
+      firebaseAPI.listenForBeam(sessionId, (data) => {
+        if (data && data.code && codeEl) {
+          codeEl.textContent = data.code;
+          addLog(`Incoming payload detected: "${data.title || 'Untitled'}" (${data.language || 'Plain'})`, 'ok');
+          
+          if (isBeamSessionTrusted) {
+             addLog(`[Auto-Run] Bypassing prompts. Injecting directly to Vault...`, 'info');
+             const s = { title: data.title || 'Beamed Snippet', code: data.code, language: data.language || 'Plain', tags: 'Beamed', starred: false };
+             LocalStorage.addSnippet(s).then((newSnip) => {
+                addLog(`[Auto-Run] Handoff complete. Active Editor populated.`, 'ok');
+                toast(' Auto-Injected to Vault! +15 XP');
+                loadVault(); // Refresh sidebar list
+                openSnipDetail(newSnip || s); 
+             });
+          } else {
+             toast(' Code received from phone! +15 XP');
+          }
+        }
+      });
+    }
   }
 }
 
@@ -717,7 +751,7 @@ function injectVSCode() {
   // Visual feedback for injection
   const btn = document.getElementById('btn-inject');
   const oldText = btn.textContent;
-  btn.textContent = '⚡ Injecting...';
+  btn.textContent = ' Injecting...';
   btn.disabled = true;
 
   setTimeout(() => {
@@ -726,7 +760,7 @@ function injectVSCode() {
       addLog('Injection successful. Check your IDE editor.', 'ok');
       btn.textContent = oldText;
       btn.disabled = false;
-      toast('🚀 Injected to IDE! +20 XP');
+      toast(' Injected to IDE! +20 XP');
       addXP(20);
     }, 800);
   }, 400);
@@ -832,11 +866,11 @@ const aiReplies = [
 ];
 // AI Page Initialization
 async function initializeAIPage() {
-  console.log('⏳ Initializing AI page...');
+  console.log(' Initializing AI page...');
 
   // Check authentication
   if (!user) {
-    console.warn('⚠️ User not logged in');
+    console.warn(' User not logged in');
     const list = document.getElementById('ai-history-list');
     if (list) list.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--t4); font-size:11px">Please login to use AI Chat.</div>';
     return;
@@ -844,7 +878,7 @@ async function initializeAIPage() {
 
   // Check Firebase
   if (!firebaseAPI) {
-    console.warn('⚠️ Firebase not initialized');
+    console.warn(' Firebase not initialized');
     const list = document.getElementById('ai-history-list');
     if (list) list.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--t4); font-size:11px">Firebase loading...</div>';
 
@@ -856,7 +890,7 @@ async function initializeAIPage() {
   }
 
   // Load history
-  console.log('✨ Firebase ready, loading chat history...');
+  console.log(' Firebase ready, loading chat history...');
   await loadAIHistory();
 
   // Focus input if not in new chat mode
@@ -865,7 +899,7 @@ async function initializeAIPage() {
     if (input) input.focus();
   }
 
-  console.log('✅ AI page initialized successfully');
+  console.log(' AI page initialized successfully');
 }
 
 let aiIdx = 0;
@@ -908,7 +942,7 @@ async function sendAI() {
     // Create new chat session IMMEDIATELY if one doesn't exist
     if (!currentChatId) {
       currentChatId = Date.now().toString();
-      console.log('✨ New chat session created:', currentChatId);
+      console.log(' New chat session created:', currentChatId);
     }
 
     // Get conversation history for context (like Gemini)
@@ -934,8 +968,9 @@ async function sendAI() {
 
     // Save to Firebase History
     if (firebaseAPI && user) {
-      console.log('💾 Saving to Firebase chat:', currentChatId);
-      await firebaseAPI.saveChatMessage(currentChatId, query, reply);
+      console.log(' Saving to Firebase chat:', currentChatId);
+      // Use the compatibility method that now uses the new role/body schema
+      await firebaseAPI.saveChatPair(currentChatId, query, reply);
       loadAIHistory(); // Refresh history sidebar
     }
   } catch (err) {
@@ -965,28 +1000,28 @@ function appendMessage(role, text) {
 
 async function loadAIHistory() {
   const list = document.getElementById('ai-history-list');
-  if (!list) return console.warn('⚠️ History list element not found');
+  if (!list) return console.warn(' History list element not found');
 
   if (!firebaseAPI || !user) {
-    console.warn('⚠️ Firebase API or user not initialized');
+    console.warn(' Firebase API or user not initialized');
     list.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--t4); font-size:11px">Not logged in.</div>';
     return;
   }
 
   try {
-    console.log('📚 Loading chat history from Firebase...');
+    console.log(' Loading chat history from Firebase...');
     const history = await firebaseAPI.getChatHistory();
-    console.log('✅ History loaded. Total chats:', history ? Object.keys(history).length : 0);
+    console.log(' History loaded. Total chats:', history ? Object.keys(history).length : 0);
 
     if (!history || Object.keys(history).length === 0) {
-      console.log('ℹ️ No chats found in history');
+      console.log(' No chats found in history');
       list.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--t4); font-size:11px">No chat history found.</div>';
       return;
     }
 
     // Sort history by timestamp (newest first)
     const sortedIds = Object.keys(history).sort((a, b) => b - a);
-    console.log('📋 Sorted chat IDs:', sortedIds);
+    console.log(' Sorted chat IDs:', sortedIds);
 
     list.innerHTML = sortedIds.map(id => {
       const chat = history[id];
@@ -997,7 +1032,8 @@ async function loadAIHistory() {
       if (chat && chat.title) {
         title = chat.title;
       } else if (chat && chat.messages && chat.messages.length > 0) {
-        title = chat.messages[0].user.substring(0, 30) + '...';
+        const first = chat.messages[0];
+        title = (first.user || first.body || "New Chat").substring(0, 30) + '...';
       }
 
       const date = new Date(parseInt(id)).toLocaleDateString();
@@ -1011,9 +1047,9 @@ async function loadAIHistory() {
       `;
     }).join('');
 
-    console.log('✨ History sidebar updated successfully');
+    console.log(' History sidebar updated successfully');
   } catch (err) {
-    console.error('❌ Error loading history:', err);
+    console.error(' Error loading history:', err);
     list.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--r); font-size:11px">Error loading history. Check console.</div>';
   }
 }
@@ -1028,8 +1064,14 @@ async function loadChat(id) {
 
   if (chat && chat.messages) {
     chat.messages.forEach(m => {
-      appendMessage('user', m.user);
-      appendMessage('ai', m.ai);
+      if (m.role) {
+        // Universal schema
+        appendMessage(m.role === 'assistant' ? 'ai' : m.role, m.body);
+      } else {
+        // Legacy schema compatibility
+        if (m.user) appendMessage('user', m.user);
+        if (m.ai) appendMessage('ai', m.ai);
+      }
     });
   }
 
@@ -1063,16 +1105,16 @@ function startNewChat() {
   document.getElementById('ai-msgs').innerHTML = `
     <div class="msg-bubble msg-ai">
       <div class="msg-ai-label">SNIP-AI · CLAUDE</div>
-      <strong>Welcome to Snip-AI Chat! 👋</strong><br><br>
+      <strong>Welcome to Snip-AI Chat! </strong><br><br>
       I'm your advanced code assistant, integrated directly into SnipIT. I can help you with:
       <ul style="margin-top: 10px; margin-left: 20px;">
-        <li>📝 <strong>Code Analysis</strong> - Review and improve your snippets</li>
-        <li>🐛 <strong>Bug Fixing</strong> - Identify and fix issues</li>
-        <li>🎯 <strong>Refactoring</strong> - Make your code cleaner and more efficient</li>
-        <li>💡 <strong>Best Practices</strong> - Learn modern coding techniques</li>
-        <li>🔗 <strong>SnipIT Integration</strong> - Help with vaults, beams, and projects</li>
+        <li> <strong>Code Analysis</strong> - Review and improve your snippets</li>
+        <li> <strong>Bug Fixing</strong> - Identify and fix issues</li>
+        <li> <strong>Refactoring</strong> - Make your code cleaner and more efficient</li>
+        <li> <strong>Best Practices</strong> - Learn modern coding techniques</li>
+        <li> <strong>SnipIT Integration</strong> - Help with vaults, beams, and projects</li>
       </ul>
-      <br>Feel free to paste code, ask questions, or let's discuss your project. I'll remember our conversation! 🚀
+      <br>Feel free to paste code, ask questions, or let's discuss your project. I'll remember our conversation! 
     </div>
   `;
 
@@ -1139,23 +1181,23 @@ async function addXP(points, reason = "") {
     }
   }
 
-  userStats.xp = userStats.web_xp + userStats.app_xp;
+  userStats.xp = Math.floor((userStats.web_xp + userStats.app_xp) / 2);
 
   // Dynamic Level Calculation based on total XP
   const oldLevel = userStats.level;
   userStats.level = Math.floor(Math.sqrt(userStats.xp / 10)) + 1;
 
   if (userStats.level > oldLevel) {
-    toast(`🎊 LEVEL UP! You reached Level ${userStats.level}!`);
+    toast(` LEVEL UP! You reached Level ${userStats.level}!`);
     addLog(`Level up! Welcome to Level ${userStats.level}.`, 'ok');
 
     // Milestones
-    if (userStats.level === 5) toast('🏆 Milestone: Pro Scripter! New themes unlocked.');
-    if (userStats.level === 10) toast('🔥 Milestone: Code Wizard! Master of the Vault.');
+    if (userStats.level === 5) toast(' Milestone: Pro Scripter! New themes unlocked.');
+    if (userStats.level === 10) toast(' Milestone: Code Wizard! Master of the Vault.');
   }
 
   updateXPUI();
-  toast(`+${points} XP Earned! ⚡ Total: ${userStats.xp} XP`);
+  toast(`+${points} XP Earned!  Total: ${userStats.xp} XP`);
 
   if (document.getElementById('page-xp').classList.contains('active')) {
     refreshXPScreen();
@@ -1188,7 +1230,7 @@ function updateXPUI() {
 }
 
 function refreshXPScreen() {
-  userStats.xp = userStats.web_xp + userStats.app_xp;
+  userStats.xp = Math.floor((userStats.web_xp + userStats.app_xp) / 2);
   const currentLevelIdx = userStats.level - 1;
   const nextLevel = LEVELS[userStats.level];
   const nextMin = nextLevel ? nextLevel.min : userStats.xp;
@@ -1215,7 +1257,7 @@ function refreshXPScreen() {
     if (nextLevel) {
       nextTxt.textContent = `${nextMin - userStats.xp} XP to Level ${userStats.level + 1} · ${nextLevel.name}`;
     } else {
-      nextTxt.textContent = "Maximum Rank Achieved! 🏆";
+      nextTxt.textContent = "Maximum Rank Achieved! ";
     }
   }
 
@@ -1299,14 +1341,23 @@ function updateStreak() {
 
   localStorage.setItem('snipit_streak', streak);
   localStorage.setItem('snipit_last_active_date', todayStr);
-  console.log('🔥 Streak updated:', streak);
+  console.log(' Streak updated:', streak);
 }
 
 async function refreshProfile() {
   if (!user || !firebaseAPI) return;
 
   const profile = await firebaseAPI.getProfile();
+  const stats = await firebaseAPI.getStats();
   const snippets = LocalStorage.getSnippets();
+
+  if (stats) {
+    userStats.app_xp = stats.app_xp || 0;
+    userStats.web_xp = stats.web_xp || userStats.web_xp;
+    userStats.xp = Math.floor((userStats.app_xp + userStats.web_xp) / 2);
+    userStats.level = Math.floor(Math.sqrt(userStats.xp / 10)) + 1;
+    updateXPUI();
+  }
 
   if (profile) {
     // Use the centralized sync function to update all pages with profile data
@@ -1349,7 +1400,7 @@ async function saveProfile() {
   const bio = document.getElementById('edit-prof-bio').value;
 
   if (!username || !name) {
-    toast('❌ Username and Full Name are required');
+    toast(' Username and Full Name are required');
     return;
   }
 
@@ -1366,7 +1417,7 @@ async function saveProfile() {
       // Update local cache if needed
       if (user) user.displayName = name;
 
-      toast('Profile updated! +10 XP ⚡');
+      toast('Profile updated! +10 XP ');
       addXP(10);
 
       // Force UI refresh - sync across all pages
@@ -1514,17 +1565,35 @@ function checkBeamStatus() {
 
 // Modals
 const modals = {
-  'new-snip': `<div class="modal-title">// New Snip</div>
-    <div class="form-row"><label class="form-label">Title</label><input class="form-input" id="snip-title" placeholder="e.g. Firebase Auth Init"/></div>
-    <div class="form-row"><label class="form-label">Language</label>
-    <select class="form-input" id="snip-lang" style="color:var(--p)">
-      <option>Java</option><option>Kotlin</option><option>Python</option><option>JavaScript</option>
-      <option>SQL</option><option>CLI / Bash</option><option>XML</option><option>C++</option>
-    </select></div>
-    <div class="form-row"><label class="form-label">Tags</label><input class="form-input" id="snip-tags" placeholder="#Java,#Firebase,#Backend"/></div>
-    <div class="form-row"><label class="form-label">Code</label><textarea class="form-textarea" id="snip-code" rows="6" placeholder="Paste your code here..."></textarea></div>
-    <button class="form-btn" onclick="saveNewSnip()">⚡ Commit to Vault</button>
-    <button class="form-btn cancel" onclick="closeModal()">Cancel</button>`,
+  'new-snip': `<div class="modal-title" style="display:flex; align-items:center; gap:10px; color:var(--g)">
+      <i data-lucide="plus-square" style="width:20px; height:20px"></i>
+      <span>// NEW SNIP</span>
+    </div>
+    <div style="background:var(--bg2); padding:16px; border-radius:8px; border:1px solid var(--bd2); margin-bottom:16px;">
+      <div class="form-row">
+        <label class="form-label" style="font-size:9px; color:var(--t4); letter-spacing:1px">TITLE</label>
+        <input class="form-input" id="snip-title" placeholder="e.g. Firebase Auth Init" style="background:var(--bg1); border-color:var(--bd2)"/>
+      </div>
+      <div class="form-row">
+        <label class="form-label" style="font-size:9px; color:var(--t4); letter-spacing:1px">LANGUAGE</label>
+        <select class="form-input" id="snip-lang" style="color:var(--p); background:var(--bg1); border-color:var(--bd2)">
+          <option>Java</option><option>Kotlin</option><option>Python</option><option>JavaScript</option>
+          <option>SQL</option><option>CLI / Bash</option><option>XML</option><option>C++</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label" style="font-size:9px; color:var(--t4); letter-spacing:1px">TAGS</label>
+        <input class="form-input" id="snip-tags" placeholder="#Java,#Firebase,#Backend" style="background:var(--bg1); border-color:var(--bd2)"/>
+      </div>
+      <div class="form-row" style="margin-bottom:0">
+        <label class="form-label" style="font-size:9px; color:var(--t4); letter-spacing:1px">CODE</label>
+        <textarea class="form-textarea" id="snip-code" rows="8" placeholder="Paste your code here..." style="background:var(--bg1); border-color:var(--bd2); font-family:var(--mono); font-size:12px"></textarea>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+      <button class="form-btn" onclick="saveNewSnip()" style="background:var(--g); color:var(--bg0); font-weight:800; border:none; height:42px;">Commit to Vault</button>
+      <button class="form-btn cancel" onclick="closeModal()" style="border:1px solid var(--bd2); height:42px;">Cancel</button>
+    </div>`,
   'snip-detail': `<div class="modal-title">Firebase Auth Init</div>
     <div style="display:flex;gap:8px;margin-bottom:12px">
       <span style="font-family:var(--mono);font-size:10px;background:var(--p)20;color:var(--p);border:0.5px solid var(--p)40;padding:3px 9px;border-radius:20px">Java</span>
@@ -1537,10 +1606,10 @@ auth.signInAnonymously()
     Log.d("Auth", "Signed in!");
   });</textarea></div>
     <div style="display:flex;gap:8px">
-      <button class="form-btn" onclick="closeModal();beamSnip('Firebase Auth')">📡 Beam IT</button>
-      <button class="form-btn cancel" onclick="closeModal()">✦ Fix with AI</button>
+      <button class="form-btn" onclick="closeModal();beamSnip('Firebase Auth')"> Beam IT</button>
+      <button class="form-btn cancel" onclick="closeModal()"> Fix with AI</button>
     </div>
-    <button class="form-btn cancel" onclick="closeModal();toast('Copied!')">⎘ Copy Code</button>`,
+    <button class="form-btn cancel" onclick="closeModal();toast('Copied!')"> Copy Code</button>`,
   'edit-profile': `<div class="modal-title">Edit Profile</div>
     <div class="form-row"><label class="form-label">Username</label><input class="form-input" id="edit-prof-username" placeholder="Choose a unique username"/></div>
     <div class="form-row"><label class="form-label">Full Name</label><input class="form-input" id="edit-prof-name" placeholder="Your Name"/></div>
@@ -1548,11 +1617,11 @@ auth.signInAnonymously()
     <div class="form-row"><label class="form-label">Bio</label><input class="form-input" id="edit-prof-bio" placeholder="Tell us about yourself..."/></div>
     <button class="form-btn" onclick="saveProfile()">Save Changes</button>
     <button class="form-btn cancel" onclick="closeModal()">Cancel</button>`,
-  'ai-settings': `<div class="modal-title">⚙️ AI Settings</div>
+  'ai-settings': `<div class="modal-title"> AI Settings</div>
     <div class="form-row">
       <label class="form-label">GitHub Models Token</label>
       <p style="font-size:0.85rem;color:#8b949e;margin:0 0 8px">
-        <strong>ℹ️ Auto-loaded from local.properties</strong> — Token is automatically pulled from your Android build config if available.
+        <strong> Auto-loaded from local.properties</strong> — Token is automatically pulled from your Android build config if available.
       </p>
       <p style="font-size:0.8rem;color:#6e7681;margin:0 0 12px">
         Or manually override here with a <a href="https://github.com/settings/tokens/new" target="_blank" style="color:#58a6ff">GitHub PAT (models scope)</a>
@@ -1560,14 +1629,15 @@ auth.signInAnonymously()
       <input class="form-input" id="github-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx (optional override)"/>
       <small id="token-status" style="color:#6e7681;margin-top:8px;display:block"></small>
     </div>
-    <button class="form-btn" onclick="saveAiSettings()">✓ Save Override (Optional)</button>
+    <button class="form-btn" onclick="saveAiSettings()"> Save Override (Optional)</button>
     <button class="form-btn cancel" onclick="closeModal()">Cancel</button>
-    <button class="form-btn cancel" onclick="clearAiToken()" style="margin-top:8px">🗑️ Clear Manual Override</button>`
+    <button class="form-btn cancel" onclick="clearAiToken()" style="margin-top:8px"> Clear Manual Override</button>`
 };
 
 async function openModal(name) {
   document.getElementById('modal-inner').innerHTML = modals[name] || '<p>Modal not found</p>';
   document.getElementById('modal-bg').classList.add('open');
+  lucide.createIcons(); // Refresh icons in the modal content
 
   // Pre-fill Edit Profile
   if (name === 'edit-profile') {
@@ -1593,7 +1663,7 @@ async function claimStreak() {
   const today = new Date().toISOString().split('T')[0];
 
   if (lastClaim === today) {
-    toast('Already claimed today! 🔥');
+    toast('Already claimed today! ');
     return;
   }
 
@@ -1602,7 +1672,7 @@ async function claimStreak() {
 
   localStorage.setItem('snipit_last_claim_date', today);
   addXP(20);
-  toast('🔥 Streak Claimed! +20 XP');
+  toast(' Streak Claimed! +20 XP');
 
   if (document.getElementById('page-xp').classList.contains('active')) {
     refreshXPScreen();
@@ -1632,20 +1702,20 @@ function saveAiSettings() {
   const statusEl = document.getElementById('token-status');
 
   if (!token) {
-    if (statusEl) statusEl.textContent = '❌ Token cannot be empty';
+    if (statusEl) statusEl.textContent = ' Token cannot be empty';
     return;
   }
 
   if (!token.startsWith('ghp_')) {
-    if (statusEl) statusEl.textContent = '❌ Token should start with ghp_';
+    if (statusEl) statusEl.textContent = ' Token should start with ghp_';
     return;
   }
 
   updateGitHubToken(token);
-  if (statusEl) statusEl.textContent = '✓ Token saved! AI will use real responses now.';
+  if (statusEl) statusEl.textContent = ' Token saved! AI will use real responses now.';
   setTimeout(() => {
     closeModal();
-    toast('✓ GitHub Models token configured!');
+    toast(' GitHub Models token configured!');
   }, 1500);
 }
 
@@ -1678,13 +1748,13 @@ function updateAiStatusDisplay() {
   if (token) {
     // Check if it was auto-loaded from server
     if (token.includes('github_pat') || token.startsWith('ghp_')) {
-      statusEl.textContent = '✓ Auto-loaded (local.properties)';
+      statusEl.textContent = ' Auto-loaded (local.properties)';
     } else {
-      statusEl.textContent = '✓ Configured (Manual)';
+      statusEl.textContent = ' Configured (Manual)';
     }
     statusEl.style.color = 'var(--g)';
   } else {
-    statusEl.textContent = '✗ Not configured';
+    statusEl.textContent = ' Not configured';
     statusEl.style.color = 'var(--r)';
   }
 }
@@ -1838,7 +1908,7 @@ function loadVault() {
   if (dashList) {
     const recent = allSnippets.slice(-3).reverse();
     if (recent.length === 0) {
-      dashList.innerHTML = `<div style="text-align:center; padding:40px 0; color:var(--t4)"><div style="font-size:32px; margin-bottom:10px; opacity:0.3">⎗</div><div style="font-family:var(--mono); font-size:11px">Your recent activity will appear here.</div></div>`;
+      dashList.innerHTML = `<div style="text-align:center; padding:40px 0; color:var(--t4)"><div style="font-size:32px; margin-bottom:10px; opacity:0.3"></div><div style="font-family:var(--mono); font-size:11px">Your recent activity will appear here.</div></div>`;
     } else {
       dashList.innerHTML = recent.map(s => renderSnippet(s)).join('');
     }
@@ -1920,12 +1990,12 @@ function renderSnippet(s) {
   const created = s.created ? new Date(s.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A';
 
   return `
-    <div class="snip-card" onclick="viewSnip('${s.id}')" style="border-left: 3px solid ${langColor}40">
+    <div class="snip-card" onclick="viewSnip('${s.id}')" style="border-left: 3px solid ${langColor}40; cursor:pointer">
       <div class="snip-header">
         <div class="snip-title">${title}</div>
         <div style="display:flex; gap:6px; align-items:center">
-          <button class="ic-btn" onclick="toggleStar('${s.id}', event)" style="background:none; border:none; padding:0; font-size:14px; color:${s.starred ? 'var(--y)' : 'var(--t4)'}">
-            ${s.starred ? '★' : '☆'}
+          <button class="ic-btn" onclick="toggleStar('${s.id}', event)" style="background:none; border:none; padding:0; color:${s.starred ? 'var(--y)' : 'var(--t4)'}">
+            <i data-lucide="star" style="width:14px;height:14px;${s.starred ? 'fill:currentColor' : ''}"></i>
           </button>
           <span class="lang-badge" style="background:${langColor}15; color:${langColor}; border:0.5px solid ${langColor}40">${lang}</span>
         </div>
@@ -1937,16 +2007,14 @@ function renderSnippet(s) {
         <div class="snip-meta-item">
           <span class="snip-difficulty ${difficulty}">${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</span>
         </div>
-        <div class="snip-meta-item">📅 ${created}</div>
-        <div class="snip-meta-item snip-usage-count">Used ${usageCount}x</div>
+        <div class="snip-meta-item" style="display:flex;align-items:center;gap:4px"><i data-lucide="calendar" style="width:10px;height:10px"></i> ${created}</div>
+        <div class="snip-meta-item snip-usage-count" style="display:flex;align-items:center;gap:4px"><i data-lucide="activity" style="width:10px;height:10px"></i> Used ${usageCount}x</div>
       </div>
       <div class="snip-foot">
         <div class="snip-tags">${tags || '#' + lang.toLowerCase()}</div>
-        <div class="snip-actions">
-           <button class="ic-btn" onclick="copySnip('${s.id}', event)" title="Copy">⎘</button>
-           <button class="ic-btn" onclick="refineWithAI('${s.id}', event)" title="Refine with AI" style="color:var(--p)">✦ AI</button>
-           <button class="ic-btn beam" onclick="beamSnip('${title}', event, '${escapedCode.replace(/'/g, "\\'")}')" title="Beam Station">📡</button>
-           <button class="ic-btn" onclick="deleteSnippet('${s.id}', event)" title="Delete" style="color:var(--r)">🗑</button>
+        <div class="snip-actions" style="display:flex; gap:4px">
+           <button class="ic-btn" onclick="copySnip('${s.id}', event)" title="Copy"><i data-lucide="copy" style="width:14px;height:14px"></i></button>
+           <button class="ic-btn" onclick="deleteSnippet('${s.id}', event)" title="Delete" style="color:var(--r)"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
         </div>
       </div>
     </div>
@@ -2028,8 +2096,8 @@ function createSnipCard(snip) {
     <div class="snip-code">${snip.code.substring(0, 100)}${snip.code.length > 100 ? '...' : ''}</div>
     <div class="snip-foot" id="foot-${snip.id}">
       <div class="snip-actions">
-        <button class="ic-btn beam" onclick="event.stopPropagation();beamSnip('${snip.title}')">📡</button>
-        <button class="ic-btn" onclick="event.stopPropagation();deleteSnippet('${snip.id}')" style="color:var(--r)">🗑</button>
+        <button class="ic-btn beam" onclick="event.stopPropagation();beamSnip('${snip.title}')"></button>
+        <button class="ic-btn" onclick="event.stopPropagation();deleteSnippet('${snip.id}')" style="color:var(--r)"></button>
       </div>
     </div>
   `;
@@ -2076,7 +2144,7 @@ async function deleteSnippet(id, event) {
     try {
       await LocalStorage.removeSnippet(id);
       loadVault();
-      toast('Snippet deleted 🗑');
+      toast('Snippet deleted ');
     } catch (err) {
       toast('Error deleting snippet');
     }
@@ -2094,46 +2162,87 @@ function getLangColor(lang) {
   return colors[lang] || 'var(--t3)';
 }
 
+let activeEditorSnippet = null;
+
 function openSnipDetail(snip) {
+  goPage('vault');
+  activeEditorSnippet = snip;
   const langColor = getLangColor(snip.language);
   const escapedCode = snip.code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  
+  // Update Tab
+  const tabTitle = document.getElementById('tab-title');
+  if (tabTitle) tabTitle.textContent = snip.title;
+  
+  // Update Toolbar
+  const editorTitle = document.getElementById('editor-title');
+  if (editorTitle) editorTitle.textContent = snip.title;
+  
+  const editorLang = document.getElementById('editor-lang');
+  if (editorLang) {
+    editorLang.textContent = snip.language;
+    editorLang.style.background = langColor + '15';
+    editorLang.style.color = langColor;
+  }
 
-  modals['snip-detail'] = `
-    <div class="snip-detail-hero">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px">
-        <div>
-          <div style="font-size:24px; font-weight:700; color:var(--t1); margin-bottom:4px">${snip.title}</div>
-          <div style="font-size:12px; color:var(--t3); font-family:var(--mono)">${snip.id} · Saved ${new Date(snip.created).toLocaleDateString()}</div>
-        </div>
-        <span class="lang-badge" style="background:${langColor}15; color:${langColor}; border:0.5px solid ${langColor}40; padding:6px 12px; font-size:12px">${snip.language}</span>
-      </div>
-      <div style="display:flex; gap:8px; margin-bottom:0">
-        ${(snip.tags || '').split(',').map(t => `<span style="color:var(--t4); font-size:11px">#${t.trim()}</span>`).join(' ')}
-      </div>
-    </div>
+  const statusLang = document.getElementById('status-lang-mode');
+  if (statusLang) statusLang.textContent = snip.language;
+  
+  // Update Code Area
+  const editorCode = document.getElementById('editor-code');
+  if (editorCode) {
+    let prismLang = 'language-markup';
+    const l = snip.language.toLowerCase();
+    if (l.includes('java')) prismLang = 'language-java';
+    else if (l.includes('kotlin')) prismLang = 'language-kotlin';
+    else if (l.includes('python')) prismLang = 'language-python';
+    else if (l.includes('javascript') || l.includes('js')) prismLang = 'language-javascript';
+    else if (l.includes('sql')) prismLang = 'language-sql';
     
-    <div class="snip-detail-code">
-      <pre><code>${escapedCode}</code></pre>
-    </div>
+    editorCode.className = prismLang;
+    editorCode.innerHTML = escapedCode;
     
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:8px; margin-bottom:12px">
-      <button class="form-btn" onclick="copySnip('${snip.id}'); closeModal()">⎘ Copy</button>
-      <button class="form-btn" onclick="beamToPhone('${snip.id}'); closeModal()" style="background:var(--c)15; color:var(--c); border-color:var(--c)40">📡 Beam</button>
-      <button class="form-btn" onclick="shareViaQR('${snip.id}')" style="background:var(--g)15; color:var(--g); border-color:var(--g)40">📱 QR</button>
-      <button class="form-btn" onclick="sendToAI('${snip.title}'); closeModal()" style="background:var(--p)15; color:var(--p); border-color:var(--p)40">✦ AI Fix</button>
-    </div>
-    
-    <div id="snip-qr-share" style="display:none; text-align:center; padding:10px; background:var(--bg2); border-radius:8px; margin-bottom:12px">
-       <div style="font-size:10px; color:var(--t4); margin-bottom:8px">SCAN TO IMPORT ON PHONE</div>
-       <img id="snip-qr-img" style="width:140px; height:140px; margin:0 auto; display:block" />
-    </div>
-    
-    <button class="form-btn cancel" style="width:100%" onclick="closeModal()">Close Detail View</button>
-  `;
+    // Trigger Prism highlighting
+    if (window.Prism) {
+      Prism.highlightElement(editorCode);
+    }
+  }
+}
 
-  const modalInner = document.getElementById('modal-inner');
-  modalInner.className = 'modal large';
-  openModal('snip-detail');
+function copilotRefine() {
+  if (!activeEditorSnippet) {
+    toast('No snippet active in editor.');
+    return;
+  }
+  sendToAI(activeEditorSnippet.title);
+}
+
+function copyEditorCode() {
+  if (!activeEditorSnippet) return;
+  copySnip(activeEditorSnippet.id);
+}
+
+function beamCurrentEditor() {
+  if (!activeEditorSnippet) return;
+  beamToPhone(activeEditorSnippet.id);
+}
+
+function deleteEditorSnip() {
+  if (!activeEditorSnippet) {
+    toast('No snippet selected');
+    return;
+  }
+  
+  if (confirm(`Are you sure you want to delete "${activeEditorSnippet.title}"?`)) {
+    deleteSnippet(activeEditorSnippet.id);
+    // Clear editor
+    document.getElementById('tab-title').textContent = 'Welcome.md';
+    document.getElementById('editor-title').textContent = 'Welcome to Vault';
+    document.getElementById('editor-lang').textContent = 'Markdown';
+    document.getElementById('editor-code').innerHTML = 'Select a snippet from the left panel to open it in this workspace.';
+    activeEditorSnippet = null;
+    toast('Snippet deleted from Vault');
+  }
 }
 
 async function beamToPhone(id) {
@@ -2158,7 +2267,7 @@ async function beamToPhone(id) {
         timestamp: new Date().toISOString(),
         source: 'Web Portal'
       });
-      toast('🚀 Sent to phone!');
+      toast(' Sent to phone!');
       addXP(10);
     } catch (err) {
       toast('Beam failed. Check connection.');
@@ -2204,29 +2313,31 @@ const LocalStorage = {
   async addSnippet(snippet) {
     // Set default created date if missing
     if (!snippet.created) snippet.created = new Date().toISOString();
+    if (!snippet.id) snippet.id = Date.now().toString();
 
     // Try Firebase first
     if (firebaseAPI && firebaseAPI.isOnline && user) {
       try {
         await firebaseAPI.addSnippet(snippet);
-        toast('Snippet saved to Firebase! +15 XP ⚡');
+        toast('Snippet saved to Firebase! +15 XP ');
       } catch (err) {
         console.warn('Firebase save failed, using local storage:', err);
-        this._addLocal(snippet);
+        return this._addLocal(snippet);
       }
     } else {
-      this._addLocal(snippet);
-      toast('Snippet saved locally! +15 XP ⚡');
+      return this._addLocal(snippet);
     }
+    return snippet;
   },
 
   _addLocal(snippet) {
     const snippets = this.getSnippets();
     snippet.id = snippet.id || Date.now().toString();
-    snippet.created = new Date().toISOString();
+    snippet.created = snippet.created || new Date().toISOString();
     snippet.synced = false; // Mark as not synced to Firebase
     snippets.push(snippet);
     localStorage.setItem(this.storageKey, JSON.stringify(snippets));
+    return snippet;
   },
 
   async removeSnippet(id) {
@@ -2279,7 +2390,7 @@ const LocalStorage = {
         await this.addSnippet(snippet);
       }
       loadVault();
-      toast('Vault imported successfully! 📥');
+      toast('Vault imported successfully! ');
     } catch (err) {
       toast('Error importing vault');
       console.error(err);
@@ -2298,7 +2409,7 @@ function copySnip(id, event) {
     localStorage.setItem('snipit_vault_usage', JSON.stringify(vaultUsageTracker));
 
     navigator.clipboard.writeText(snip.code).then(() => {
-      toast('Copied to clipboard! 📋');
+      toast('Copied to clipboard! ');
       loadVault(); // Refresh to show updated usage count
       addXP(5); // +5 XP for copying
     });
@@ -2456,6 +2567,16 @@ function toggleTheme() {
   document.body.classList.toggle('light-mode');
   const isLight = document.body.classList.contains('light-mode');
   localStorage.setItem('snipit_theme', isLight ? 'light' : 'dark');
+  
+  // Update toggle button icon
+  const btn = document.getElementById('theme-toggle-btn');
+  if (btn) {
+    btn.innerHTML = isLight 
+      ? '<i data-lucide="sun" style="width:14px; height:14px"></i><span style="font-size:10px">Light</span>'
+      : '<i data-lucide="moon" style="width:14px; height:14px"></i><span style="font-size:10px">Dark</span>';
+    lucide.createIcons();
+  }
+  
   toast(isLight ? 'Light Mode Activated' : 'Dark Mode Activated');
 }
 

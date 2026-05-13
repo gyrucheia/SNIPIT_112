@@ -316,32 +316,43 @@ class SnipITFirebase {
     }
   }
 
-  // Save AI chat message
-  async saveChatMessage(chatId, userMsg, aiMsg) {
+  // Save AI chat message (Universal format for App & Web sync)
+  async saveChatMessage(chatId, role, content, title = null) {
     try {
-      if (!user || !user.uid) {
-        console.error('❌ User not authenticated');
-        return null;
-      }
+      if (!user || !user.uid) return null;
 
-      console.log('💾 Saving chat message...', { chatId, uid: user.uid });
-
-      const { ref, get, set, push } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
+      const { ref, get, set } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
       const chatRef = ref(db, `users/${user.uid}/aiChat/${chatId}`);
       const snapshot = await get(chatRef);
 
-      let chatData = snapshot.exists() ? snapshot.val() : { messages: [], title: userMsg.substring(0, 40) };
-      chatData.messages.push({ user: userMsg, ai: aiMsg, timestamp: new Date().toISOString() });
+      let chatData = snapshot.exists() ? snapshot.val() : { 
+        messages: [], 
+        title: title || content.substring(0, 40),
+        createdAt: new Date().toISOString()
+      };
+
+      if (!chatData.messages) chatData.messages = [];
+      
+      chatData.messages.push({ 
+        role: role === 'ai' ? 'assistant' : role, 
+        body: content, 
+        timestamp: new Date().toISOString() 
+      });
+      
       chatData.lastUpdated = new Date().toISOString();
 
       await set(chatRef, chatData);
-      console.log('✅ Chat message saved successfully to:', `users/${user.uid}/aiChat/${chatId}`);
-      console.log('   Message count:', chatData.messages.length);
       return chatId;
     } catch (err) {
       console.error('❌ Error saving chat:', err);
       throw err;
     }
+  }
+
+  // Compatibility method for old web calls
+  async saveChatPair(chatId, userMsg, aiMsg) {
+    await this.saveChatMessage(chatId, 'user', userMsg);
+    return await this.saveChatMessage(chatId, 'assistant', aiMsg);
   }
 
   // Get chat history
@@ -430,6 +441,47 @@ class SnipITFirebase {
       console.log('✅ Beam cleared in Firebase');
     } catch (err) {
       console.error('❌ Error clearing beam:', err);
+    }
+  }
+
+  // Listen for Cloud-Relay Active Beam (Phase 2)
+  async listenForActiveBeam(callback) {
+    try {
+      if (!user) return;
+      const { ref, onValue } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
+      const beamRef = ref(db, `users/${user.uid}/active_beam`);
+      onValue(beamRef, (snapshot) => {
+        if (snapshot.exists()) {
+          callback(snapshot.val());
+        }
+      });
+    } catch (err) {
+      console.error('Error listening for active beam:', err);
+    }
+  }
+
+  // Clear Cloud-Relay Active Beam
+  async clearActiveBeam() {
+    try {
+      if (!user) return;
+      const { ref, remove } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
+      await remove(ref(db, `users/${user.uid}/active_beam`));
+      console.log('✅ Active beam cleared');
+    } catch (err) {
+      console.error('❌ Error clearing active beam:', err);
+    }
+  }
+
+  // Get Security PIN for Vault (Phase 1)
+  async getSecurityPin() {
+    try {
+      if (!user) return null;
+      const { ref, get } = await import('https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js');
+      const snapshot = await get(ref(db, `users/${user.uid}/profile/pin`));
+      return snapshot.exists() ? snapshot.val() : null;
+    } catch (err) {
+      console.error('Error fetching security PIN:', err);
+      return null;
     }
   }
 

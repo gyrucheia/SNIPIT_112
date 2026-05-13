@@ -11,4 +11,5 @@ public class AiChatSession {
 
     public String title;
     public long updatedAt;
+    public String firebaseId;
 }

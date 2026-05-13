@@ -23,6 +23,9 @@ public interface ChatDao {
     @Query("SELECT * FROM ai_sessions ORDER BY updatedAt DESC")
     LiveData<List<AiChatSession>> observeSessions();
 
+    @Query("SELECT * FROM ai_sessions WHERE id = :id")
+    AiChatSession getSessionById(long id);
+
     @Query("SELECT * FROM ai_messages WHERE sessionId = :sid ORDER BY createdAt ASC")
     List<AiChatMessage> getMessagesForSession(long sid);
 

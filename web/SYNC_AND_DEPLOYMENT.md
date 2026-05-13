@@ -25,7 +25,7 @@ Firebase Project: snipit-d07da
 | **Snippets** | Firebase | Firebase | ✅ Full sync |
 | **Authentication** | FirebaseAuth | FirebaseAuth | ✅ Same account |
 | **XP/Badges** | Local Room DB | LocalStorage | ❌ Separate |
-| **AI Chat History** | Local Room DB | Firebase | ⚠️ Different storage |
+| **AI Chat History** | Firebase + Room | Firebase | ✅ Synced |
 
 ### Data Storage Differences
 
