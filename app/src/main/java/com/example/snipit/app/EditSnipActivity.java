@@ -188,28 +188,41 @@ public class EditSnipActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_show_qr)
                 .setOnClickListener(
-                        v -> {
-                            String payload = safe(code);
+                        v -> repo.getSnipById(snipId, s -> {
+                            if (s == null) return;
+                            String payload;
+                            String hintMsg;
+                            if (s.remoteId != null && !s.remoteId.isEmpty()) {
+                                payload = "snipit://snip/" + s.remoteId;
+                                hintMsg = "Generated a high-speed LIGHT QR using the cloud Sync ID!";
+                            } else {
+                                payload = safe(code);
+                                hintMsg = getString(R.string.qr_share_peer_hint);
+                            }
+
                             if (payload.isEmpty()) {
-                                Toast.makeText(this, R.string.qr_need_code, Toast.LENGTH_SHORT).show();
+                                runOnUiThread(() -> Toast.makeText(this, R.string.qr_need_code, Toast.LENGTH_SHORT).show());
                                 return;
                             }
-                            try {
-                                Bitmap bmp = QrUtils.encodeQr(payload, 512);
-                                ImageView iv = new ImageView(this);
-                                iv.setImageBitmap(bmp);
-                                int pad = (int) (16 * getResources().getDisplayMetrics().density);
-                                iv.setPadding(pad, pad, pad, pad);
-                                new MaterialAlertDialogBuilder(this)
-                                        .setTitle(R.string.show_qr)
-                                        .setMessage(R.string.qr_share_peer_hint)
-                                        .setView(iv)
-                                        .setPositiveButton(android.R.string.ok, null)
-                                        .show();
-                            } catch (WriterException e) {
-                                Toast.makeText(this, R.string.qr_too_long, Toast.LENGTH_SHORT).show();
-                            }
-                        });
+
+                            runOnUiThread(() -> {
+                                try {
+                                    Bitmap bmp = QrUtils.encodeQr(payload, 512);
+                                    ImageView iv = new ImageView(this);
+                                    iv.setImageBitmap(bmp);
+                                    int pad = (int) (16 * getResources().getDisplayMetrics().density);
+                                    iv.setPadding(pad, pad, pad, pad);
+                                    new MaterialAlertDialogBuilder(this)
+                                            .setTitle(R.string.show_qr)
+                                            .setMessage(hintMsg)
+                                            .setView(iv)
+                                            .setPositiveButton(android.R.string.ok, null)
+                                            .show();
+                                } catch (WriterException e) {
+                                    Toast.makeText(this, R.string.qr_too_long, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }));
 
         findViewById(R.id.btn_delete)
                 .setOnClickListener(

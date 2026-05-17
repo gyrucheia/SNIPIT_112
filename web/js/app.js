@@ -953,8 +953,8 @@ async function sendAI() {
       if (currentChat && currentChat.messages) {
         // Include last 5 messages for context (not all, for performance)
         conversationContext = currentChat.messages.slice(-5).map(m => ({
-          user: m.user,
-          ai: m.ai
+          role: m.role || (m.user ? 'user' : 'assistant'),
+          body: m.body || m.user || m.ai
         }));
       }
     }
@@ -1617,21 +1617,36 @@ auth.signInAnonymously()
     <div class="form-row"><label class="form-label">Bio</label><input class="form-input" id="edit-prof-bio" placeholder="Tell us about yourself..."/></div>
     <button class="form-btn" onclick="saveProfile()">Save Changes</button>
     <button class="form-btn cancel" onclick="closeModal()">Cancel</button>`,
-  'ai-settings': `<div class="modal-title"> AI Settings</div>
-    <div class="form-row">
-      <label class="form-label">GitHub Models Token</label>
-      <p style="font-size:0.85rem;color:#8b949e;margin:0 0 8px">
-        <strong> Auto-loaded from local.properties</strong> — Token is automatically pulled from your Android build config if available.
-      </p>
-      <p style="font-size:0.8rem;color:#6e7681;margin:0 0 12px">
-        Or manually override here with a <a href="https://github.com/settings/tokens/new" target="_blank" style="color:#58a6ff">GitHub PAT (models scope)</a>
-      </p>
-      <input class="form-input" id="github-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx (optional override)"/>
-      <small id="token-status" style="color:#6e7681;margin-top:8px;display:block"></small>
+  'ai-settings': `<div class="modal-title" style="display:flex; align-items:center; gap:10px; color:var(--p)">
+      <i data-lucide="settings-2" style="width:20px; height:20px"></i>
+      <span>// AI ENGINE CONFIG</span>
     </div>
-    <button class="form-btn" onclick="saveAiSettings()"> Save Override (Optional)</button>
-    <button class="form-btn cancel" onclick="closeModal()">Cancel</button>
-    <button class="form-btn cancel" onclick="clearAiToken()" style="margin-top:8px"> Clear Manual Override</button>`
+    <div style="background:var(--bg2); padding:16px; border-radius:8px; border:1px solid var(--bd2); margin-bottom:16px;">
+      <div style="margin-bottom:16px">
+        <label class="form-label" style="font-size:9px; color:var(--t4); letter-spacing:1px; margin-bottom:8px">SECURITY ADVISORY</label>
+        <p style="font-size:11px; color:var(--t2); line-height:1.5">
+          Your <strong style="color:var(--t1)">Access Token</strong> is stored locally in your browser. It is never sent to our servers.
+        </p>
+      </div>
+      <div class="form-row">
+        <label class="form-label" style="font-size:9px; color:var(--t4); letter-spacing:1px">API ACCESS TOKEN</label>
+        <div style="position:relative">
+          <input class="form-input" id="github-token" type="password" placeholder="Paste your key here" 
+                 style="background:var(--bg1); border-color:var(--bd2); padding-right:40px"/>
+          <i data-lucide="key" style="position:absolute; right:12px; top:12px; width:14px; height:14px; color:var(--t4)"></i>
+        </div>
+        <small id="token-status" style="color:var(--t3); margin-top:8px; display:block; font-family:var(--mono); font-size:10px"></small>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; padding-top:8px; border-top:1px solid var(--bd); margin-top:8px">
+        <i data-lucide="info" style="width:12px; height:12px; color:var(--p)"></i>
+        <span style="font-size:10px; color:var(--t3)">Using OpenRouter or GitHub Models.</span>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+      <button class="form-btn" onclick="saveAiSettings()" style="background:var(--p); color:var(--bg0); font-weight:800; border:none; height:42px;">Apply Configuration</button>
+      <button class="form-btn cancel" onclick="clearAiToken()" style="border:1px solid var(--r)40; color:var(--r); height:42px;">Wipe Token</button>
+    </div>
+    <button class="form-btn cancel" onclick="closeModal()" style="margin-top:12px; height:32px; font-size:11px; opacity:0.6">Dismiss</button>`,
 };
 
 async function openModal(name) {
@@ -2596,6 +2611,16 @@ document.addEventListener('keydown', (e) => {
 
 // Initializations
 window.addEventListener('load', () => {
+  // Try to load AI token from server or localStorage
+  if (typeof api !== 'undefined') {
+    const localToken = localStorage.getItem('github_models_token');
+    if (localToken) {
+      updateGitHubToken(localToken);
+    } else {
+      api.loadTokenFromServer();
+    }
+  }
+
   // Add demo snippet if empty for new users
   const existing = LocalStorage.getSnippets();
   if (existing.length === 0) {

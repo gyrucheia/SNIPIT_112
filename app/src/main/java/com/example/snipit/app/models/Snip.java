@@ -17,11 +17,15 @@ public class Snip {
     public int usageCount;
     public boolean isPinned;
     public String remoteId;
+    public long lastModified;
+    public boolean isDirty;
 
     public Snip() {
         this.dateCreated = System.currentTimeMillis();
+        this.lastModified = System.currentTimeMillis();
         this.usageCount = 0;
         this.isPinned = false;
+        this.isDirty = true;
     }
 
     public String[] getTagArray() {

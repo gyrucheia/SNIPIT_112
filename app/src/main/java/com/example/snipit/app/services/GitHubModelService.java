@@ -21,10 +21,10 @@ import org.json.JSONObject;
 public class GitHubModelService {
 
     private static final String ENDPOINT =
-            "https://models.github.ai/inference/chat/completions";
+            "https://models.inference.ai.azure.com/chat/completions";
 
     /** See model catalog: https://github.com/marketplace?type=models */
-    private static final String MODEL_NAME = "openai/gpt-4o";
+    private static final String MODEL_NAME = "gpt-4o-mini";
 
     private static final String GITHUB_API_VERSION = "2022-11-28";
 

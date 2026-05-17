@@ -1,11 +1,11 @@
 // SnipIT Web Portal - API Client
 // GitHub Models API (same backend as Android app)
 
-const OPENROUTER_API_KEY = '';
+// OPENROUTER_API_KEY is now loaded from js/config.js (gitignored) or localStorage
 
 class SnipITAPI {
   constructor() {
-    this.apiKey = OPENROUTER_API_KEY;
+    this.apiKey = (typeof OPENROUTER_API_KEY !== 'undefined') ? OPENROUTER_API_KEY : '';
     this.isOnline = true;
     this.endpoint = 'https://models.inference.ai.azure.com/chat/completions';
     this.model = 'gpt-4o-mini';
@@ -84,8 +84,14 @@ class SnipITAPI {
     ];
 
     conversationHistory.forEach(msg => {
-      messages.push({ role: 'user', content: msg.user });
-      messages.push({ role: 'assistant', content: msg.ai });
+      if (msg.role && msg.body) {
+        // New universal schema
+        messages.push({ role: msg.role === 'user' ? 'user' : 'assistant', content: msg.body });
+      } else if (msg.user || msg.ai) {
+        // Legacy schema
+        if (msg.user) messages.push({ role: 'user', content: msg.user });
+        if (msg.ai) messages.push({ role: 'assistant', content: msg.ai });
+      }
     });
 
     messages.push({ role: 'user', content: userMessage });
@@ -104,8 +110,28 @@ class SnipITAPI {
     return this.getAIResponse(`Analyze and improve this ${language} code:\n\`\`\`\n${code}\n\`\`\``);
   }
 
-  // Dummy — no longer needed, kept so nothing breaks
-  async loadTokenFromServer() { return; }
+  // Fetch token from local server (local.properties) - only on localhost
+  async loadTokenFromServer() {
+    // Safety: Only attempt to hit the local Python server if we are on localhost
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      return false;
+    }
+
+    try {
+      const response = await fetch('/api/config');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.github_token) {
+          this.setGitHubToken(data.github_token);
+          console.log('✓ AI Token auto-loaded from local.properties via server');
+          return true;
+        }
+      }
+    } catch (err) {
+      // Silent fail on cloud
+    }
+    return false;
+  }
 }
 
 // Initialize global API client

@@ -32,10 +32,30 @@ public class ProfileFragment extends Fragment {
 
     private final ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-                if (uri != null) {
-                    profileImg.setImageURI(uri);
-                    // Persist locally for this session or save to cloud in Phase 4
-                    Toast.makeText(getContext(), "Profile identity updated", Toast.LENGTH_SHORT).show();
+                if (uri != null && getContext() != null) {
+                    try {
+                        java.io.InputStream is = getContext().getContentResolver().openInputStream(uri);
+                        if (is != null) {
+                            android.graphics.Bitmap bmp = android.graphics.BitmapFactory.decodeStream(is);
+                            is.close();
+                            if (bmp != null) {
+                                java.io.File file = new java.io.File(getContext().getFilesDir(), "profile_pic.png");
+                                java.io.FileOutputStream fos = new java.io.FileOutputStream(file);
+                                bmp.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, fos);
+                                fos.close();
+                                
+                                profileImg.setImageBitmap(bmp);
+                                Toast.makeText(getContext(), "Profile identity saved locally", Toast.LENGTH_SHORT).show();
+                                
+                                if (getActivity() instanceof MainActivity) {
+                                    ((MainActivity) getActivity()).updateSidebarProfilePic();
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Failed to save profile picture", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -59,6 +79,16 @@ public class ProfileFragment extends Fragment {
         profileImg = v.findViewById(R.id.profile_avatar_img);
 
         if (profileImg != null) {
+            try {
+                java.io.File file = new java.io.File(requireContext().getFilesDir(), "profile_pic.png");
+                if (file.exists()) {
+                    android.graphics.Bitmap bmp = android.graphics.BitmapFactory.decodeFile(file.getAbsolutePath());
+                    if (bmp != null) {
+                        profileImg.setImageBitmap(bmp);
+                    }
+                }
+            } catch (Exception ignored) {}
+
             profileImg.setOnClickListener(view -> {
                 pickMedia.launch(new PickVisualMediaRequest.Builder()
                         .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)

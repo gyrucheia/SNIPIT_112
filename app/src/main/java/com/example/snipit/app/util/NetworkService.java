@@ -42,4 +42,37 @@ public class NetworkService {
      * Logic for fetching public IP is typically handled via external API calls 
      * in the fragment (e.g., ipify.org) to avoid blocking the main service.
      */
+
+    public static void syncCurrentSession(Context context) {
+        try {
+            com.google.firebase.auth.FirebaseUser user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) return;
+
+            Map<String, String> netInfo = getLocalNetworkInfo(context);
+            new Thread(() -> {
+                String publicIp = "Unavailable";
+                try {
+                    java.net.URL url = new java.net.URL("https://api.ipify.org");
+                    java.net.HttpURLConnection c = (java.net.HttpURLConnection) url.openConnection();
+                    c.setConnectTimeout(4000);
+                    c.setReadTimeout(4000);
+                    if (c.getResponseCode() == 200) {
+                        java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(c.getInputStream()));
+                        publicIp = br.readLine();
+                        br.close();
+                    }
+                    c.disconnect();
+                } catch (Exception ignored) {}
+                netInfo.put("public_ip", publicIp);
+                netInfo.put("timestamp", String.valueOf(System.currentTimeMillis()));
+
+                com.google.firebase.database.FirebaseDatabase.getInstance().getReference("users")
+                    .child(user.getUid())
+                    .child("current_session")
+                    .setValue(netInfo);
+            }).start();
+        } catch (Exception e) {
+            android.util.Log.e("NetworkService", "Failed to sync session network details", e);
+        }
+    }
 }

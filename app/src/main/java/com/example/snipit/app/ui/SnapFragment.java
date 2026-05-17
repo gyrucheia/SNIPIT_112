@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +37,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
 import com.example.snipit.app.NewSnipActivity;
+import com.example.snipit.app.SnapReviewActivity;
 import com.example.snipit.app.R;
 import com.example.snipit.app.services.GitHubModelService;
 import com.example.snipit.app.util.XpManager;
@@ -70,6 +72,7 @@ public class SnapFragment extends Fragment {
     private TextView extractedPreview;
     private MaterialButton captureBtn;
     private MaterialButton btnContinue;
+    private MaterialButton btnGallery;
     private View scannerHint;
     private android.widget.ImageView capturePreview;
     private View scrimOverlay;
@@ -94,9 +97,106 @@ public class SnapFragment extends Fragment {
     private final ActivityResultLauncher<String> permLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
                 if (Boolean.TRUE.equals(granted)) {
-                    startCamera();
+                     startCamera();
                 } else {
-                    Toast.makeText(requireContext(), "Camera permission required", Toast.LENGTH_SHORT).show();
+                     Toast.makeText(requireContext(), "Camera permission required", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+    private final ActivityResultLauncher<PickVisualMediaRequest> pickGalleryMedia =
+            registerForActivityResult(new ActivityResultContracts.PickMultipleVisualMedia(5), uris -> {
+                if (uris != null && !uris.isEmpty() && getContext() != null) {
+                    try {
+                        progress.setVisibility(View.VISIBLE);
+                        status.setText("IMPORTING " + uris.size() + " IMAGES...");
+                        
+                        accumulatedLines.clear();
+                        final int total = uris.size();
+                        final java.util.concurrent.atomic.AtomicInteger completed = new java.util.concurrent.atomic.AtomicInteger(0);
+                        
+                        android.net.Uri firstUri = uris.get(0);
+                        java.io.InputStream is = getContext().getContentResolver().openInputStream(firstUri);
+                        if (is != null) {
+                            Bitmap bmp = BitmapFactory.decodeStream(is);
+                            is.close();
+                            if (bmp != null) {
+                                capturePreview.setImageBitmap(bmp);
+                                capturePreview.setVisibility(View.VISIBLE);
+                                scrimOverlay.setVisibility(View.GONE);
+                            }
+                        }
+                        
+                        for (android.net.Uri uri : uris) {
+                            java.io.InputStream stream = getContext().getContentResolver().openInputStream(uri);
+                            if (stream != null) {
+                                Bitmap bmp = BitmapFactory.decodeStream(stream);
+                                stream.close();
+                                if (bmp != null) {
+                                    InputImage inputImage = InputImage.fromBitmap(bmp, 0);
+                                    recognizer.process(inputImage)
+                                            .addOnSuccessListener(visionText -> {
+                                                String text = visionText.getText().trim();
+                                                String[] lines = text.split("\n");
+                                                for (String line : lines) {
+                                                    String trimmed = line.trim();
+                                                    if (trimmed.length() > 3 && !isNoiseLine(trimmed)) {
+                                                        boolean isNew = true;
+                                                        for (String existing : accumulatedLines) {
+                                                            if (isSimilar(trimmed, existing)) {
+                                                                isNew = false;
+                                                                break;
+                                                            }
+                                                        }
+                                                        if (isNew) accumulatedLines.add(trimmed);
+                                                    }
+                                                }
+                                                
+                                                int progressCount = completed.incrementAndGet();
+                                                if (progressCount == total) {
+                                                    if (isAdded()) {
+                                                        requireActivity().runOnUiThread(() -> {
+                                                            StringBuilder sb = new StringBuilder();
+                                                            for (String line : accumulatedLines) {
+                                                                    sb.append(line).append("\n");
+                                                            }
+                                                            capturedText = sb.toString().trim();
+                                                            extractedPreview.setText(capturedText);
+                                                            progress.setVisibility(View.GONE);
+                                                            status.setText("BATCH OCR COMPLETE");
+                                                            
+                                                            state = STATE_RESULT;
+                                                            captureBtn.setText("RESCAN");
+                                                            btnContinue.setVisibility(View.VISIBLE);
+                                                            
+                                                            android.content.SharedPreferences prefs = requireContext().getSharedPreferences("snipit_prefs", Context.MODE_PRIVATE);
+                                                            int newCount = prefs.getInt("gallery_upload_count", 0) + 1;
+                                                            prefs.edit().putInt("gallery_upload_count", newCount).apply();
+                                                            Toast.makeText(getContext(), "Import " + newCount + "/5 successful", Toast.LENGTH_SHORT).show();
+                                                            
+                                                            View container = getView() != null ? getView().findViewById(R.id.btn_container_snap) : null;
+                                                            if (container != null) container.setVisibility(View.GONE);
+                                                        });
+                                                    }
+                                                }
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                int progressCount = completed.incrementAndGet();
+                                                if (progressCount == total && isAdded()) {
+                                                    requireActivity().runOnUiThread(() -> progress.setVisibility(View.GONE));
+                                                }
+                                            });
+                                } else {
+                                    completed.incrementAndGet();
+                                }
+                            } else {
+                                completed.incrementAndGet();
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        progress.setVisibility(View.GONE);
+                        status.setText("IMPORT FAILED");
+                    }
                 }
             });
 
@@ -119,6 +219,7 @@ public class SnapFragment extends Fragment {
             extractedPreview = v.findViewById(R.id.extracted_preview);
             captureBtn = v.findViewById(R.id.btn_scan);
             btnContinue = v.findViewById(R.id.btn_continue_to_editor);
+            btnGallery = v.findViewById(R.id.btn_gallery_upload);
             scannerHint = v.findViewById(R.id.scanner_hint_container);
             capturePreview = v.findViewById(R.id.capture_preview_image);
             scrimOverlay = v.findViewById(R.id.scrim_overlay);
@@ -139,11 +240,9 @@ public class SnapFragment extends Fragment {
         try {
             captureBtn.setOnClickListener(
                     view -> {
-                        if (!isLiveScanning && state == STATE_PREVIEW) {
-                            // Ready to start session
+                        if (state == STATE_PREVIEW) {
                             startCaptureSession();
-                        } else if (isLiveScanning && state == STATE_PROCESSING) {
-                            // Currently capturing, so STOP it
+                        } else if (state == STATE_PROCESSING) {
                             stopCaptureSession();
                         } else if (state == STATE_RESULT) {
                             resetScanner();
@@ -153,9 +252,10 @@ public class SnapFragment extends Fragment {
             btnContinue.setOnClickListener(v1 -> {
                 if (capturedText != null && !capturedText.isEmpty()) {
                     Intent i = new Intent(requireContext(), NewSnipActivity.class);
-                    i.putExtra("prefill_title", "Snap Capture " + new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(new java.util.Date()));
-                    i.putExtra("prefill_code", capturedText);
-                    i.putExtra("prefill_tags", "#Snap,#OCR");
+                    i.putExtra(NewSnipActivity.EXTRA_PREFILL_TITLE, "Board capture");
+                    i.putExtra(NewSnipActivity.EXTRA_PREFILL_CODE, capturedText);
+                    i.putExtra(NewSnipActivity.EXTRA_PREFILL_LANG, "Plain Text");
+                    i.putExtra(NewSnipActivity.EXTRA_PREFILL_TAGS, "#OCR,#Snap");
                     startActivity(i);
                     
                     // Automatically switch to Vault tab when user returns from editor
@@ -164,6 +264,25 @@ public class SnapFragment extends Fragment {
                     }
                 }
             });
+
+            if (btnGallery != null) {
+                btnGallery.setOnClickListener(view -> {
+                    int currentUploads = requireContext().getSharedPreferences("snipit_prefs", Context.MODE_PRIVATE)
+                            .getInt("gallery_upload_count", 0);
+                    if (currentUploads >= 5) {
+                        new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                                .setTitle("Developer Import Limit")
+                                .setMessage("You have reached the maximum limit of 5 local gallery imports. Use high-precision Live Scan to continue or upgrade to SnipIT Pro!")
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show();
+                        return;
+                    }
+
+                    pickGalleryMedia.launch(new PickVisualMediaRequest.Builder()
+                            .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                            .build());
+                });
+            }
 
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 startCamera();
@@ -221,20 +340,25 @@ public class SnapFragment extends Fragment {
         isLiveScanning = false;
         capturedText = "";
         state = STATE_PREVIEW;
-        captureBtn.setText("INITIATE CAPTURE");
+        captureBtn.setText("START CAPTURE");
         captureBtn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.terminal_green)));
         captureBtn.setVisibility(View.VISIBLE);
         captureBtn.setEnabled(true);
+        captureBtn.setAlpha(1.0f);
         btnContinue.setVisibility(View.GONE);
         extractedPreview.setText("");
         scannerHint.setVisibility(View.VISIBLE);
         status.setText("SYSTEM READY");
-        captureBtn.setEnabled(false); // Guarded until focus/clarity
-        captureBtn.setAlpha(0.5f);
+
+        if (getView() != null) {
+            View container = getView().findViewById(R.id.btn_container_snap);
+            if (container != null) container.setVisibility(View.VISIBLE);
+        }
         
         // Ensure UI elements are visible for scanning
         scrimOverlay.setVisibility(View.VISIBLE);
         previewView.setVisibility(View.VISIBLE);
+        capturePreview.setVisibility(View.GONE);
     }
 
     private Bitmap imageProxyToBitmap(ImageProxy image) {
@@ -273,6 +397,101 @@ public class SnapFragment extends Fragment {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private void takeSnapshot() {
+        if (imageCapture == null) return;
+
+        if (isAdded()) {
+            requireActivity().runOnUiThread(() -> {
+                state = STATE_PROCESSING;
+                progress.setVisibility(View.VISIBLE);
+                captureBtn.setEnabled(false);
+                status.setText("CAPTURING IMAGE...");
+                scannerHint.setVisibility(View.GONE);
+            });
+        }
+
+        imageCapture.takePicture(cameraExecutor, new ImageCapture.OnImageCapturedCallback() {
+            @Override
+            public void onCaptureSuccess(@NonNull ImageProxy image) {
+                Bitmap fullBitmap = imageProxyToBitmap(image);
+                image.close();
+
+                if (fullBitmap != null) {
+                    Bitmap croppedBitmap = cropBitmapToScanner(fullBitmap);
+                    if (croppedBitmap != null) {
+                        if (isAdded()) {
+                            requireActivity().runOnUiThread(() -> {
+                                capturePreview.setImageBitmap(croppedBitmap);
+                                capturePreview.setVisibility(View.VISIBLE);
+                                scrimOverlay.setVisibility(View.GONE);
+                            });
+                        }
+
+                        InputImage inputImage = InputImage.fromBitmap(croppedBitmap, 0);
+                        recognizer.process(inputImage)
+                                .addOnSuccessListener(visionText -> {
+                                    capturedText = visionText.getText().trim();
+                                    if (isAdded()) {
+                                        requireActivity().runOnUiThread(() -> {
+                                            extractedPreview.setText(capturedText);
+                                            progress.setVisibility(View.GONE);
+                                            captureBtn.setEnabled(true);
+                                            captureBtn.setText("RESCAN");
+                                            captureBtn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.terminal_green)));
+                                            state = STATE_RESULT;
+                                            status.setText("OCR COMPLETE");
+
+                                            if (!capturedText.isEmpty()) {
+                                                btnContinue.setVisibility(View.VISIBLE);
+                                                btnContinue.setAlpha(1.0f);
+                                            } else {
+                                                status.setText("NO TEXT DETECTED");
+                                            }
+                                        });
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    if (isAdded()) {
+                                        requireActivity().runOnUiThread(() -> {
+                                            progress.setVisibility(View.GONE);
+                                            captureBtn.setEnabled(true);
+                                            status.setText("OCR ERROR");
+                                        });
+                                    }
+                                });
+                    } else {
+                        if (isAdded()) {
+                            requireActivity().runOnUiThread(() -> {
+                                progress.setVisibility(View.GONE);
+                                captureBtn.setEnabled(true);
+                                status.setText("CROP FAILED");
+                            });
+                        }
+                    }
+                } else {
+                    if (isAdded()) {
+                        requireActivity().runOnUiThread(() -> {
+                            progress.setVisibility(View.GONE);
+                            captureBtn.setEnabled(true);
+                            status.setText("CAPTURE DECODE FAILED");
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onError(@NonNull ImageCaptureException exception) {
+                if (isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        progress.setVisibility(View.GONE);
+                        captureBtn.setEnabled(true);
+                        status.setText("CAPTURE FAILED");
+                    });
+                }
+            }
+        });
     }
 
     private void startCamera() {
@@ -409,29 +628,34 @@ public class SnapFragment extends Fragment {
     }
 
     private boolean isInsideScanner(android.graphics.Rect rect, int imgW, int imgH) {
-        // Map the image coordinates to the PreviewView coordinates
-        // This is a simplified check: if the block is too high or too low, it's noise
-        // Since the scanner is centered, we ignore the top and bottom 20% by default
-        // or we can use the scannerBox's actual bounds if we want to be very precise.
-        
+        if (previewView == null || previewView.getHeight() == 0 || scannerBox == null) {
+            float relativeTop = (float) rect.top / imgH;
+            float relativeBottom = (float) rect.bottom / imgH;
+            return relativeTop > 0.15f && relativeBottom < 0.85f;
+        }
+
+        float boxTop = scannerBox.getY() / previewView.getHeight();
+        float boxBottom = (scannerBox.getY() + scannerBox.getHeight()) / previewView.getHeight();
+
         float relativeTop = (float) rect.top / imgH;
         float relativeBottom = (float) rect.bottom / imgH;
-        
-        // Ignore top 15% (Status bar, VIVO, etc) and bottom 15%
-        return relativeTop > 0.15f && relativeBottom < 0.85f;
+
+        float tolerance = 0.1f;
+        float scanTop = Math.max(0.0f, boxTop - tolerance);
+        float scanBottom = Math.min(1.0f, boxBottom + tolerance);
+
+        return relativeTop >= scanTop && relativeBottom <= scanBottom;
     }
 
     private void handleLiveDetection(String text) {
         if (isAdded()) {
             requireActivity().runOnUiThread(() -> {
-                // LOCK: Only process if we are actively in the PROCESSING state
                 if (state != STATE_PROCESSING) return;
 
                 String[] lines = text.split("\n");
                 for (String line : lines) {
                     String trimmed = line.trim();
-                    if (trimmed.length() > 3) {
-                        // Jitter Guard: Check if a similar line already exists
+                    if (trimmed.length() > 3 && !isNoiseLine(trimmed)) {
                         boolean isNew = true;
                         for (String existing : accumulatedLines) {
                             if (isSimilar(trimmed, existing)) {
@@ -453,17 +677,65 @@ public class SnapFragment extends Fragment {
         }
     }
 
-    private boolean isSimilar(String s1, String s2) {
-        if (s1.equals(s2)) return true;
-        // Simple length and content check for jitter
-        if (Math.abs(s1.length() - s2.length()) < 2) {
-            if (s1.contains(s2) || s2.contains(s1)) return true;
-        }
+    private boolean isNoiseLine(String line) {
+        String lower = line.toLowerCase().trim();
+        if (lower.isEmpty()) return true;
+        if (lower.replaceAll("[\\s;\\{\\}\\(\\),.\\\"'\\-_\\*\\+]", "").isEmpty()) return true;
+
+        if (lower.contains("vivo") || lower.contains("oppo") || lower.contains("realme") || lower.contains("samsung")) return true;
+        if (lower.contains("shot on") || lower.contains("camera") || lower.contains("triple") || lower.contains("dual")) return true;
+        if (lower.contains("battery") || lower.matches(".*\\b\\d{1,2}%\\b.*")) return true;
+        if (lower.equals("lte") || lower.equals("volte") || lower.equals("3g") || lower.equals("4g") || lower.equals("5g")) return true;
+        if (lower.matches(".*\\d{1,2}:\\d{2}.*")) return true;
+
         return false;
     }
 
+    private boolean isSimilar(String s1, String s2) {
+        if (s1 == null || s2 == null) return true;
+        if (s1.trim().equalsIgnoreCase(s2.trim())) return true;
+
+        String clean1 = s1.replaceAll("[\\s;\\{\\}\\(\\),.\\\"']", "").toLowerCase();
+        String clean2 = s2.replaceAll("[\\s;\\{\\}\\(\\),.\\\"']", "").toLowerCase();
+
+        if (clean1.isEmpty() || clean2.isEmpty()) return true;
+        if (clean1.equals(clean2)) return true;
+        if (clean1.contains(clean2) || clean2.contains(clean1)) return true;
+
+        int distance = getLevenshteinDistance(clean1, clean2);
+        int maxLength = Math.max(clean1.length(), clean2.length());
+        double similarity = 1.0 - ((double) distance / maxLength);
+
+        return similarity > 0.75;
+    }
+
+    private int getLevenshteinDistance(String s, String t) {
+        if (s == null || t == null) return 0;
+        int n = s.length();
+        int m = t.length();
+        if (n == 0) return m;
+        if (m == 0) return n;
+
+        int[] p = new int[n + 1];
+        int[] d = new int[n + 1];
+
+        for (int i = 0; i <= n; i++) p[i] = i;
+
+        for (int j = 1; j <= m; j++) {
+            char t_j = t.charAt(j - 1);
+            d[0] = j;
+            for (int i = 1; i <= n; i++) {
+                int cost = s.charAt(i - 1) == t_j ? 0 : 1;
+                d[i] = Math.min(Math.min(d[i - 1] + 1, p[i] + 1), p[i - 1] + cost);
+            }
+            int[] placeholder = p;
+            p = d;
+            d = placeholder;
+        }
+        return p[n];
+    }
+
     private void checkFrameClarity(@NonNull ImageProxy imageProxy) {
-        // LOCK: Only run in PREVIEW state
         if (state != STATE_PREVIEW) {
             imageProxy.close();
             return;
@@ -479,17 +751,27 @@ public class SnapFragment extends Fragment {
         InputImage input = InputImage.fromMediaImage(mediaImage, imageProxy.getImageInfo().getRotationDegrees());
         recognizer.process(input)
                 .addOnSuccessListener(text -> {
-                    boolean hasText = !text.getText().trim().isEmpty();
+                    boolean hasTextInBox = false;
+                    for (com.google.mlkit.vision.text.Text.TextBlock block : text.getTextBlocks()) {
+                        android.graphics.Rect rect = block.getBoundingBox();
+                        if (rect != null && isInsideScanner(rect, imageProxy.getWidth(), imageProxy.getHeight())) {
+                            hasTextInBox = true;
+                            break;
+                        }
+                    }
+                    final boolean inFocus = hasTextInBox;
                     if (isAdded()) {
                         requireActivity().runOnUiThread(() -> {
-                            if (hasText) {
+                            if (inFocus) {
                                 captureBtn.setEnabled(true);
                                 captureBtn.setAlpha(1.0f);
-                                status.setText("TERMINAL READY (CLEAR)");
+                                scannerBox.setBackgroundTintList(ContextCompat.getColorStateList(requireContext(), R.color.terminal_green));
+                                status.setText("TERMINAL IN FOCUS (READY)");
                             } else {
                                 captureBtn.setEnabled(false);
                                 captureBtn.setAlpha(0.5f);
-                                status.setText("FOCUSING terminal...");
+                                scannerBox.setBackgroundTintList(ContextCompat.getColorStateList(requireContext(), R.color.error_red));
+                                status.setText("ALIGN & FOCUS TERMINAL...");
                             }
                         });
                     }

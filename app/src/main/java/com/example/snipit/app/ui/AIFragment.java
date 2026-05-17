@@ -310,7 +310,7 @@ public class AIFragment extends Fragment {
                         public void onError(String error) {
                             if (!isAdded()) return;
                             removeTypingIndicator();
-                            addBubble("AI Error: " + error, false);
+                            addBubble("Snip AI request failed. Check your connection and GITHUB_MODELS_KEY in local.properties.", false);
                         }
                     });
                 });

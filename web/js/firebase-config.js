@@ -3,7 +3,7 @@
 // Firebase Configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAC7mGegLIH_vvsEUhQn9LMNuPhRBO-Db8",
+  apiKey: "AIzaSyAa-l7kxBmUaKie0pBMolEVeiZ52AsT6N0",
   authDomain: "snipit-d07da.firebaseapp.com",
   databaseURL: "https://snipit-d07da-default-rtdb.firebaseio.com",
   projectId: "snipit-d07da",

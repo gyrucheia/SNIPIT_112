@@ -12,6 +12,7 @@
         android:required="false" />
 
     <application
+        android:name=".SnipApplication"
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"

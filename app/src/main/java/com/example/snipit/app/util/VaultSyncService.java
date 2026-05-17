@@ -44,7 +44,9 @@ public class VaultSyncService {
             executor.execute(() -> {
                 try {
                     pullFromFirebase(user.getUid(), () -> {
-                        pushNewLocals(user.getUid(), onDone);
+                        pushNewLocals(user.getUid(), () -> {
+                            pushDirtyLocals(user.getUid(), onDone);
+                        });
                     });
                 } catch (Exception e) {
                     Log.e(TAG, "Sync executor failed", e);
@@ -133,6 +135,33 @@ public class VaultSyncService {
         if (onDone != null) onDone.run();
     }
 
+    private void pushDirtyLocals(String uid, Runnable next) {
+        try {
+            List<Snip> dirties = dao.getDirtySnips();
+            if (dirties != null && !dirties.isEmpty()) {
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("snippets");
+                for (Snip s : dirties) {
+                    if (s.remoteId == null || s.remoteId.isEmpty()) continue;
+                    
+                    DatabaseReference sRef = ref.child(s.remoteId);
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("title", s.title != null ? s.title : "");
+                    data.put("code", s.code != null ? s.code : "");
+                    data.put("language", s.language != null ? s.language : "");
+                    data.put("tags", s.tags != null ? s.tags : "");
+                    data.put("updated", new java.util.Date().toString());
+                    
+                    sRef.setValue(data);
+                    s.isDirty = false;
+                    dao.update(s);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Push dirty failed", e);
+        }
+        if (next != null) next.run();
+    }
+
     public void deleteRemote(String rid) {
         try {
             if (rid == null) return;
@@ -165,7 +194,14 @@ public class VaultSyncService {
             data.put("language", s.language);
             data.put("tags", s.tags);
             data.put("updated", new java.util.Date().toString());
-            ref.updateChildren(data);
+            ref.updateChildren(data).addOnSuccessListener(aVoid -> {
+                executor.execute(() -> {
+                    s.isDirty = false;
+                    if (dao != null) {
+                        dao.update(s);
+                    }
+                });
+            });
         } catch (Exception e) {
             Log.e(TAG, "Update remote failed", e);
         }

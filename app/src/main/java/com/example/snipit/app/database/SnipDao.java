@@ -51,6 +51,9 @@ public interface SnipDao {
     @Query("SELECT * FROM snippets WHERE remoteId IS NULL")
     List<Snip> getSnipsWithoutRemoteId();
 
+    @Query("SELECT * FROM snippets WHERE isDirty = 1")
+    List<Snip> getDirtySnips();
+
     @Query("SELECT * FROM snippets ORDER BY dateCreated DESC LIMIT :limit")
     List<Snip> getRecentSnipsSync(int limit);
 }

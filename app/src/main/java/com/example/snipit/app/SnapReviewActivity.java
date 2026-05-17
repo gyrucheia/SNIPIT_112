@@ -28,6 +28,7 @@ public class SnapReviewActivity extends AppCompatActivity {
     public static final String EXTRA_OCR_TEXT = "ocr_text";
     public static final String EXTRA_CONFIDENCE_PERCENT = "confidence_pct";
     public static final String EXTRA_CONFIDENCE_LEVEL = "confidence_level";
+    public static final String EXTRA_RETURN_RESULT = "return_result";
 
     private EditText editor;
     private TextView confidenceBadge;
@@ -83,6 +84,8 @@ public class SnapReviewActivity extends AppCompatActivity {
                         : "";
         if (initial == null) initial = "";
 
+        boolean returnResult = getIntent() != null && getIntent().getBooleanExtra(EXTRA_RETURN_RESULT, false);
+
         int pct = getIntent() != null ? getIntent().getIntExtra(EXTRA_CONFIDENCE_PERCENT, -1) : -1;
         String levelName =
                 getIntent() != null ? getIntent().getStringExtra(EXTRA_CONFIDENCE_LEVEL) : null;
@@ -129,14 +132,21 @@ public class SnapReviewActivity extends AppCompatActivity {
                                     langPicker.getText() != null
                                             ? langPicker.getText().toString()
                                             : "Text";
-                            Intent i = new Intent(this, NewSnipActivity.class);
-                            i.putExtra(NewSnipActivity.EXTRA_PREFILL_TITLE, "Board capture");
-                            i.putExtra(NewSnipActivity.EXTRA_PREFILL_CODE, code);
-                            i.putExtra(
-                                    NewSnipActivity.EXTRA_PREFILL_LANG,
-                                    LanguagePickerHelper.vaultLabel(langHint));
-                            i.putExtra(NewSnipActivity.EXTRA_PREFILL_TAGS, "#OCR,#Snap");
-                            newSnipLauncher.launch(i);
+                            if (returnResult) {
+                                Intent data = new Intent();
+                                data.putExtra("scanned_text", code);
+                                setResult(Activity.RESULT_OK, data);
+                                finish();
+                            } else {
+                                Intent i = new Intent(this, NewSnipActivity.class);
+                                i.putExtra(NewSnipActivity.EXTRA_PREFILL_TITLE, "Board capture");
+                                i.putExtra(NewSnipActivity.EXTRA_PREFILL_CODE, code);
+                                i.putExtra(
+                                        NewSnipActivity.EXTRA_PREFILL_LANG,
+                                        LanguagePickerHelper.vaultLabel(langHint));
+                                i.putExtra(NewSnipActivity.EXTRA_PREFILL_TAGS, "#OCR,#Snap");
+                                newSnipLauncher.launch(i);
+                            }
                         });
     }
 

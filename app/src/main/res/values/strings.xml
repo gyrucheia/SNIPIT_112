@@ -181,6 +181,6 @@
     <string name="snap_capture_failed">Couldn\'t take a photo. Try again.</string>
     <string name="snap_ocr_failed">Couldn\'t read text from the photo.</string>
     <string name="snap_camera_not_ready">Camera is still starting…</string>
-    <string name="snap_ai_failed">Snip AI request failed. Check your connection and OPENROUTER_API_KEY in local.properties (use your GitHub Models PAT with models scope as this value).</string>
+    <string name="snap_ai_failed">Snip AI request failed. Check your connection and OPENROUTER_API_KEY in local.properties.</string>
     <string name="save_snip">Save Snip</string>
 </resources>

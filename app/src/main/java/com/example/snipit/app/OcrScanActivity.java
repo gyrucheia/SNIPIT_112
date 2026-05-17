@@ -11,6 +11,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
@@ -46,6 +48,19 @@ public class OcrScanActivity extends AppCompatActivity {
     private TextRecognizer recognizer;
     private String lastScannedText = "";
 
+    private final ActivityResultLauncher<Intent> reviewLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    String finalCode = result.getData().getStringExtra("scanned_text");
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("scanned_text", finalCode);
+                    setResult(Activity.RESULT_OK, resultIntent);
+                    finish();
+                }
+            }
+    );
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,10 +84,10 @@ public class OcrScanActivity extends AppCompatActivity {
 
         btnCapture.setOnClickListener(v -> takePhoto());
         btnImport.setOnClickListener(v -> {
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("scanned_text", lastScannedText);
-            setResult(Activity.RESULT_OK, resultIntent);
-            finish();
+            Intent intent = new Intent(this, SnapReviewActivity.class);
+            intent.putExtra(SnapReviewActivity.EXTRA_OCR_TEXT, lastScannedText);
+            intent.putExtra(SnapReviewActivity.EXTRA_RETURN_RESULT, true);
+            reviewLauncher.launch(intent);
         });
     }
 

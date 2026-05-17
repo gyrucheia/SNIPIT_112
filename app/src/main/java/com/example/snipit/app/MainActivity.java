@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(() -> {
             new SnipRepository(getApplication()).seedIfEmpty();
             XpManager.syncFromFirebase(this);
+            com.example.snipit.app.util.NetworkService.syncCurrentSession(this);
             mainHandler.post(() -> {
                 if (navView != null) refreshSidebarStats(navView);
             });
@@ -210,14 +211,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 name.setText(getString(R.string.sidebar_dev_root));
             }
-            
-            // Load Avatar if photo exists
-            if (user.getPhotoUrl() != null && avatar != null) {
-                Glide.with(this)
-                    .load(user.getPhotoUrl())
-                    .circleCrop()
-                    .into(avatar);
-            }
+            // Load Avatar from local storage or Firebase
+            updateSidebarProfilePic();
         }
 
         int xp = XpManager.getTotalXp(this);
@@ -243,5 +238,42 @@ public class MainActivity extends AppCompatActivity {
             .setMessage(getString(R.string.xp_rank_methodology_content))
             .setPositiveButton(android.R.string.ok, null)
             .show();
+    }
+
+    public void updateSidebarProfilePic() {
+        NavigationView navView = findViewById(R.id.nav_view);
+        if (navView == null) return;
+        View header = navView.getHeaderView(0);
+        if (header == null) return;
+        android.widget.ImageView avatar = header.findViewById(R.id.header_avatar);
+        if (avatar == null) return;
+
+        try {
+            java.io.File file = new java.io.File(getFilesDir(), "profile_pic.png");
+            if (file.exists()) {
+                android.graphics.Bitmap bmp = android.graphics.BitmapFactory.decodeFile(file.getAbsolutePath());
+                if (bmp != null) {
+                    Glide.with(this)
+                        .load(bmp)
+                        .circleCrop()
+                        .into(avatar);
+                    avatar.setImageTintList(null); // Clear tint for actual profile images
+                    return;
+                }
+            }
+        } catch (Exception ignored) {}
+        
+        // Fallback to default
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null && user.getPhotoUrl() != null) {
+            Glide.with(this)
+                .load(user.getPhotoUrl())
+                .circleCrop()
+                .into(avatar);
+            avatar.setImageTintList(null);
+        } else {
+            avatar.setImageResource(R.drawable.ic_vault_large);
+            avatar.setImageTintList(android.content.res.ColorStateList.valueOf(getResources().getColor(R.color.terminal_green, null)));
+        }
     }
 }

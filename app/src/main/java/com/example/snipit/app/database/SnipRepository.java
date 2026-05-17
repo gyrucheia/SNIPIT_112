@@ -80,6 +80,8 @@ public class SnipRepository {
 
     public void update(Snip snip) {
         executor.execute(() -> {
+            snip.isDirty = true;
+            snip.lastModified = System.currentTimeMillis();
             snipDao.update(snip);
             syncService.updateRemote(snip);
         });
@@ -87,6 +89,8 @@ public class SnipRepository {
 
     public void update(Snip snip, Runnable onDone) {
         executor.execute(() -> {
+            snip.isDirty = true;
+            snip.lastModified = System.currentTimeMillis();
             snipDao.update(snip);
             syncService.updateRemote(snip);
             if (onDone != null) mainHandler.post(onDone);

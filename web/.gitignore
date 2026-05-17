@@ -25,3 +25,4 @@ temp/
 # Don't accidentally commit this if you add secrets
 firebase-config.*.js
 !firebase-config.js  # This file will have public config for Netlify
+js/config.js
